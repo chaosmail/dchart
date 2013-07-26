@@ -1,9 +1,90 @@
-/** angular-dchart - v0.0.2 - Sun May 26 2013 20:30:23
+/** angular-dchart - v0.0.2 - Wed Jun 26 2013 23:39:12
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
 var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+/*
+    _dataSet
+    *******************
+*/
+var _dataSet = (function() {
+
+    function _dataSet() {
+
+        this.fn = null;
+        this.data = [];
+        this.label = "";
+        this.stroke = _dchart.getRandomColor();
+        this.fill = "#000";
+        this.opacity = 1;
+        this.fillOpacity = 1;
+        this.strokeWidth = 1;
+        this.min = 0;
+        this.max = 0,
+        this.interpolate = "linear";
+
+        /**
+         * Parse a HTML-Element as a DataSet
+         * @param  {object} elem HTML Element
+         * @param  {object} axis Axis Object
+         */
+        _dataSet.prototype.parse = function(elem, axis) {
+
+            var self = this;
+
+            angular.forEach(elem.attributes, function (value, key) {
+                if (value.nodeName.match(/^label$/i)) {
+                    self.label = value.nodeValue;
+                }
+                else if (value.nodeName.match(/^stroke$/i)) {
+                    self.stroke = value.nodeValue;
+                }
+                else if (value.nodeName.match(/^interpolate$/i)) {
+                    self.interpolate = value.nodeValue;
+                }
+                else if (value.nodeName.match(/^fill$/i)) {
+                    self.fill = value.nodeValue;
+                }
+                else if (value.nodeName.match(/^min$/i)) {
+                    self.min = parseFloat(value.nodeValue);
+                }
+                else if (value.nodeName.match(/^max$/i)) {
+                    self.max = parseFloat(value.nodeValue);
+                }
+                else if (value.nodeName.match(/^stroke-width$/i)) {
+                    self.strokeWidth = parseFloat(value.nodeValue);
+                }
+                else if (value.nodeName.match(/^fill-opacity$/i)) {
+                    self.fillOpacity = parseFloat(value.nodeValue);
+                }
+                else if (value.nodeName.match(/^opacity$/i)) {
+                    self.opacity = parseFloat(value.nodeValue);
+                }
+            });
+        };
+
+        /**
+         * Recalculate Function values
+         * @param  {object} axis Axis Object
+         */
+        _dataSet.prototype.recalculate = function(axis) {
+
+            if (this.fn === undefined || this.fn === null) return;
+
+            var xAxis = axis.x,
+                min = set.min ? set.min : xAxis.range[0] ? parseFloat(xAxis.range[0]) : 0,
+                max = set.max ? set.max : xAxis.range[1] ? parseFloat(xAxis.range[1]) : 180,
+                ticks = xAxis.ticks ? parseFloat(xAxis.ticks) : 10,
+                range = (max - min) / ticks;
+
+            this.data = (new _solver()).solve(this.fn,min,max,range);
+        };
+    }
+
+    return _dataSet;
+})();
 
 /*
     _dchart
@@ -66,7 +147,7 @@ var _dchart = (function() {
         });
     };
 
-    // Create the basic SVG Element
+    // Create the basic dChart Element
     _dchart.prototype.createSvg = function(scope, elem) {
         if (scope.svg !== undefined && scope.svg !== null) return;
 
@@ -197,7 +278,7 @@ var _dchart2D = (function(_super) {
                     data:[],
                     dataFn:undefined
                 },
-            self = this
+            self = this,
             xAxis = axis.x;
 
         angular.forEach(elem.attributes, function (value, key) {
@@ -284,8 +365,11 @@ var _dchart2D = (function(_super) {
     };
 
     _dchart2D.prototype.calculateFnData = function(scope) {
-        if (scope.data === undefined || scope.data.length ===0)
+        if (scope.data === undefined || scope.data.length === 0)
             return;
+
+        if (scope.drawDataSets === undefined || scope.drawDataSets.length === 0)
+            scope.drawDataSets = [];
 
         var self = this;
 

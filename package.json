@@ -27,10 +27,10 @@
     "grunt-contrib-copy": "",
     "grunt-contrib-watch": "",
     "grunt-karma": "",
-    "grunt-bower-task": "",
-    "grunt-contrib-clean":"",
+    "grunt-contrib-clean": "",
     "mocha": "",
-    "chai": ""
+    "chai": "",
+    "grunt-typescript": "~0.2.2"
   },
   "author": "Christoph Körner <office@chaosmail.at> (http://chaosmail.at)",
   "license": "MIT",

@@ -4,7 +4,8 @@
   "main": "dist/angular-dchart.js",
   "dependencies": {
     "angular": "~1.0.6",
-    "d3": "~3.1.6"
+    "d3": "~3.1.6",
+    "underscore": "~1.4.4"
   },
   "ignore": [
     "**/.*",

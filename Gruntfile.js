@@ -85,10 +85,22 @@ module.exports = function(grunt) {
         }
       }
     },
+    typescript: {
+      base: {
+        src: ['src/ts/dchart.ts','src/ts/*/*.ts'],
+        dest: '',
+        options: {
+          target: 'es3', //or es5
+          fullSourceMapPath: true,
+          sourcemap: true,
+          declaration: true,
+        }
+      }
+    },
     watch: {
       scripts: {
-        files: ['src/css/*.css', 'src/js/*.js'],
-        tasks: ['default']
+        files: ['src/css/**/*.css', 'src/js/**/*.js', 'src/ts/**/*.ts'],
+        tasks: ['dist']
       }
     }
   });
@@ -102,9 +114,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-bower-task');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-typescript');
 
   // Default task(s).
   grunt.registerTask('default', ['karma', 'clean:dist', 'concat', 'cssmin', 'uglify', 'clean:demo', 'copy:demo']);
-  grunt.registerTask('dist', ['clean:dist', 'concat', 'cssmin', 'uglify', 'clean:demo', 'copy:demo']);
+  grunt.registerTask('dist', ['clean:dist', 'concat', 'cssmin', 'typescript', 'uglify', 'clean:demo', 'copy:demo']);
   grunt.registerTask('lib', ['clean:lib', 'bower', 'copy:libs']);
 };
