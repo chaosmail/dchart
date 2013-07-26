@@ -1,4 +1,4 @@
-/** angular-dchart - v0.0.2 - Wed Jul 24 2013 15:00:13
+/** angular-dchart - v0.0.2 - Fri Jul 26 2013 18:36:24
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */

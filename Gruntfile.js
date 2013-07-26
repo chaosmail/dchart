@@ -87,19 +87,19 @@ module.exports = function(grunt) {
     },
     typescript: {
       base: {
-        src: ['src/ts/dchart.ts','src/ts/*/*.ts'],
-        dest: '',
+        src: ['src/ts/dchart.ts'],
+        dest: 'src/ts/dchart.js',
         options: {
           target: 'es3', //or es5
           fullSourceMapPath: true,
           sourcemap: true,
-          declaration: true,
+          declaration: false,
         }
       }
     },
     watch: {
       scripts: {
-        files: ['src/css/**/*.css', 'src/js/**/*.js', 'src/ts/**/*.ts'],
+        files: ['src/css/**/*.css', 'src/js/**/*.js', 'src/ts/*.ts'],
         tasks: ['dist']
       }
     }

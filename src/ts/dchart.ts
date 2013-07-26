@@ -1,9 +1,6 @@
 /// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
-
-/// <reference path="dchart.solver.ts" />
-/// <reference path="dchart.svg.ts" />
-"use strict"
+"use strict";
 
 module dChart {
 
@@ -493,10 +490,12 @@ module dChart {
 
         }
 
-        min() {
+        min(axis:string) {
+            return 0.0;
         }
 
-        max() {
+        max(axis:string) {
+            return 0.0;
         }
 
         /**
@@ -532,7 +531,7 @@ module dChart {
         }
     }
 
-    class DataSet2D extends DataSet {
+    export class DataSet2D extends DataSet {
 
         data:Point2D[] = [];
         solver:ISolver2D = new Solver2D();
@@ -545,20 +544,18 @@ module dChart {
             this.data = this.solver.solve();
         }
 
-        min() {
+        min(axis:string) {
 
-            return [d3.min(this.data, (d:Point2D) => d.x),
-                d3.min(this.data, (d:Point2D) => d.y)];
+            return d3.min(this.data, (d:Point2D) => d[axis]);
         }
 
-        max() {
+        max(axis:string) {
 
-            return [d3.max(this.data, (d:Point2D) => d.x),
-                d3.max(this.data, (d:Point2D) => d.y)];
+            return d3.max(this.data, (d:Point2D) => d[axis]);
         }
     }
 
-    class DataSet3D extends DataSet {
+    export class DataSet3D extends DataSet {
 
         data:Point3D[] = [];
         solver:ISolver3D = new Solver3D();
@@ -571,18 +568,14 @@ module dChart {
             this.data = this.solver.solve();
         }
 
-        min() {
+        min(axis:string) {
 
-            return [d3.min(this.data, (d:Point3D) => d.x),
-                d3.min(this.data, (d:Point3D) => d.y),
-                d3.min(this.data, (d:Point3D) => d.z)];
+            return d3.min(this.data, (d:Point3D) => d[axis]);
         }
 
-        max() {
+        max(axis:string) {
 
-            return [d3.max(this.data, (d:Point3D) => d.x),
-                d3.max(this.data, (d:Point3D) => d.y),
-                d3.max(this.data, (d:Point3D) => d.z)];
+            return d3.max(this.data, (d:Point3D) => d[axis]);
         }
     }
 
@@ -596,23 +589,14 @@ module dChart {
         chartTitle:string;
         chartDescription:string;
 
-        public dataSets:DataSet[];
-
         constructor(public chartWidth:Size = new Size(400), public chartHeight:Size = new Size(400)) {
 
         }
-
-        min() {
-            return d3.min(this.dataSets, (dataSet:DataSet) => dataSet.min());
-        }
-
-        max() {
-            return d3.max(this.dataSets, (dataSet:DataSet) => dataSet.max());
-        }
-
     }
 
     export class Chart2D extends Chart {
+
+        public dataSets:DataSet2D[];
 
         xAxis:Axis = new Axis("x");
         yAxis:Axis = new Axis("y");
@@ -627,9 +611,19 @@ module dChart {
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
         }
+
+        min(axis:string = "x") {
+            return d3.min(this.dataSets, (dataSet:DataSet2D) => dataSet.min(axis));
+        }
+
+        max(axis:string = "x") {
+            return d3.max(this.dataSets, (dataSet:DataSet2D) => dataSet.max(axis));
+        }
     }
 
     export class Chart3D extends Chart {
+
+        public dataSets:DataSet3D[];
 
         chartDepth:Size = new Size(400);
 
@@ -647,6 +641,172 @@ module dChart {
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
             this.zAxis.draw(this.chartDepth, min[2], max[2]);
+        }
+
+        min(axis:string = "x") {
+            return d3.min(this.dataSets, (dataSet:DataSet3D) => dataSet.min(axis));
+        }
+
+        max(axis:string = "x") {
+            return d3.max(this.dataSets, (dataSet:DataSet3D) => dataSet.max(axis));
+        }
+    }
+
+    export interface IStyle {
+
+        get();
+    }
+
+    export class Color {
+
+        constructor(public value:string) {
+
+        }
+
+        get() {
+            return this.value;
+        }
+
+        RGB() {
+            return d3.rgb(this.value);
+        }
+
+        HSL() {
+            return d3.hsl(this.value);
+        }
+
+        HCL() {
+            return d3.hcl(this.value);
+        }
+
+        LAB() {
+            return d3.lab(this.value);
+        }
+    }
+
+    export class Size {
+
+        constructor(public value:number) {
+
+        }
+
+        get() {
+            return this.value.toString(10) + "px";
+        }
+
+        sub(d:Size) {
+            this.value -= d.value;
+            return this;
+        }
+
+        add(d:Size) {
+            this.value += d.value;
+            return this;
+        }
+
+        mul(d:Size) {
+            this.value *= d.value;
+            return this;
+        }
+
+        div(d:Size) {
+            this.value /= d.value;
+            return this;
+        }
+    }
+
+    export class LineStyle implements IStyle {
+
+        stroke: Color;
+        strokeWidth: Size;
+        strokeOpacity: number;
+
+        get() {
+            return "";
+        }
+    }
+
+    export class AreaStyle implements IStyle {
+
+        fill: Color;
+        fillOpacity: number;
+
+        get() {
+            return "";
+        }
+    }
+
+    export interface ISolver {
+
+        min:number;
+        max:number;
+        step:number;
+    }
+
+    export interface ISolver2D extends ISolver {
+
+        fn: (x:number) => number;
+        solve: (min?:number, max?:number, step?:number) => Point2D[];
+    }
+
+    export interface ISolver3D {
+
+        fn: (x:number, y:number) => number;
+        solve: (min?:number, max?:number, step?:number) => Point3D[];
+    }
+
+    export class Solver2D implements ISolver2D {
+
+        public min:number = 0;
+        public max:number = 10;
+        public step:number = 1;
+
+        fn(x:number) {
+            return x;
+        }
+
+        solve(min?:number, max?:number, step?:number) {
+
+            min = min || this.min;
+            max = max || this.max;
+            step = step || this.step;
+
+            var x:number;
+            var data: Point2D[] = [];
+
+            for (x=min;x<=max;x+=step) {
+                data.push(new Point2D(x, this.fn(x)));
+            }
+
+            return data;
+        }
+    }
+
+    export class Solver3D implements ISolver3D {
+
+        public min:number = 0;
+        public max:number = 10;
+        public step:number = 1;
+
+        fn(x:number, y:number) {
+            return x;
+        }
+
+        solve(min?:number, max?:number, step?:number) {
+
+            min = min || this.min;
+            max = max || this.max;
+            step = step || this.step;
+
+            var x:number;
+            var y:number;
+            var data: Point3D[] = [];
+
+            for (x=min;x<=max;x+=step) {
+                data.push(new Point3D(x, y, this.fn(x, y)));
+            }
+
+            return data;
         }
     }
 }

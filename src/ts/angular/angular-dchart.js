@@ -14,12 +14,12 @@ var aChart;
             this.data = [];
             this.solver = new dChart.Solver2D();
         }
-        Chart2D.prototype.parseDataAttr = function (node) {
+        Chart2D.prototype.parseDataAttr = function (value) {
             if (value.nodeValue === undefined || value.nodeValue === null || value.nodeValue.trim() === "") {
                 return;
             }
 
-            var scope = angular.element(node).scope();
+            var scope = angular.element(value.nodeValue).scope();
 
             if (scope === undefined || scope === null) {
                 return;
@@ -43,7 +43,6 @@ var aChart;
             } else if (typeof (scopeDataElem) === "function") {
                 this.solver.fn = scopeDataElem;
             } else {
-                this.data = scopeDataElem;
             }
         };
         return Chart2D;

@@ -10,16 +10,16 @@ module aChart {
     export class Chart2D extends dChart.Chart2D  {
 
         data:dChart.Point2D[] = [];
-        solver:dChart.ISolver = new dChart.Solver2D();
+        solver:dChart.ISolver2D = new dChart.Solver2D();
 
-        parseDataAttr(node:Node) {
+        parseDataAttr(value:Node) {
 
             if (value.nodeValue===undefined || value.nodeValue === null || value.nodeValue.trim() === "") {
                 return;
             }
 
             // Access the Data from Element's parent scope
-            var scope = angular.element(node).scope();
+            var scope = angular.element(value.nodeValue).scope();
 
             if (scope===undefined || scope===null) {
                 return;
@@ -57,7 +57,7 @@ module aChart {
             // TODO: Can we make better binding here?
             else {
 
-                this.data = scopeDataElem;
+                //this.data = scopeDataElem;
             }
         }
     }
