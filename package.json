@@ -1,20 +1,23 @@
 {
   "name": "dchart",
   "version": "0.0.4",
-  "description": "Extendable D3 Chart Library",
-  "main": "dist/dchart.test.js",
+  "description": "Extensible declarative chart library using D3.js",
+  "main": "dist/dchart.js",
   "scripts": {
     "test": "mocha test/unit"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chaosmail/angular-dchart"
+    "url": "https://github.com/chaosmail/dchart"
   },
   "keywords": [
     "dchart",
     "chart",
-    "angular",
-    "d3"
+    "extensible",
+    "declarative",
+    "library",
+    "d3",
+    "d3.js"
   ],
   "devDependencies": {
     "grunt": "",
