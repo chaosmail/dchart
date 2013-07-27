@@ -10,7 +10,7 @@ files = [
   './lib/d3.min.js',
 
   //App-specific Code
-  './src/js/angular-dchart.js',
+  './src/js/angular-dchart.test.js',
   './src/js/*.js',
 
   //Test-Specific Code

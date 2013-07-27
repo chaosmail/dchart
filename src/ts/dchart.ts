@@ -4,7 +4,7 @@
 
 module dChart {
 
-    class ElementUtils {
+    export class ElementUtils {
 
         static getFloat(regexp:RegExp, value:Element) {
             if (value.nodeName.match(regexp)) {
@@ -46,7 +46,7 @@ module dChart {
 
         parse(elem:Element) {
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^stroke$/i)) {
                     this.lineStyle.stroke = new Color(value.nodeValue);
@@ -89,19 +89,23 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^val$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^value$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
             });
         }
@@ -116,19 +120,23 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
                     this.y = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^val$/i)) {
                     this.y = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^value$/i)) {
                     this.y = parseFloat(value.nodeValue);
+                    return;
                 }
             });
         }
@@ -143,25 +151,31 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
                     this.t = new Date(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^val$/i)) {
                     this.t = new Date(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^value$/i)) {
                     this.t = new Date(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^t$/i)) {
                     this.t = new Date(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^time$/i)) {
                     this.t = new Date(value.nodeValue);
+                    return;
                 }
             });
         }
@@ -176,16 +190,19 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
                     this.y = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^z$/i)) {
                     this.z = parseFloat(value.nodeValue);
+                    return;
                 }
             });
         }
@@ -200,16 +217,19 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
                     this.y = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^t$/i)) {
                     this.t = new Date(value.nodeValue);
+                    return;
                 }
             });
         }

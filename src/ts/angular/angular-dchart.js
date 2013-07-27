@@ -49,4 +49,4 @@ var aChart;
     })(dChart.Chart2D);
     aChart.Chart2D = Chart2D;
 })(aChart || (aChart = {}));
-//@ sourceMappingURL=angular-dchart.js.map
+//@ sourceMappingURL=angular-dchart.test.js.map

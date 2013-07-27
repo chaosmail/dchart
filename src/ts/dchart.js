@@ -32,6 +32,7 @@ var dChart;
         };
         return ElementUtils;
     })();
+    dChart.ElementUtils = ElementUtils;
 
     var Point = (function () {
         function Point() {
@@ -42,21 +43,22 @@ var dChart;
         };
 
         Point.prototype.parse = function (elem) {
+            var _this = this;
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = new Color(value.nodeValue);
+                    _this.lineStyle.stroke = new Color(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    _this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill$/i)) {
-                    this.areaStyle.fill = new Color(value.nodeValue);
+                    _this.areaStyle.fill = new Color(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
                     return;
                 }
             });
@@ -80,17 +82,22 @@ var dChart;
         };
 
         Point1D.prototype.parse = function (elem) {
+            var _this = this;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^y$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^val$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^value$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 }
             });
         };
@@ -106,17 +113,22 @@ var dChart;
             this.y = y;
         }
         Point2D.prototype.parse = function (elem) {
+            var _this = this;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^y$/i)) {
-                    this.y = parseFloat(value.nodeValue);
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^val$/i)) {
-                    this.y = parseFloat(value.nodeValue);
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^value$/i)) {
-                    this.y = parseFloat(value.nodeValue);
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
                 }
             });
         };
@@ -132,21 +144,28 @@ var dChart;
             this.t = t;
         }
         Point2DTime.prototype.parse = function (elem) {
+            var _this = this;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^y$/i)) {
-                    this.t = new Date(value.nodeValue);
+                    _this.t = new Date(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^val$/i)) {
-                    this.t = new Date(value.nodeValue);
+                    _this.t = new Date(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^value$/i)) {
-                    this.t = new Date(value.nodeValue);
+                    _this.t = new Date(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^t$/i)) {
-                    this.t = new Date(value.nodeValue);
+                    _this.t = new Date(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^time$/i)) {
-                    this.t = new Date(value.nodeValue);
+                    _this.t = new Date(value.nodeValue);
+                    return;
                 }
             });
         };
@@ -163,15 +182,19 @@ var dChart;
             this.z = z;
         }
         Point3D.prototype.parse = function (elem) {
+            var _this = this;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^y$/i)) {
-                    this.y = parseFloat(value.nodeValue);
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^z$/i)) {
-                    this.z = parseFloat(value.nodeValue);
+                    _this.z = parseFloat(value.nodeValue);
+                    return;
                 }
             });
         };
@@ -188,15 +211,19 @@ var dChart;
             this.t = t;
         }
         Point3DTime.prototype.parse = function (elem) {
+            var _this = this;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^y$/i)) {
-                    this.y = parseFloat(value.nodeValue);
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^t$/i)) {
-                    this.t = new Date(value.nodeValue);
+                    _this.t = new Date(value.nodeValue);
+                    return;
                 }
             });
         };

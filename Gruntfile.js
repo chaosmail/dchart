@@ -93,7 +93,7 @@ module.exports = function(grunt) {
           target: 'es3', //or es5
           fullSourceMapPath: true,
           sourcemap: true,
-          declaration: false,
+          declaration: false
         }
       }
     },
