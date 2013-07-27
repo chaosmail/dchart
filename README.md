@@ -11,8 +11,8 @@ Development
 Get the source and install the dependencies.
 ```
 clone https://github.com/chaosmail/dchart.git
-npm install
 bower install
+npm install
 ```
 Make dist
 ```
