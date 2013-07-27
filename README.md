@@ -3,6 +3,8 @@ Declarative Chart Library
 
 This is not useable yet!
 
+This library is the vanilla Chart Library. It also can be used with jQuery (see ...) or AngularJS ([see this Repo](https://github.com/chaosmail/angular-dchart))
+
 Development
 -----------
 Get the source and install the dependencies.
