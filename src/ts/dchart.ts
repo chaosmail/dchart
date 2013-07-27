@@ -6,25 +6,20 @@ module dChart {
 
     export class ElementUtils {
 
-        static getFloat(regexp:RegExp, value:Element) {
-            if (value.nodeName.match(regexp)) {
-                return parseFloat(value.nodeValue);
-            }
-            return null;
+        static getFloat(value:Element) {
+            return parseFloat(value.nodeValue);
         }
 
-        static getSize(regexp:RegExp, value:Element) {
-            if (value.nodeName.match(regexp)) {
-                return new Size(parseFloat(value.nodeValue));
-            }
-            return null;
+        static getSize(value:Element) {
+            return new Size(parseFloat(value.nodeValue));
         }
 
-        static  getColor(regexp:RegExp, value:Element) {
-            if (value.nodeName.match(regexp)) {
-                return new Color(value.nodeValue);
-            }
-            return null;
+        static  getColor(value:Element) {
+            return new Color(value.nodeValue);
+        }
+
+        static  getDate(value:Element) {
+            return new Date(value.nodeValue);
         }
     }
 
@@ -417,6 +412,14 @@ module dChart {
         public data:Point[] = [];
 
         /**
+         * DataSet label
+         * @type {string}
+         */
+        label:string = "";
+
+        solver:ISolver;
+
+        /**
          * Interpolation between the points in the DataSet
          * @type {string}
          */
@@ -463,44 +466,55 @@ module dChart {
          */
             parse(elem:Element) {
 
-            _.map(elem.attributes, function (value) {
+            _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^label$/i)) {
                     this.label = value.nodeValue;
+                    return;
                 }
                 else if (value.nodeName.match(/^interpolate$/i)) {
                     this.interpolate = value.nodeValue;
+                    return;
                 }
                 else if (value.nodeName.match(/^min$/i)) {
-                    this.solver.min = parseFloat(value.nodeValue);
+                    //this.solver.min = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^max$/i)) {
-                    this.solver.max = parseFloat(value.nodeValue);
+                    //this.solver.max = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^step$/i)) {
-                    this.solver.max = parseFloat(value.nodeValue);
+                    //this.solver.step = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^stroke$/i)) {
                     this.lineStyle.stroke = new Color(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
                     this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {
                     this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^fill$/i)) {
                     this.areaStyle.fill = new Color(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^fill-opacity$/i)) {
                     this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    return;
                 }
                 else if (value.nodeName.match(/^data$/i)) {
                     this.parseDataAttr(value);
+                    return;
                 }
             });
 
-            _.map(elem.childNodes, function (value) {
+            _.map(elem.childNodes, (value) => {
 
                 var point = this.Point();
                 point.parse(value);
@@ -524,7 +538,7 @@ module dChart {
          * data="[{Point},{Point},{Point}]"
          * @param {Node} value Value of the Data Attribute
          */
-            parseDataAttr(value:Node) {
+         parseDataAttr(value:Node) {
 
             if (value.nodeValue === undefined || value.nodeValue === null || value.nodeValue.trim() === "") {
                 return;
@@ -541,7 +555,7 @@ module dChart {
 
             // TODO Parse data="[{Point},{Point},{Point}]"
 
-            _.map(parsedData, function (value) {
+            _.map(parsedData, (value) => {
 
                 var point = this.Point();
                 point.normalize(value);
@@ -672,11 +686,6 @@ module dChart {
         }
     }
 
-    export interface IStyle {
-
-        get();
-    }
-
     export class Color {
 
         constructor(public value:string) {
@@ -735,6 +744,11 @@ module dChart {
         }
     }
 
+    export interface IStyle {
+
+        get();
+    }
+
     export class LineStyle implements IStyle {
 
         stroke: Color;
@@ -769,7 +783,7 @@ module dChart {
         solve: (min?:number, max?:number, step?:number) => Point2D[];
     }
 
-    export interface ISolver3D {
+    export interface ISolver3D extends ISolver {
 
         fn: (x:number, y:number) => number;
         solve: (min?:number, max?:number, step?:number) => Point3D[];

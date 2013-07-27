@@ -19,44 +19,27 @@ describe('dChart.ElementUtils', function(){
 
     describe('#getFloat()', function(){
 
-        it('should return float when RegExp matches nodeName', function(){
+        it('should return float', function(){
 
-            assert.equal(0.8, dChart.ElementUtils.getFloat(/^fill-opacity$/i,fillOpacityElement));
-            assert.equal(0.95, dChart.ElementUtils.getFloat(/^stroke-opacity$/i,strokeOpacityElement));
-        })
-
-        it('should return null when RegExp doesnot match nodeName', function(){
-
-            assert.equal(null, dChart.ElementUtils.getFloat(/^stroke$/i,fillOpacityElement));
-            assert.equal(null, dChart.ElementUtils.getFloat(/^fill-opacity$/i,strokeOpacityElement));
+            assert.equal(0.8, dChart.ElementUtils.getFloat(fillOpacityElement));
+            assert.equal(0.95, dChart.ElementUtils.getFloat(strokeOpacityElement));
         })
     })
 
     describe('#getSize()', function(){
 
-        it('should return Size when RegExp matches nodeName', function(){
+        it('should return Size', function(){
 
-            assert.deepEqual(new dChart.Size(0.2), dChart.ElementUtils.getSize(/^stroke-width$/i,strokeWidthElement));
-        })
-
-        it('should return null when RegExp doesnot match nodeName', function(){
-
-            assert.equal(null, dChart.ElementUtils.getSize(/^stroke$/i,strokeWidthElement));
+            assert.deepEqual(new dChart.Size(0.2), dChart.ElementUtils.getSize(strokeWidthElement));
         })
     })
 
     describe('#getColor()', function(){
 
-        it('should return Color when RegExp matches nodeName', function(){
+        it('should return Color', function(){
 
-            assert.deepEqual(new dChart.Color('#ffff00'), dChart.ElementUtils.getColor(/^stroke$/i,strokeElement));
-            assert.deepEqual(new dChart.Color('#ff00ff'), dChart.ElementUtils.getColor(/^fill$/i,fillElement));
-        })
-
-        it('should return null when RegExp doesnot match nodeName', function(){
-
-            assert.equal(null, dChart.ElementUtils.getColor(/^fill/i,strokeElement));
-            assert.equal(null, dChart.ElementUtils.getColor(/^stroke$/i,fillElement));
+            assert.deepEqual(new dChart.Color('#ffff00'), dChart.ElementUtils.getColor(strokeElement));
+            assert.deepEqual(new dChart.Color('#ff00ff'), dChart.ElementUtils.getColor(fillElement));
         })
     })
 })

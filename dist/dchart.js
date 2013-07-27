@@ -1,3 +1,7 @@
+/** dchart - v0.0.4 - Sat Jul 27 2013 23:52:24
+ *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
+ *  License: MIT
+ */
 "use strict";
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -10,25 +14,20 @@ var dChart;
     var ElementUtils = (function () {
         function ElementUtils() {
         }
-        ElementUtils.getFloat = function (regexp, value) {
-            if (value.nodeName.match(regexp)) {
-                return parseFloat(value.nodeValue);
-            }
-            return null;
+        ElementUtils.getFloat = function (value) {
+            return parseFloat(value.nodeValue);
         };
 
-        ElementUtils.getSize = function (regexp, value) {
-            if (value.nodeName.match(regexp)) {
-                return new Size(parseFloat(value.nodeValue));
-            }
-            return null;
+        ElementUtils.getSize = function (value) {
+            return new Size(parseFloat(value.nodeValue));
         };
 
-        ElementUtils.getColor = function (regexp, value) {
-            if (value.nodeName.match(regexp)) {
-                return new Color(value.nodeValue);
-            }
-            return null;
+        ElementUtils.getColor = function (value) {
+            return new Color(value.nodeValue);
+        };
+
+        ElementUtils.getDate = function (value) {
+            return new Date(value.nodeValue);
         };
         return ElementUtils;
     })();
@@ -309,6 +308,7 @@ var dChart;
         function DataSet(dataSetLabel) {
             this.dataSetLabel = dataSetLabel;
             this.data = [];
+            this.label = "";
             this.interpolate = "linear";
             this.visible = true;
             this.lineStyle = new LineStyle();
@@ -322,37 +322,46 @@ var dChart;
         };
 
         DataSet.prototype.parse = function (elem) {
+            var _this = this;
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^label$/i)) {
-                    this.label = value.nodeValue;
+                    _this.label = value.nodeValue;
+                    return;
                 } else if (value.nodeName.match(/^interpolate$/i)) {
-                    this.interpolate = value.nodeValue;
+                    _this.interpolate = value.nodeValue;
+                    return;
                 } else if (value.nodeName.match(/^min$/i)) {
-                    this.solver.min = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^max$/i)) {
-                    this.solver.max = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^step$/i)) {
-                    this.solver.max = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = new Color(value.nodeValue);
+                    _this.lineStyle.stroke = new Color(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    _this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^fill$/i)) {
-                    this.areaStyle.fill = new Color(value.nodeValue);
+                    _this.areaStyle.fill = new Color(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    return;
                 } else if (value.nodeName.match(/^data$/i)) {
-                    this.parseDataAttr(value);
+                    _this.parseDataAttr(value);
+                    return;
                 }
             });
 
             _.map(elem.childNodes, function (value) {
-                var point = this.Point();
+                var point = _this.Point();
                 point.parse(value);
 
-                this.data.push(point);
+                _this.data.push(point);
             });
         };
 
@@ -365,6 +374,7 @@ var dChart;
         };
 
         DataSet.prototype.parseDataAttr = function (value) {
+            var _this = this;
             if (value.nodeValue === undefined || value.nodeValue === null || value.nodeValue.trim() === "") {
                 return;
             }
@@ -377,10 +387,10 @@ var dChart;
             }
 
             _.map(parsedData, function (value) {
-                var point = this.Point();
+                var point = _this.Point();
                 point.normalize(value);
 
-                this.data.push(point);
+                _this.data.push(point);
             });
         };
         return DataSet;
@@ -670,4 +680,4 @@ var dChart;
     })();
     dChart.Solver3D = Solver3D;
 })(dChart || (dChart = {}));
-//@ sourceMappingURL=file:////home/ckoerner/workspace/javascript/dchart/src/ts/dchart.js.map
+//@ sourceMappingURL=file:////home/ckoerner/workspace/javascript/dchart/src/js/dchart.js.map
