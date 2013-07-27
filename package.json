@@ -21,18 +21,13 @@
   ],
   "devDependencies": {
     "grunt": "",
-    "karma": "",
     "grunt-contrib-concat": "",
     "grunt-contrib-uglify": "",
     "grunt-contrib-cssmin": "",
-    "grunt-bower-task": "",
-    "grunt-contrib-copy": "",
     "grunt-contrib-watch": "",
-    "grunt-karma": "",
     "grunt-contrib-clean": "",
     "grunt-typescript": "~0.2.2",
     "mocha": "~1.12.0",
-    "eval": "~0.1.0",
     "load": "~0.1.1",
     "jsdom": "~0.8.1",
     "underscore": "~1.5.1"
