@@ -1,11 +1,16 @@
+/// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
 /// <reference path="Utils/utils.ts" />
 
 module dChart {
 
-    export class Axis {
+    export interface ITickSize {
+        major:number;
+        minor:number;
+        end:number;
+    }
 
-        clamp:bool = false;
+    export class Axis {
 
         range:number[] = [0, 1];
 
@@ -14,6 +19,8 @@ module dChart {
         autorange:bool = true;
 
         scale:D3.Scale = d3.scale.linear();
+
+        d3Attrs:any[] = [];
 
         length:Utils.Size = new Utils.Size(1);
 
@@ -40,11 +47,15 @@ module dChart {
          */
         labelAlign:string = "end";
 
-        nice:number[] = [];
-
         ticks:number = 10;
 
         ticksFormat:string[];
+        tickValues:number[];
+        tickSubdivide:bool = false;
+        tickSize:ITickSize = {
+            major:1,minor:0,end:0
+        };
+        tickPadding:number;
 
         visible:bool = true;
 
@@ -112,7 +123,7 @@ module dChart {
          * @param scale {string}
          * @see https://github.com/mbostock/d3/wiki/Quantitative-Scales
          */
-            setScale(scale:string = "linear") {
+         setScale(scale:string = "linear") {
 
             this.scale = (scale.match(/^identity$/i)) ? d3.scale.identity()
                 : (scale.match(/^pow|power$/i)) ? d3.scale.pow()
@@ -126,6 +137,13 @@ module dChart {
             this.scale.domain(this.domain).range(this.range);
 
             return this;
+        }
+
+        addScaleFn(fn:string,args:any) {
+
+            if (this.scale.prototype[fn]) {
+                this.scale[fn](args);
+            }
         }
 
         setOrientation(orientation:string = "x") {
@@ -167,7 +185,9 @@ module dChart {
 
         getAxis() {
 
-            d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+            var axis = d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+
+            return axis;
         }
 
         /**
