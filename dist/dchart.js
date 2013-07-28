@@ -1,7 +1,324 @@
-/** dchart - v0.0.4 - Sun Jul 28 2013 15:59:20
+/** dchart - v0.0.4 - Sun Jul 28 2013 17:59:16
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var dChart;
+(function (dChart) {
+    var Point = (function () {
+        function Point() {
+            this.lineStyle = new dChart.Utils.LineStyle();
+            this.areaStyle = new dChart.Utils.AreaStyle();
+        }
+        Point.prototype.normalize = function (value) {
+            if (value.hasOwnProperty("stroke")) {
+                this.lineStyle.stroke = new dChart.Utils.Color(value.stroke);
+            }
+
+            if (value.hasOwnProperty("strokeWidth")) {
+                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.strokeWidth));
+            }
+
+            if (value.hasOwnProperty("strokeOpacity")) {
+                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
+            }
+
+            if (value.hasOwnProperty("fill")) {
+                this.areaStyle.fill = new dChart.Utils.Color(value.fill);
+            }
+
+            if (value.hasOwnProperty("fillOpacity")) {
+                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            }
+        };
+
+        Point.prototype.map = function (value, map) {
+            if (value.hasOwnProperty(map.stroke)) {
+                this.lineStyle.stroke = new dChart.Utils.Color(value[map.stroke]);
+            }
+
+            if (value.hasOwnProperty(map.strokeWidth)) {
+                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value[map.strokeWidth]));
+            }
+
+            if (value.hasOwnProperty(map.strokeOpacity)) {
+                this.lineStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
+            }
+
+            if (value.hasOwnProperty(map.fill)) {
+                this.areaStyle.fill = new dChart.Utils.Color(value[map.fill]);
+            }
+
+            if (value.hasOwnProperty(map.fillOpacity)) {
+                this.areaStyle.fillOpacity = parseFloat(value[map.fillOpacity]);
+            }
+        };
+
+        Point.prototype.parse = function (elem) {
+            var _this = this;
+            _.map(elem.attributes, function (value) {
+                if (value.nodeName.match(/^stroke$/i)) {
+                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
+                    return;
+                } else if (value.nodeName.match(/^stroke-width$/i)) {
+                    _this.lineStyle.strokeWidth = dChart.Utils.Elem.getSize(value);
+                    return;
+                } else if (value.nodeName.match(/^stroke-opacity$/i)) {
+                    _this.lineStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^fill$/i)) {
+                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
+                    return;
+                } else if (value.nodeName.match(/^fill-opacity$/i)) {
+                    _this.areaStyle.fillOpacity = dChart.Utils.Elem.getFloat(value);
+                    return;
+                }
+            });
+        };
+        return Point;
+    })();
+    dChart.Point = Point;
+
+    var Point1D = (function (_super) {
+        __extends(Point1D, _super);
+        function Point1D(x) {
+            _super.call(this);
+            this.x = x;
+        }
+        Point1D.prototype.normalize = function (value) {
+            _super.prototype.normalize.call(this, value);
+
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            } else if (value.hasOwnProperty("y")) {
+                this.x = parseFloat(value.y);
+            } else if (value.hasOwnProperty("val")) {
+                this.x = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.x = parseFloat(value.value);
+            }
+        };
+
+        Point1D.prototype.map = function (value, map) {
+            _super.prototype.map.call(this, value, map);
+
+            if (value.hasOwnProperty(map.x)) {
+                this.x = parseFloat(value[map.x]);
+            }
+        };
+
+        Point1D.prototype.parse = function (elem) {
+            var _this = this;
+            _super.prototype.parse.call(this, elem);
+
+            _.map(elem.attributes, function (value) {
+                if (value.nodeName.match(/^x$/i)) {
+                    _this.x = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^y$/i)) {
+                    _this.x = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^val$/i)) {
+                    _this.x = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^value$/i)) {
+                    _this.x = dChart.Utils.Elem.getFloat(value);
+                    return;
+                }
+            });
+        };
+        return Point1D;
+    })(Point);
+    dChart.Point1D = Point1D;
+
+    var Point2D = (function (_super) {
+        __extends(Point2D, _super);
+        function Point2D(x, y) {
+            _super.call(this);
+            this.x = x;
+            this.y = y;
+        }
+        Point2D.prototype.map = function (value, map) {
+            _super.prototype.map.call(this, value, map);
+
+            if (value.hasOwnProperty(map.x)) {
+                this.x = parseFloat(value[map.x]);
+            }
+
+            if (value.hasOwnProperty(map.y)) {
+                this.y = parseFloat(value[map.y]);
+            }
+        };
+
+        Point2D.prototype.parse = function (elem) {
+            var _this = this;
+            _super.prototype.parse.call(this, elem);
+
+            _.map(elem.attributes, function (value) {
+                if (value.nodeName.match(/^x$/i)) {
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^y$/i)) {
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^val$/i)) {
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^value$/i)) {
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
+                }
+            });
+        };
+        return Point2D;
+    })(Point);
+    dChart.Point2D = Point2D;
+
+    var Point2DTime = (function (_super) {
+        __extends(Point2DTime, _super);
+        function Point2DTime(x, t) {
+            _super.call(this);
+            this.x = x;
+            this.t = t;
+        }
+        Point2DTime.prototype.map = function (value, map) {
+            _super.prototype.map.call(this, value, map);
+
+            if (value.hasOwnProperty(map.x)) {
+                this.x = parseFloat(value[map.x]);
+            }
+
+            if (value.hasOwnProperty(map.t)) {
+                this.t = new Date(value[map.t]);
+            }
+        };
+
+        Point2DTime.prototype.parse = function (elem) {
+            var _this = this;
+            _super.prototype.parse.call(this, elem);
+
+            _.map(elem.attributes, function (value) {
+                if (value.nodeName.match(/^x$/i)) {
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^y$/i)) {
+                    _this.t = new Date(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^val$/i)) {
+                    _this.t = new Date(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^value$/i)) {
+                    _this.t = new Date(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^t$/i)) {
+                    _this.t = new Date(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^time$/i)) {
+                    _this.t = new Date(value.nodeValue);
+                    return;
+                }
+            });
+        };
+        return Point2DTime;
+    })(Point);
+    dChart.Point2DTime = Point2DTime;
+
+    var Point3D = (function (_super) {
+        __extends(Point3D, _super);
+        function Point3D(x, y, z) {
+            _super.call(this);
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        Point3D.prototype.map = function (value, map) {
+            _super.prototype.map.call(this, value, map);
+
+            if (value.hasOwnProperty(map.x)) {
+                this.x = parseFloat(value[map.x]);
+            }
+
+            if (value.hasOwnProperty(map.y)) {
+                this.y = parseFloat(value[map.y]);
+            }
+
+            if (value.hasOwnProperty(map.z)) {
+                this.z = parseFloat(value[map.z]);
+            }
+        };
+
+        Point3D.prototype.parse = function (elem) {
+            var _this = this;
+            _super.prototype.parse.call(this, elem);
+
+            _.map(elem.attributes, function (value) {
+                if (value.nodeName.match(/^x$/i)) {
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^y$/i)) {
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^z$/i)) {
+                    _this.z = parseFloat(value.nodeValue);
+                    return;
+                }
+            });
+        };
+        return Point3D;
+    })(Point);
+    dChart.Point3D = Point3D;
+
+    var Point3DTime = (function (_super) {
+        __extends(Point3DTime, _super);
+        function Point3DTime(x, y, t) {
+            _super.call(this);
+            this.x = x;
+            this.y = y;
+            this.t = t;
+        }
+        Point3DTime.prototype.map = function (value, map) {
+            _super.prototype.map.call(this, value, map);
+
+            if (value.hasOwnProperty(map.x)) {
+                this.x = parseFloat(value[map.x]);
+            }
+
+            if (value.hasOwnProperty(map.y)) {
+                this.y = parseFloat(value[map.y]);
+            }
+
+            if (value.hasOwnProperty(map.t)) {
+                this.t = new Date(value[map.t]);
+            }
+        };
+
+        Point3DTime.prototype.parse = function (elem) {
+            var _this = this;
+            _super.prototype.parse.call(this, elem);
+
+            _.map(elem.attributes, function (value) {
+                if (value.nodeName.match(/^x$/i)) {
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^y$/i)) {
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^t$/i)) {
+                    _this.t = new Date(value.nodeValue);
+                    return;
+                }
+            });
+        };
+        return Point3DTime;
+    })(Point);
+    dChart.Point3DTime = Point3DTime;
+})(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
     (function (Utils) {
@@ -170,237 +487,8 @@ var dChart;
     var Solver = dChart.Solver;
 })(dChart || (dChart = {}));
 "use strict";
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var dChart;
 (function (dChart) {
-    var Point = (function () {
-        function Point() {
-            this.lineStyle = new dChart.Utils.LineStyle();
-            this.areaStyle = new dChart.Utils.AreaStyle();
-        }
-        Point.prototype.normalize = function (value) {
-            if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = new dChart.Utils.Color(value.stroke);
-            }
-
-            if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.strokeWidth));
-            }
-
-            if (value.hasOwnProperty("strokeOpacity")) {
-                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
-            }
-
-            if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = new dChart.Utils.Color(value.fill);
-            }
-
-            if (value.hasOwnProperty("fillOpacity")) {
-                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
-            }
-        };
-
-        Point.prototype.parse = function (elem) {
-            var _this = this;
-            _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
-                    return;
-                } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = dChart.Utils.Elem.getSize(value);
-                    return;
-                } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    _this.lineStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
-                    return;
-                } else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    _this.areaStyle.fillOpacity = dChart.Utils.Elem.getFloat(value);
-                    return;
-                }
-            });
-        };
-        return Point;
-    })();
-    dChart.Point = Point;
-
-    var Point1D = (function (_super) {
-        __extends(Point1D, _super);
-        function Point1D(x) {
-            _super.call(this);
-            this.x = x;
-        }
-        Point1D.prototype.normalize = function (value) {
-            _super.prototype.normalize.call(this, value);
-
-            if (value.hasOwnProperty("x")) {
-                this.x = parseFloat(value.x);
-            } else if (value.hasOwnProperty("y")) {
-                this.x = parseFloat(value.y);
-            } else if (value.hasOwnProperty("val")) {
-                this.x = parseFloat(value.val);
-            }
-            if (value.hasOwnProperty("value")) {
-                this.x = parseFloat(value.value);
-            }
-        };
-
-        Point1D.prototype.parse = function (elem) {
-            var _this = this;
-            _super.prototype.parse.call(this, elem);
-
-            _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.x = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^val$/i)) {
-                    _this.x = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^value$/i)) {
-                    _this.x = dChart.Utils.Elem.getFloat(value);
-                    return;
-                }
-            });
-        };
-        return Point1D;
-    })(Point);
-    dChart.Point1D = Point1D;
-
-    var Point2D = (function (_super) {
-        __extends(Point2D, _super);
-        function Point2D(x, y) {
-            _super.call(this);
-            this.x = x;
-            this.y = y;
-        }
-        Point2D.prototype.parse = function (elem) {
-            var _this = this;
-            _super.prototype.parse.call(this, elem);
-
-            _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^val$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^value$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                }
-            });
-        };
-        return Point2D;
-    })(Point);
-    dChart.Point2D = Point2D;
-
-    var Point2DTime = (function (_super) {
-        __extends(Point2DTime, _super);
-        function Point2DTime(x, t) {
-            _super.call(this);
-            this.x = x;
-            this.t = t;
-        }
-        Point2DTime.prototype.parse = function (elem) {
-            var _this = this;
-            _super.prototype.parse.call(this, elem);
-
-            _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^val$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^value$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^t$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^time$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                }
-            });
-        };
-        return Point2DTime;
-    })(Point);
-    dChart.Point2DTime = Point2DTime;
-
-    var Point3D = (function (_super) {
-        __extends(Point3D, _super);
-        function Point3D(x, y, z) {
-            _super.call(this);
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        Point3D.prototype.parse = function (elem) {
-            var _this = this;
-            _super.prototype.parse.call(this, elem);
-
-            _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^z$/i)) {
-                    _this.z = parseFloat(value.nodeValue);
-                    return;
-                }
-            });
-        };
-        return Point3D;
-    })(Point);
-    dChart.Point3D = Point3D;
-
-    var Point3DTime = (function (_super) {
-        __extends(Point3DTime, _super);
-        function Point3DTime(x, y, t) {
-            _super.call(this);
-            this.x = x;
-            this.y = y;
-            this.t = t;
-        }
-        Point3DTime.prototype.parse = function (elem) {
-            var _this = this;
-            _super.prototype.parse.call(this, elem);
-
-            _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^t$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                }
-            });
-        };
-        return Point3DTime;
-    })(Point);
-    dChart.Point3DTime = Point3DTime;
-
     var Axis = (function () {
         function Axis(axisLabel) {
             this.axisLabel = axisLabel;
@@ -486,7 +574,7 @@ var dChart;
             this.areaStyle = new dChart.Utils.AreaStyle();
         }
         DataSet.prototype.Point = function () {
-            return new Point();
+            return new dChart.Point();
         };
 
         DataSet.prototype.recalculate = function () {
@@ -576,7 +664,7 @@ var dChart;
             this.solver = new dChart.Solver.Solver2D();
         }
         DataSet2D.prototype.Point = function () {
-            return new Point2D();
+            return new dChart.Point2D();
         };
 
         DataSet2D.prototype.recalculate = function () {
@@ -606,7 +694,7 @@ var dChart;
             this.solver = new dChart.Solver.Solver3D();
         }
         DataSet3D.prototype.Point = function () {
-            return new Point3D();
+            return new dChart.Point3D();
         };
 
         DataSet3D.prototype.recalculate = function () {

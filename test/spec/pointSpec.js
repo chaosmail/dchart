@@ -8,47 +8,13 @@ var assert = require("assert"),
 var libDChart = load(process.cwd()+'/dist/dchart.min.js',{_:_});
 var dChart = libDChart.dChart;
 
-describe('dChart.Utils.Elem', function(){
-
-    var elements = jsdom.jsdom("<div stroke='#ffff00' stroke-width='0.2' stroke-opacity='0.95' fill-opacity='0.8' fill='#ff00ff'></div>"),
-        strokeElement = elements.children[0].attributes[0],
-        strokeWidthElement = elements.children[0].attributes[1],
-        strokeOpacityElement = elements.children[0].attributes[2],
-        fillOpacityElement = elements.children[0].attributes[3],
-        fillElement = elements.children[0].attributes[4];
-
-    describe('#getFloat()', function(){
-
-        it('should return float', function(){
-
-            assert.equal(0.8, dChart.Utils.Elem.getFloat(fillOpacityElement));
-            assert.equal(0.95, dChart.Utils.Elem.getFloat(strokeOpacityElement));
-        })
-    })
-
-    describe('#getSize()', function(){
-
-        it('should return Size', function(){
-
-            assert.deepEqual(new dChart.Utils.Size(0.2), dChart.Utils.Elem.getSize(strokeWidthElement));
-        })
-    })
-
-    describe('#getColor()', function(){
-
-        it('should return Color', function(){
-
-            assert.deepEqual(new dChart.Utils.Color('#ffff00'), dChart.Utils.Elem.getColor(strokeElement));
-            assert.deepEqual(new dChart.Utils.Color('#ff00ff'), dChart.Utils.Elem.getColor(fillElement));
-        })
-    })
-})
-
 describe('dChart.Point', function(){
 
     var elements = jsdom.jsdom("<div stroke='#ffff00' stroke-width='0.2' stroke-opacity='0.95' fill-opacity='0.8' fill='#ff00ff'></div>"),
         element = elements.children[0],
-        normalizeElement = {stroke:'#ffff00', strokeWidth:0.2, strokeOpacity:0.95, fillOpacity:0.8, fill:'#ff00ff'};
+        normalizeElement = {stroke:'#ffff00', strokeWidth:0.2, strokeOpacity:0.95, fillOpacity:0.8, fill:'#ff00ff'},
+        customMap = {stroke:'customStroke', strokeWidth:'customStrokeWidth', strokeOpacity:'customStrokeOpacity', fillOpacity:'customFillOpacity', fill:'customFill'},
+        mapElement = {customStroke:'#ffff00', customStrokeWidth:0.2, customStrokeOpacity:0.95, customFillOpacity:0.8, customFill:'#ff00ff'};
 
     describe('#parse()', function(){
 
@@ -69,6 +35,34 @@ describe('dChart.Point', function(){
         it('should create an AreaStyle', function(){
 
             p.parse(element);
+
+            var area = new dChart.Utils.AreaStyle();
+            area.fill = new dChart.Utils.Color('#ff00ff');
+            area.fillOpacity = 0.8;
+
+            assert.deepEqual(area, p.areaStyle);
+        })
+    })
+
+    describe('#map()', function(){
+
+        var p = new dChart.Point();
+
+        it('should create a LineStyle', function(){
+
+            p.map(mapElement, customMap);
+
+            var line = new dChart.Utils.LineStyle();
+            line.stroke = new dChart.Utils.Color('#ffff00');
+            line.strokeWidth = new dChart.Utils.Size(0.2);
+            line.strokeOpacity = 0.95;
+
+            assert.deepEqual(line, p.lineStyle);
+        })
+
+        it('should create an AreaStyle', function(){
+
+            p.map(mapElement, customMap);
 
             var area = new dChart.Utils.AreaStyle();
             area.fill = new dChart.Utils.Color('#ff00ff');

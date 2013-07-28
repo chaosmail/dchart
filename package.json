@@ -4,7 +4,7 @@
   "description": "Extensible declarative chart library using D3.js",
   "main": "dist/dchart.js",
   "scripts": {
-    "test": "mocha test/unit"
+    "test": "mocha test/spec --recursive"
   },
   "repository": {
     "type": "git",

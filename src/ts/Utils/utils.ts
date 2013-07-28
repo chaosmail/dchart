@@ -1,4 +1,4 @@
-/// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
+/// <reference path="../../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
 
 module dChart.Utils {
 

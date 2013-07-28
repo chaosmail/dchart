@@ -1,3 +1,77 @@
+declare module dChart {
+    interface IPointMap {
+        stroke: string;
+        strokeWidth: string;
+        strokeOpacity: string;
+        fill: string;
+        fillOpacity: string;
+    }
+    interface IPoint1DMap extends IPointMap {
+        x: string;
+    }
+    interface IPoint2DMap extends IPointMap {
+        x: string;
+        y: string;
+    }
+    interface IPoint2DTimeMap extends IPointMap {
+        x: string;
+        t: string;
+    }
+    interface IPoint3DMap extends IPointMap {
+        x: string;
+        y: string;
+        z: string;
+    }
+    interface IPoint3DTimeMap extends IPointMap {
+        x: string;
+        y: string;
+        t: string;
+    }
+    class Point {
+        public lineStyle: dChart.Utils.LineStyle;
+        public areaStyle: dChart.Utils.AreaStyle;
+        public normalize(value: any): void;
+        public map(value: any, map: IPointMap): void;
+        public parse(elem: Element): void;
+    }
+    class Point1D extends Point {
+        public x: number;
+        constructor(x?: number);
+        public normalize(value: any): void;
+        public map(value: any, map: IPoint1DMap): void;
+        public parse(elem: Element): void;
+    }
+    class Point2D extends Point {
+        public x: number;
+        public y: number;
+        constructor(x?: number, y?: number);
+        public map(value: any, map: IPoint2DMap): void;
+        public parse(elem: Element): void;
+    }
+    class Point2DTime extends Point {
+        public x: number;
+        public t: Date;
+        constructor(x?: number, t?: Date);
+        public map(value: any, map: IPoint2DTimeMap): void;
+        public parse(elem: Element): void;
+    }
+    class Point3D extends Point {
+        public x: number;
+        public y: number;
+        public z: number;
+        constructor(x?: number, y?: number, z?: number);
+        public map(value: any, map: IPoint3DMap): void;
+        public parse(elem: Element): void;
+    }
+    class Point3DTime extends Point {
+        public x: number;
+        public y: number;
+        public t: Date;
+        constructor(x?: number, y?: number, t?: Date);
+        public map(value: any, map: IPoint3DTimeMap): void;
+        public parse(elem: Element): void;
+    }
+}
 declare module dChart.Utils {
     class Elem {
         static getFloat(value: Element): number;
@@ -68,44 +142,6 @@ declare module dChart.Solver {
     }
 }
 declare module dChart {
-    class Point {
-        public lineStyle: dChart.Utils.LineStyle;
-        public areaStyle: dChart.Utils.AreaStyle;
-        public normalize(value: any): void;
-        public parse(elem: Element): void;
-    }
-    class Point1D extends Point {
-        public x: number;
-        constructor(x?: number);
-        public normalize(value: any): void;
-        public parse(elem: Element): void;
-    }
-    class Point2D extends Point {
-        public x: number;
-        public y: number;
-        constructor(x?: number, y?: number);
-        public parse(elem: Element): void;
-    }
-    class Point2DTime extends Point {
-        public x: number;
-        public t: Date;
-        constructor(x?: number, t?: Date);
-        public parse(elem: Element): void;
-    }
-    class Point3D extends Point {
-        public x: number;
-        public y: number;
-        public z: number;
-        constructor(x?: number, y?: number, z?: number);
-        public parse(elem: Element): void;
-    }
-    class Point3DTime extends Point {
-        public x: number;
-        public y: number;
-        public t: Date;
-        constructor(x?: number, y?: number, t?: Date);
-        public parse(elem: Element): void;
-    }
     class Axis {
         public axisLabel: string;
         public clamp: boolean;
@@ -123,7 +159,7 @@ declare module dChart {
     }
     class DataSet {
         public dataSetLabel: string;
-        public data: Point[];
+        public data: dChart.Point[];
         public label: string;
         public solver: dChart.Solver.ISolver;
         public interpolate: string;
@@ -131,7 +167,7 @@ declare module dChart {
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
         constructor(dataSetLabel: string);
-        public Point(): Point;
+        public Point(): dChart.Point;
         public recalculate(): void;
         public parse(elem: Element): void;
         public min(axis: string): number;
@@ -139,17 +175,17 @@ declare module dChart {
         public parseDataAttr(value: Node): void;
     }
     class DataSet2D extends DataSet {
-        public data: Point2D[];
+        public data: dChart.Point2D[];
         public solver: dChart.Solver.ISolver2D;
-        public Point(): Point2D;
+        public Point(): dChart.Point2D;
         public recalculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
     }
     class DataSet3D extends DataSet {
-        public data: Point3D[];
+        public data: dChart.Point3D[];
         public solver: dChart.Solver.ISolver3D;
-        public Point(): Point3D;
+        public Point(): dChart.Point3D;
         public recalculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
