@@ -100,3 +100,117 @@ describe('dChart.Point', function(){
         })
     })
 })
+
+describe('dChart.Point1D', function(){
+
+    var elements = jsdom.jsdom("<div x='5.25'></div><div y='4.25'></div><div val='3.25'></div><div value='2.25'></div>"),
+        element = [elements.children[0],elements.children[1],elements.children[2],elements.children[3]],
+        normalizeElement = [{x:6.25},{y:5.25},{val:4.25},{value:3.25}],
+        customMap = {x:'customX'},
+        mapElement = {customX:7.25};
+
+    describe('#parse()', function(){
+
+        var p = new dChart.Point1D();
+
+        it ('should create 1D Point',function() {
+
+            p.parse(element[0]);
+            assert.deepEqual(new dChart.Point1D(5.25), p);
+
+            p.parse(element[1]);
+            assert.deepEqual(new dChart.Point1D(4.25), p);
+
+            p.parse(element[2]);
+            assert.deepEqual(new dChart.Point1D(3.25), p);
+
+            p.parse(element[3]);
+            assert.deepEqual(new dChart.Point1D(2.25), p);
+        })
+    })
+
+    describe('#map()', function(){
+
+        var p = new dChart.Point1D();
+
+        it ('should create 1D Point',function() {
+
+            p.map(mapElement,customMap);
+            assert.deepEqual(new dChart.Point1D(7.25), p);
+        })
+    })
+
+    describe('#normalize()', function(){
+
+        var p = new dChart.Point1D();
+
+        it ('should create 1D Point',function() {
+
+            p.normalize(normalizeElement[0]);
+            assert.deepEqual(new dChart.Point1D(6.25), p);
+
+            p.normalize(normalizeElement[1]);
+            assert.deepEqual(new dChart.Point1D(5.25), p);
+
+            p.normalize(normalizeElement[2]);
+            assert.deepEqual(new dChart.Point1D(4.25), p);
+
+            p.normalize(normalizeElement[3]);
+            assert.deepEqual(new dChart.Point1D(3.25), p);
+        })
+    })
+})
+
+describe('dChart.Point2D', function(){
+
+    var elements = jsdom.jsdom("<div x='5.25' y='12.14'></div><div x='5.25' val='13.14'></div><div x='5.25' value='14.14'></div>"),
+        element = [elements.children[0],elements.children[1],elements.children[2]],
+        normalizeElement = [{x:6.25,y:13.14},{x:6.25,val:14.14},{x:6.25,value:15.14}],
+        customMap = {x:'customX',y:'customY'},
+        mapElement = {customX:7.25,customY:14.14};
+
+    describe('#parse()', function(){
+
+        var p = new dChart.Point2D();
+
+        it ('should create 2D Point',function() {
+
+            p.parse(element[0]);
+            assert.deepEqual(new dChart.Point2D(5.25,12.14), p);
+
+            p.parse(element[1]);
+            assert.deepEqual(new dChart.Point2D(5.25,13.14), p);
+
+            p.parse(element[2]);
+            assert.deepEqual(new dChart.Point2D(5.25,14.14), p);
+        })
+    })
+
+    describe('#map()', function(){
+
+        var p = new dChart.Point2D();
+
+        it ('should create 2D Point',function() {
+
+            p.map(mapElement,customMap);
+            assert.deepEqual(new dChart.Point2D(7.25,14.14), p);
+        })
+    })
+
+    describe('#normalize()', function(){
+
+        var p = new dChart.Point2D();
+
+        it ('should create 2D Point',function() {
+
+            p.normalize(normalizeElement[0]);
+            assert.deepEqual(new dChart.Point2D(6.25,13.14), p);
+
+            p.normalize(normalizeElement[1]);
+            assert.deepEqual(new dChart.Point2D(6.25,14.14), p);
+
+            p.normalize(normalizeElement[2]);
+            assert.deepEqual(new dChart.Point2D(6.25,15.14), p);
+        })
+    })
+})
