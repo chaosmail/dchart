@@ -1,39 +1,22 @@
 /// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
+/// <reference path="dchart.utils.ts" />
+/// <reference path="dchart.solver.ts" />
 "use strict";
 
 module dChart {
-
-    export class ElementUtils {
-
-        static getFloat(value:Element) {
-            return parseFloat(value.nodeValue);
-        }
-
-        static getSize(value:Element) {
-            return new Size(parseFloat(value.nodeValue));
-        }
-
-        static  getColor(value:Element) {
-            return new Color(value.nodeValue);
-        }
-
-        static  getDate(value:Element) {
-            return new Date(value.nodeValue);
-        }
-    }
 
     export class Point {
 
         /**
          * dChart Line Element, that stores all Attribute Styles
          */
-        lineStyle:LineStyle = new LineStyle();
+        lineStyle:Utils.LineStyle = new Utils.LineStyle();
 
         /**
          * dChart Area Element, that stores all Attribute Styles
          */
-        areaStyle:AreaStyle = new AreaStyle();
+        areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
         normalize(value:any) {
 
@@ -44,11 +27,11 @@ module dChart {
             _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = new Color(value.nodeValue);
+                    this.lineStyle.stroke = new Utils.Color(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.nodeValue));
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {
@@ -56,7 +39,7 @@ module dChart {
                     return;
                 }
                 else if (value.nodeName.match(/^fill$/i)) {
-                    this.areaStyle.fill = new Color(value.nodeValue);
+                    this.areaStyle.fill = new Utils.Color(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^fill-opacity$/i)) {
@@ -332,12 +315,12 @@ module dChart {
         }
 
         /**
-         * Draw Axis as SVG
-         * @param length {Size}
+         * Utils Axis as SVG
+         * @param length {Utils.Size}
          * @param min {number}
          * @param max {number}
          */
-        draw(length:Size, min:number, max:number) {
+        draw(length:Utils.Size, min:number, max:number) {
 
             if (this.rangeAuto === true) {
                 this.range = [min, max];
@@ -417,7 +400,7 @@ module dChart {
          */
         label:string = "";
 
-        solver:ISolver;
+        solver:Solver.ISolver;
 
         /**
          * Interpolation between the points in the DataSet
@@ -434,12 +417,12 @@ module dChart {
         /**
          * Line Element, that stores all Attribute Styles
          */
-        lineStyle:LineStyle = new LineStyle();
+        lineStyle:Utils.LineStyle = new Utils.LineStyle();
 
         /**
          * Area Element, that stores all Attribute Styles
          */
-        areaStyle:AreaStyle = new AreaStyle();
+        areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
         /**
          * Constructor
@@ -489,11 +472,11 @@ module dChart {
                     return;
                 }
                 else if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = new Color(value.nodeValue);
+                    this.lineStyle.stroke = new Utils.Color(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.nodeValue));
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {
@@ -501,7 +484,7 @@ module dChart {
                     return;
                 }
                 else if (value.nodeName.match(/^fill$/i)) {
-                    this.areaStyle.fill = new Color(value.nodeValue);
+                    this.areaStyle.fill = new Utils.Color(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^fill-opacity$/i)) {
@@ -568,7 +551,7 @@ module dChart {
     export class DataSet2D extends DataSet {
 
         data:Point2D[] = [];
-        solver:ISolver2D = new Solver2D();
+        solver:Solver.ISolver2D = new Solver.Solver2D();
 
         public Point() {
             return new Point2D();
@@ -592,7 +575,7 @@ module dChart {
     export class DataSet3D extends DataSet {
 
         data:Point3D[] = [];
-        solver:ISolver3D = new Solver3D();
+        solver:Solver.ISolver3D = new Solver.Solver3D();
 
         public Point() {
             return new Point3D();
@@ -615,15 +598,15 @@ module dChart {
 
     export class Chart {
 
-        chartMarginLeft:Size = new Size(10);
-        chartMarginRight:Size = new Size(10);
-        chartMarginTop:Size = new Size(10);
-        chartMarginBottom:Size = new Size(10);
+        chartMarginLeft:Utils.Size = new Utils.Size(10);
+        chartMarginRight:Utils.Size = new Utils.Size(10);
+        chartMarginTop:Utils.Size = new Utils.Size(10);
+        chartMarginBottom:Utils.Size = new Utils.Size(10);
 
         chartTitle:string;
         chartDescription:string;
 
-        constructor(public chartWidth:Size = new Size(400), public chartHeight:Size = new Size(400)) {
+        constructor(public chartWidth:Utils.Size = new Utils.Size(400), public chartHeight:Utils.Size = new Utils.Size(400)) {
 
         }
     }
@@ -639,8 +622,8 @@ module dChart {
             var min = this.min();
             var max = this.max();
 
-            var width = (new Size(this.chartWidth.value)).sub(this.chartMarginLeft).sub(this.chartMarginRight);
-            var height = (new Size(this.chartHeight.value)).sub(this.chartMarginTop).sub(this.chartMarginBottom);
+            var width = (new Utils.Size(this.chartWidth.value)).sub(this.chartMarginLeft).sub(this.chartMarginRight);
+            var height = (new Utils.Size(this.chartHeight.value)).sub(this.chartMarginTop).sub(this.chartMarginBottom);
 
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
@@ -659,7 +642,7 @@ module dChart {
 
         public dataSets:DataSet3D[];
 
-        chartDepth:Size = new Size(400);
+        chartDepth:Utils.Size = new Utils.Size(400);
 
         xAxis:Axis = new Axis("x");
         yAxis:Axis = new Axis("y");
@@ -669,8 +652,8 @@ module dChart {
             var min = this.min();
             var max = this.max();
 
-            var width = new Size(this.chartWidth.value).sub(this.chartMarginLeft).sub(this.chartMarginRight);
-            var height = new Size(this.chartHeight.value).sub(this.chartMarginTop).sub(this.chartMarginBottom);
+            var width = new Utils.Size(this.chartWidth.value).sub(this.chartMarginLeft).sub(this.chartMarginRight);
+            var height = new Utils.Size(this.chartHeight.value).sub(this.chartMarginTop).sub(this.chartMarginBottom);
 
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
@@ -683,164 +666,6 @@ module dChart {
 
         max(axis:string = "x") {
             return d3.max(this.dataSets, (dataSet:DataSet3D) => dataSet.max(axis));
-        }
-    }
-
-    export class Color {
-
-        constructor(public value:string) {
-
-        }
-
-        get() {
-            return this.value;
-        }
-
-        RGB() {
-            return d3.rgb(this.value);
-        }
-
-        HSL() {
-            return d3.hsl(this.value);
-        }
-
-        HCL() {
-            return d3.hcl(this.value);
-        }
-
-        LAB() {
-            return d3.lab(this.value);
-        }
-    }
-
-    export class Size {
-
-        constructor(public value:number) {
-
-        }
-
-        get() {
-            return this.value.toString(10) + "px";
-        }
-
-        sub(d:Size) {
-            this.value -= d.value;
-            return this;
-        }
-
-        add(d:Size) {
-            this.value += d.value;
-            return this;
-        }
-
-        mul(d:Size) {
-            this.value *= d.value;
-            return this;
-        }
-
-        div(d:Size) {
-            this.value /= d.value;
-            return this;
-        }
-    }
-
-    export interface IStyle {
-
-        get();
-    }
-
-    export class LineStyle implements IStyle {
-
-        stroke: Color;
-        strokeWidth: Size;
-        strokeOpacity: number;
-
-        get() {
-            return "";
-        }
-    }
-
-    export class AreaStyle implements IStyle {
-
-        fill: Color;
-        fillOpacity: number;
-
-        get() {
-            return "";
-        }
-    }
-
-    export interface ISolver {
-
-        min:number;
-        max:number;
-        step:number;
-    }
-
-    export interface ISolver2D extends ISolver {
-
-        fn: (x:number) => number;
-        solve: (min?:number, max?:number, step?:number) => Point2D[];
-    }
-
-    export interface ISolver3D extends ISolver {
-
-        fn: (x:number, y:number) => number;
-        solve: (min?:number, max?:number, step?:number) => Point3D[];
-    }
-
-    export class Solver2D implements ISolver2D {
-
-        public min:number = 0;
-        public max:number = 10;
-        public step:number = 1;
-
-        fn(x:number) {
-            return x;
-        }
-
-        solve(min?:number, max?:number, step?:number) {
-
-            min = min || this.min;
-            max = max || this.max;
-            step = step || this.step;
-
-            var x:number;
-            var data: Point2D[] = [];
-
-            for (x=min;x<=max;x+=step) {
-                data.push(new Point2D(x, this.fn(x)));
-            }
-
-            return data;
-        }
-    }
-
-    export class Solver3D implements ISolver3D {
-
-        public min:number = 0;
-        public max:number = 10;
-        public step:number = 1;
-
-        fn(x:number, y:number) {
-            return x;
-        }
-
-        solve(min?:number, max?:number, step?:number) {
-
-            min = min || this.min;
-            max = max || this.max;
-            step = step || this.step;
-
-            var x:number;
-            var y:number;
-            var data: Point3D[] = [];
-
-            for (x=min;x<=max;x+=step) {
-                data.push(new Point3D(x, y, this.fn(x, y)));
-            }
-
-            return data;
         }
     }
 }

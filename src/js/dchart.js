@@ -1,3 +1,170 @@
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Elem = (function () {
+            function Elem() {
+            }
+            Elem.getFloat = function (value) {
+                return parseFloat(value.nodeValue);
+            };
+
+            Elem.getSize = function (value) {
+                return new Size(parseFloat(value.nodeValue));
+            };
+
+            Elem.getColor = function (value) {
+                return new Color(value.nodeValue);
+            };
+
+            Elem.getDate = function (value) {
+                return new Date(value.nodeValue);
+            };
+            return Elem;
+        })();
+        Utils.Elem = Elem;
+
+        var Color = (function () {
+            function Color(value) {
+                this.value = value;
+            }
+            Color.prototype.get = function () {
+                return this.value;
+            };
+
+            Color.prototype.RGB = function () {
+                return d3.rgb(this.value);
+            };
+
+            Color.prototype.HSL = function () {
+                return d3.hsl(this.value);
+            };
+
+            Color.prototype.HCL = function () {
+                return d3.hcl(this.value);
+            };
+
+            Color.prototype.LAB = function () {
+                return d3.lab(this.value);
+            };
+            return Color;
+        })();
+        Utils.Color = Color;
+
+        var Size = (function () {
+            function Size(value) {
+                this.value = value;
+            }
+            Size.prototype.get = function () {
+                return this.value.toString(10) + "px";
+            };
+
+            Size.prototype.sub = function (d) {
+                this.value -= d.value;
+                return this;
+            };
+
+            Size.prototype.add = function (d) {
+                this.value += d.value;
+                return this;
+            };
+
+            Size.prototype.mul = function (d) {
+                this.value *= d.value;
+                return this;
+            };
+
+            Size.prototype.div = function (d) {
+                this.value /= d.value;
+                return this;
+            };
+            return Size;
+        })();
+        Utils.Size = Size;
+
+        var LineStyle = (function () {
+            function LineStyle() {
+            }
+            LineStyle.prototype.get = function () {
+                return "";
+            };
+            return LineStyle;
+        })();
+        Utils.LineStyle = LineStyle;
+
+        var AreaStyle = (function () {
+            function AreaStyle() {
+            }
+            AreaStyle.prototype.get = function () {
+                return "";
+            };
+            return AreaStyle;
+        })();
+        Utils.AreaStyle = AreaStyle;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Solver) {
+        var Solver2D = (function () {
+            function Solver2D() {
+                this.min = 0;
+                this.max = 10;
+                this.step = 1;
+            }
+            Solver2D.prototype.fn = function (x) {
+                return x;
+            };
+
+            Solver2D.prototype.solve = function (min, max, step) {
+                min = min || this.min;
+                max = max || this.max;
+                step = step || this.step;
+
+                var x;
+                var data = [];
+
+                for (x = min; x <= max; x += step) {
+                    data.push(new dChart.Point2D(x, this.fn(x)));
+                }
+
+                return data;
+            };
+            return Solver2D;
+        })();
+        Solver.Solver2D = Solver2D;
+
+        var Solver3D = (function () {
+            function Solver3D() {
+                this.min = 0;
+                this.max = 10;
+                this.step = 1;
+            }
+            Solver3D.prototype.fn = function (x, y) {
+                return x;
+            };
+
+            Solver3D.prototype.solve = function (min, max, step) {
+                min = min || this.min;
+                max = max || this.max;
+                step = step || this.step;
+
+                var x;
+                var y;
+                var data = [];
+
+                for (x = min; x <= max; x += step) {
+                    data.push(new dChart.Point3D(x, y, this.fn(x, y)));
+                }
+
+                return data;
+            };
+            return Solver3D;
+        })();
+        Solver.Solver3D = Solver3D;
+    })(dChart.Solver || (dChart.Solver = {}));
+    var Solver = dChart.Solver;
+})(dChart || (dChart = {}));
 "use strict";
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -7,32 +174,10 @@ var __extends = this.__extends || function (d, b) {
 };
 var dChart;
 (function (dChart) {
-    var ElementUtils = (function () {
-        function ElementUtils() {
-        }
-        ElementUtils.getFloat = function (value) {
-            return parseFloat(value.nodeValue);
-        };
-
-        ElementUtils.getSize = function (value) {
-            return new Size(parseFloat(value.nodeValue));
-        };
-
-        ElementUtils.getColor = function (value) {
-            return new Color(value.nodeValue);
-        };
-
-        ElementUtils.getDate = function (value) {
-            return new Date(value.nodeValue);
-        };
-        return ElementUtils;
-    })();
-    dChart.ElementUtils = ElementUtils;
-
     var Point = (function () {
         function Point() {
-            this.lineStyle = new LineStyle();
-            this.areaStyle = new AreaStyle();
+            this.lineStyle = new dChart.Utils.LineStyle();
+            this.areaStyle = new dChart.Utils.AreaStyle();
         }
         Point.prototype.normalize = function (value) {
         };
@@ -41,16 +186,16 @@ var dChart;
             var _this = this;
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = new Color(value.nodeValue);
+                    _this.lineStyle.stroke = new dChart.Utils.Color(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    _this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.nodeValue));
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
                     _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = new Color(value.nodeValue);
+                    _this.areaStyle.fill = new dChart.Utils.Color(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill-opacity$/i)) {
                     _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
@@ -307,8 +452,8 @@ var dChart;
             this.label = "";
             this.interpolate = "linear";
             this.visible = true;
-            this.lineStyle = new LineStyle();
-            this.areaStyle = new AreaStyle();
+            this.lineStyle = new dChart.Utils.LineStyle();
+            this.areaStyle = new dChart.Utils.AreaStyle();
         }
         DataSet.prototype.Point = function () {
             return new Point();
@@ -333,16 +478,16 @@ var dChart;
                 } else if (value.nodeName.match(/^step$/i)) {
                     return;
                 } else if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = new Color(value.nodeValue);
+                    _this.lineStyle.stroke = new dChart.Utils.Color(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = new Size(parseFloat(value.nodeValue));
+                    _this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.nodeValue));
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
                     _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = new Color(value.nodeValue);
+                    _this.areaStyle.fill = new dChart.Utils.Color(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill-opacity$/i)) {
                     _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
@@ -398,7 +543,7 @@ var dChart;
         function DataSet2D() {
             _super.apply(this, arguments);
             this.data = [];
-            this.solver = new Solver2D();
+            this.solver = new dChart.Solver.Solver2D();
         }
         DataSet2D.prototype.Point = function () {
             return new Point2D();
@@ -428,7 +573,7 @@ var dChart;
         function DataSet3D() {
             _super.apply(this, arguments);
             this.data = [];
-            this.solver = new Solver3D();
+            this.solver = new dChart.Solver.Solver3D();
         }
         DataSet3D.prototype.Point = function () {
             return new Point3D();
@@ -455,14 +600,14 @@ var dChart;
 
     var Chart = (function () {
         function Chart(chartWidth, chartHeight) {
-            if (typeof chartWidth === "undefined") { chartWidth = new Size(400); }
-            if (typeof chartHeight === "undefined") { chartHeight = new Size(400); }
+            if (typeof chartWidth === "undefined") { chartWidth = new dChart.Utils.Size(400); }
+            if (typeof chartHeight === "undefined") { chartHeight = new dChart.Utils.Size(400); }
             this.chartWidth = chartWidth;
             this.chartHeight = chartHeight;
-            this.chartMarginLeft = new Size(10);
-            this.chartMarginRight = new Size(10);
-            this.chartMarginTop = new Size(10);
-            this.chartMarginBottom = new Size(10);
+            this.chartMarginLeft = new dChart.Utils.Size(10);
+            this.chartMarginRight = new dChart.Utils.Size(10);
+            this.chartMarginTop = new dChart.Utils.Size(10);
+            this.chartMarginBottom = new dChart.Utils.Size(10);
         }
         return Chart;
     })();
@@ -479,8 +624,8 @@ var dChart;
             var min = this.min();
             var max = this.max();
 
-            var width = (new Size(this.chartWidth.value)).sub(this.chartMarginLeft).sub(this.chartMarginRight);
-            var height = (new Size(this.chartHeight.value)).sub(this.chartMarginTop).sub(this.chartMarginBottom);
+            var width = (new dChart.Utils.Size(this.chartWidth.value)).sub(this.chartMarginLeft).sub(this.chartMarginRight);
+            var height = (new dChart.Utils.Size(this.chartHeight.value)).sub(this.chartMarginTop).sub(this.chartMarginBottom);
 
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
@@ -507,7 +652,7 @@ var dChart;
         __extends(Chart3D, _super);
         function Chart3D() {
             _super.apply(this, arguments);
-            this.chartDepth = new Size(400);
+            this.chartDepth = new dChart.Utils.Size(400);
             this.xAxis = new Axis("x");
             this.yAxis = new Axis("y");
             this.zAxis = new Axis("z");
@@ -516,8 +661,8 @@ var dChart;
             var min = this.min();
             var max = this.max();
 
-            var width = new Size(this.chartWidth.value).sub(this.chartMarginLeft).sub(this.chartMarginRight);
-            var height = new Size(this.chartHeight.value).sub(this.chartMarginTop).sub(this.chartMarginBottom);
+            var width = new dChart.Utils.Size(this.chartWidth.value).sub(this.chartMarginLeft).sub(this.chartMarginRight);
+            var height = new dChart.Utils.Size(this.chartHeight.value).sub(this.chartMarginTop).sub(this.chartMarginBottom);
 
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
@@ -540,140 +685,5 @@ var dChart;
         return Chart3D;
     })(Chart);
     dChart.Chart3D = Chart3D;
-
-    var Color = (function () {
-        function Color(value) {
-            this.value = value;
-        }
-        Color.prototype.get = function () {
-            return this.value;
-        };
-
-        Color.prototype.RGB = function () {
-            return d3.rgb(this.value);
-        };
-
-        Color.prototype.HSL = function () {
-            return d3.hsl(this.value);
-        };
-
-        Color.prototype.HCL = function () {
-            return d3.hcl(this.value);
-        };
-
-        Color.prototype.LAB = function () {
-            return d3.lab(this.value);
-        };
-        return Color;
-    })();
-    dChart.Color = Color;
-
-    var Size = (function () {
-        function Size(value) {
-            this.value = value;
-        }
-        Size.prototype.get = function () {
-            return this.value.toString(10) + "px";
-        };
-
-        Size.prototype.sub = function (d) {
-            this.value -= d.value;
-            return this;
-        };
-
-        Size.prototype.add = function (d) {
-            this.value += d.value;
-            return this;
-        };
-
-        Size.prototype.mul = function (d) {
-            this.value *= d.value;
-            return this;
-        };
-
-        Size.prototype.div = function (d) {
-            this.value /= d.value;
-            return this;
-        };
-        return Size;
-    })();
-    dChart.Size = Size;
-
-    var LineStyle = (function () {
-        function LineStyle() {
-        }
-        LineStyle.prototype.get = function () {
-            return "";
-        };
-        return LineStyle;
-    })();
-    dChart.LineStyle = LineStyle;
-
-    var AreaStyle = (function () {
-        function AreaStyle() {
-        }
-        AreaStyle.prototype.get = function () {
-            return "";
-        };
-        return AreaStyle;
-    })();
-    dChart.AreaStyle = AreaStyle;
-
-    var Solver2D = (function () {
-        function Solver2D() {
-            this.min = 0;
-            this.max = 10;
-            this.step = 1;
-        }
-        Solver2D.prototype.fn = function (x) {
-            return x;
-        };
-
-        Solver2D.prototype.solve = function (min, max, step) {
-            min = min || this.min;
-            max = max || this.max;
-            step = step || this.step;
-
-            var x;
-            var data = [];
-
-            for (x = min; x <= max; x += step) {
-                data.push(new Point2D(x, this.fn(x)));
-            }
-
-            return data;
-        };
-        return Solver2D;
-    })();
-    dChart.Solver2D = Solver2D;
-
-    var Solver3D = (function () {
-        function Solver3D() {
-            this.min = 0;
-            this.max = 10;
-            this.step = 1;
-        }
-        Solver3D.prototype.fn = function (x, y) {
-            return x;
-        };
-
-        Solver3D.prototype.solve = function (min, max, step) {
-            min = min || this.min;
-            max = max || this.max;
-            step = step || this.step;
-
-            var x;
-            var y;
-            var data = [];
-
-            for (x = min; x <= max; x += step) {
-                data.push(new Point3D(x, y, this.fn(x, y)));
-            }
-
-            return data;
-        };
-        return Solver3D;
-    })();
-    dChart.Solver3D = Solver3D;
 })(dChart || (dChart = {}));
 //@ sourceMappingURL=file:////home/ckoerner/workspace/javascript/dchart/src/js/dchart.js.map
