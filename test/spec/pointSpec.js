@@ -214,3 +214,45 @@ describe('dChart.Point2D', function(){
         })
     })
 })
+
+describe('dChart.Point3D', function(){
+
+    var elements = jsdom.jsdom("<div x='5.25' y='12.14' z='26.87'>"),
+        element = elements.children[0],
+        normalizeElement = {x:6.25,y:13.14,z:27.87},
+        customMap = {x:'customX',y:'customY',z:'customZ'},
+        mapElement = {customX:7.25,customY:14.14,customZ:28.87};
+
+    describe('#parse()', function(){
+
+        var p = new dChart.Point3D();
+
+        it ('should create 3D Point',function() {
+
+            p.parse(element);
+            assert.deepEqual(new dChart.Point3D(5.25,12.14,26.87), p);
+        })
+    })
+
+    describe('#map()', function(){
+
+        var p = new dChart.Point3D();
+
+        it ('should create 3D Point',function() {
+
+            p.map(mapElement,customMap);
+            assert.deepEqual(new dChart.Point3D(7.25,14.14,28.87), p);
+        })
+    })
+
+    describe('#normalize()', function(){
+
+        var p = new dChart.Point3D();
+
+        it ('should create 3D Point',function() {
+
+            p.normalize(normalizeElement);
+            assert.deepEqual(new dChart.Point3D(6.25,13.14,27.87), p);
+        })
+    })
+})
