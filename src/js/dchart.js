@@ -476,6 +476,97 @@ var dChart;
 })(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
+    var Axis = (function () {
+        function Axis(axisLabel) {
+            this.axisLabel = axisLabel;
+            this.clamp = false;
+            this.range = [0, 1];
+            this.domain = [0, 1];
+            this.autorange = true;
+            this.scale = d3.scale.linear();
+            this.length = new dChart.Utils.Size(1);
+            this.orientation = "x";
+            this.align = "start";
+            this.labelAlign = "end";
+            this.nice = [];
+            this.ticks = 10;
+            this.visible = true;
+        }
+        Axis.prototype.setScale = function (scale) {
+            if (typeof scale === "undefined") { scale = "linear"; }
+            this.scale = (scale.match(/^identity$/i)) ? d3.scale.identity() : (scale.match(/^pow|power$/i)) ? d3.scale.pow() : (scale.match(/^sqrt$/)) ? d3.scale.sqrt() : (scale.match(/^log$/)) ? d3.scale.log() : (scale.match(/^quantize/)) ? d3.scale.quantize() : (scale.match(/^quantile$/)) ? d3.scale.quantile() : (scale.match(/^treshold$/)) ? d3.scale.treshold() : d3.scale.linear();
+
+            this.scale.domain(this.domain).range(this.range);
+
+            return this;
+        };
+
+        Axis.prototype.setOrientation = function (orientation) {
+            if (typeof orientation === "undefined") { orientation = "x"; }
+            this.orientation = (orientation.match(/^y|v|vertical$/i)) ? "y" : (orientation.match(/^z$/i)) ? "z" : "x";
+
+            return this;
+        };
+
+        Axis.prototype.setDomain = function (domain) {
+            if (typeof domain === "undefined") { domain = [0, 1]; }
+            this.domain = domain;
+
+            return this;
+        };
+
+        Axis.prototype.setRange = function (range) {
+            if (typeof range === "undefined") { range = [0, this.length.value]; }
+            this.range = range;
+
+            return this;
+        };
+
+        Axis.prototype.setTicks = function (ticks) {
+            if (typeof ticks === "undefined") { ticks = 10; }
+            this.ticks = ticks;
+        };
+
+        Axis.prototype.setLabelAlign = function (labelAlign) {
+            this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start" : (labelAlign.match(/^bottom|right|end$/i)) ? "end" : "center";
+
+            return this;
+        };
+
+        Axis.prototype.getAxis = function () {
+            d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+        };
+
+        Axis.prototype.draw = function (length, min, max) {
+            var _this = this;
+            if (this.autorange === true) {
+                this.range = [min, max];
+            }
+
+            var pos = this.align === "center" ? length.value * 0.5 : this.align === "start" ? 0 : length.value;
+
+            var labelOrient = this.align === "start" ? "top" : "bottom";
+
+            var labelPos = this.labelAlign === "start" ? 0 : this.labelAlign === "center" ? length.value * 0.5 : length.value;
+
+            var scale = null;
+
+            scale = scale.domain(this.range).range([0, length.value]);
+
+            var axis = d3.svg.axis().scale(scale).orient(labelOrient).ticks(this.ticks);
+
+            if (this.ticksFormat.length > 0) {
+                axis.tickFormat(function (d) {
+                    return _this.ticksFormat[d];
+                });
+            }
+        };
+        return Axis;
+    })();
+    dChart.Axis = Axis;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
     (function (Solver) {
         var Solver2D = (function () {
             function Solver2D() {
@@ -539,80 +630,6 @@ var dChart;
 "use strict";
 var dChart;
 (function (dChart) {
-    var Axis = (function () {
-        function Axis(axisLabel) {
-            this.axisLabel = axisLabel;
-            this.clamp = false;
-            this.range = [0, 1];
-            this.rangeAuto = true;
-            this.scale = "linear";
-            this.align = "start";
-            this.labelAlign = "end";
-            this.nice = [];
-            this.ticks = 10;
-            this.visible = true;
-        }
-        Axis.prototype.draw = function (length, min, max) {
-            var _this = this;
-            if (this.rangeAuto === true) {
-                this.range = [min, max];
-            }
-
-            var pos = this.align === "center" ? length.value * 0.5 : this.align === "start" ? 0 : length.value;
-
-            var labelOrient = this.align === "start" ? "top" : "bottom";
-
-            var labelPos = this.labelAlign === "start" ? 0 : this.labelAlign === "center" ? length.value * 0.5 : length.value;
-
-            var scale = null;
-            switch (this.scale) {
-                case "identity":
-                    scale = d3.scale.identity();
-                    break;
-
-                case "power":
-                    scale = d3.scale.pow();
-                    break;
-
-                case "sqrt":
-                    scale = d3.scale.sqrt();
-                    break;
-
-                case "log":
-                    scale = d3.scale.log();
-                    break;
-
-                case "quantize":
-                    scale = d3.scale.quantize();
-                    break;
-
-                case "quantile":
-                    scale = d3.scale.quantile();
-                    break;
-
-                case "treshold":
-                    scale = d3.scale.treshold();
-                    break;
-
-                case "linear":
-                default:
-                    scale = d3.scale.linear();
-            }
-
-            scale = scale.domain(this.range).range([0, length.value]);
-
-            var axis = d3.svg.axis().scale(scale).orient(labelOrient).ticks(this.ticks);
-
-            if (this.ticksFormat.length > 0) {
-                axis.tickFormat(function (d) {
-                    return _this.ticksFormat[d];
-                });
-            }
-        };
-        return Axis;
-    })();
-    dChart.Axis = Axis;
-
     var DataSet = (function () {
         function DataSet(dataSetLabel) {
             this.dataSetLabel = dataSetLabel;
@@ -785,8 +802,8 @@ var dChart;
         __extends(Chart2D, _super);
         function Chart2D() {
             _super.apply(this, arguments);
-            this.xAxis = new Axis("x");
-            this.yAxis = new Axis("y");
+            this.xAxis = new dChart.Axis("x");
+            this.yAxis = new dChart.Axis("y");
         }
         Chart2D.prototype.drawAxis = function () {
             var min = this.min();
@@ -821,9 +838,9 @@ var dChart;
         function Chart3D() {
             _super.apply(this, arguments);
             this.chartDepth = new dChart.Utils.Size(400);
-            this.xAxis = new Axis("x");
-            this.yAxis = new Axis("y");
-            this.zAxis = new Axis("z");
+            this.xAxis = new dChart.Axis("x");
+            this.yAxis = new dChart.Axis("y");
+            this.zAxis = new dChart.Axis("z");
         }
         Chart3D.prototype.drawAxis = function () {
             var min = this.min();

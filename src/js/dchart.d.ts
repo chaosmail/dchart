@@ -116,6 +116,33 @@ declare module dChart.Utils {
         public get(): string;
     }
 }
+declare module dChart {
+    class Axis {
+        public axisLabel: string;
+        public clamp: boolean;
+        public range: number[];
+        public domain: number[];
+        public autorange: boolean;
+        public scale: D3.Scale;
+        public length: dChart.Utils.Size;
+        public orientation: string;
+        public align: string;
+        public labelAlign: string;
+        public nice: number[];
+        public ticks: number;
+        public ticksFormat: string[];
+        public visible: boolean;
+        constructor(axisLabel: string);
+        public setScale(scale?: string): Axis;
+        public setOrientation(orientation?: string): Axis;
+        public setDomain(domain?: number[]): Axis;
+        public setRange(range?: number[]): Axis;
+        public setTicks(ticks?: number): void;
+        public setLabelAlign(labelAlign: string): Axis;
+        public getAxis(): void;
+        public draw(length: dChart.Utils.Size, min: number, max: number): void;
+    }
+}
 declare module dChart.Solver {
     interface ISolver {
         min: number;
@@ -146,21 +173,6 @@ declare module dChart.Solver {
     }
 }
 declare module dChart {
-    class Axis {
-        public axisLabel: string;
-        public clamp: boolean;
-        public range: number[];
-        public rangeAuto: boolean;
-        public scale: string;
-        public align: string;
-        public labelAlign: string;
-        public nice: number[];
-        public ticks: number;
-        public ticksFormat: string[];
-        public visible: boolean;
-        constructor(axisLabel: string);
-        public draw(length: dChart.Utils.Size, min: number, max: number): void;
-    }
     class DataSet {
         public dataSetLabel: string;
         public data: dChart.Point[];
@@ -207,8 +219,8 @@ declare module dChart {
     }
     class Chart2D extends Chart {
         public dataSets: DataSet2D[];
-        public xAxis: Axis;
-        public yAxis: Axis;
+        public xAxis: dChart.Axis;
+        public yAxis: dChart.Axis;
         public drawAxis(): void;
         public min(axis?: string): number;
         public max(axis?: string): number;
@@ -216,9 +228,9 @@ declare module dChart {
     class Chart3D extends Chart {
         public dataSets: DataSet3D[];
         public chartDepth: dChart.Utils.Size;
-        public xAxis: Axis;
-        public yAxis: Axis;
-        public zAxis: Axis;
+        public xAxis: dChart.Axis;
+        public yAxis: dChart.Axis;
+        public zAxis: dChart.Axis;
         public drawAxis(): void;
         public min(axis?: string): number;
         public max(axis?: string): number;
