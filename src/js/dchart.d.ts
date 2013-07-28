@@ -1,4 +1,33 @@
 declare module dChart {
+    interface IPoint {
+        stroke: string;
+        strokeWidth: number;
+        strokeOpacity: number;
+        fill: string;
+        fillOpacity: number;
+        label: string;
+    }
+    interface IPoint1D extends IPoint {
+        x: number;
+    }
+    interface IPoint2D extends IPoint {
+        x: number;
+        y: number;
+    }
+    interface IPoint2DTime extends IPoint {
+        t: number;
+        y: number;
+    }
+    interface IPoint3D extends IPoint {
+        x: number;
+        y: number;
+        z: number;
+    }
+    interface IPoint3DTime extends IPoint {
+        t: number;
+        y: number;
+        z: number;
+    }
     interface IPointMap {
         stroke: string;
         strokeWidth: string;
@@ -117,29 +146,45 @@ declare module dChart.Utils {
     }
 }
 declare module dChart {
+    interface IAxis {
+        label: string;
+        scale: string;
+        autorange: boolean;
+        range: number[];
+        domain: number[];
+    }
+    interface ITickSize {
+        major: number;
+        minor: number;
+        end: number;
+    }
     class Axis {
         public axisLabel: string;
-        public clamp: boolean;
         public range: number[];
         public domain: number[];
         public autorange: boolean;
         public scale: D3.Scale;
+        public d3Attrs: any[];
         public length: dChart.Utils.Size;
         public orientation: string;
         public align: string;
         public labelAlign: string;
-        public nice: number[];
         public ticks: number;
         public ticksFormat: string[];
+        public tickValues: number[];
+        public tickSubdivide: boolean;
+        public tickSize: ITickSize;
+        public tickPadding: number;
         public visible: boolean;
         constructor(axisLabel: string);
         public setScale(scale?: string): Axis;
+        public addScaleFn(fn: string, args: any): void;
         public setOrientation(orientation?: string): Axis;
         public setDomain(domain?: number[]): Axis;
         public setRange(range?: number[]): Axis;
         public setTicks(ticks?: number): void;
         public setLabelAlign(labelAlign: string): Axis;
-        public getAxis(): void;
+        public getAxis(): D3.Axis;
         public draw(length: dChart.Utils.Size, min: number, max: number): void;
     }
 }
@@ -173,6 +218,28 @@ declare module dChart.Solver {
     }
 }
 declare module dChart {
+    interface IDataSet {
+        stroke: string;
+        strokeWidth: number;
+        strokeOpacity: number;
+        fill: string;
+        fillOpacity: number;
+        label: string;
+        fn: string;
+        data: dChart.IPoint[];
+    }
+    interface IDataSet2D extends IDataSet {
+        data: dChart.IPoint2D[];
+    }
+    interface IDataSet2DTime extends IDataSet {
+        data: dChart.IPoint2DTime[];
+    }
+    interface IDataSet3D extends IDataSet {
+        data: dChart.IPoint3D[];
+    }
+    interface IDataSet3DTime extends IDataSet {
+        data: dChart.IPoint3DTime[];
+    }
     class DataSet {
         public dataSetLabel: string;
         public data: dChart.Point[];
@@ -206,19 +273,55 @@ declare module dChart {
         public min(axis: string): number;
         public max(axis: string): number;
     }
+}
+declare module dChart {
+    interface IChart {
+        elem: Element;
+        label: string;
+        description: string;
+        width: number;
+        height: number;
+        marginTop: number;
+        marginLeft: number;
+        marginBottom: number;
+        marginRight: number;
+        dataSets: dChart.IDataSet[];
+    }
+    interface IChart2D extends IChart {
+        axis: {
+            x: dChart.IAxis;
+            y: dChart.IAxis;
+        };
+        dataSets: dChart.IDataSet2D[];
+    }
+    interface IChart3D extends IChart {
+        axis: {
+            x: dChart.IAxis;
+            y: dChart.IAxis;
+            z: dChart.IAxis;
+        };
+        dataSets: dChart.IDataSet3D[];
+    }
     class Chart {
-        public chartWidth: dChart.Utils.Size;
-        public chartHeight: dChart.Utils.Size;
-        public chartMarginLeft: dChart.Utils.Size;
-        public chartMarginRight: dChart.Utils.Size;
-        public chartMarginTop: dChart.Utils.Size;
-        public chartMarginBottom: dChart.Utils.Size;
-        public chartTitle: string;
-        public chartDescription: string;
-        constructor(chartWidth?: dChart.Utils.Size, chartHeight?: dChart.Utils.Size);
+        public svg: D3.Selection;
+        public elem: Element;
+        public marginLeft: dChart.Utils.Size;
+        public marginRight: dChart.Utils.Size;
+        public marginTop: dChart.Utils.Size;
+        public marginBottom: dChart.Utils.Size;
+        public width: dChart.Utils.Size;
+        public height: dChart.Utils.Size;
+        public label: string;
+        public description: string;
+        constructor(config: IChart);
+        public clear(): void;
+        public redraw(): void;
+        public draw(): void;
+        public drawAxis(): void;
+        public drawData(): void;
     }
     class Chart2D extends Chart {
-        public dataSets: DataSet2D[];
+        public dataSets: dChart.DataSet2D[];
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
         public drawAxis(): void;
@@ -226,8 +329,8 @@ declare module dChart {
         public max(axis?: string): number;
     }
     class Chart3D extends Chart {
-        public dataSets: DataSet3D[];
-        public chartDepth: dChart.Utils.Size;
+        public dataSets: dChart.DataSet3D[];
+        public depth: dChart.Utils.Size;
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
         public zAxis: dChart.Axis;

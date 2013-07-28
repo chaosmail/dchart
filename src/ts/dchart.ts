@@ -9,11 +9,43 @@
 
 module dChart {
 
-    export interface IChartConfig {
+    export interface IChart {
 
+        elem:Element;
+        label:string;
+        description:string;
+        width:number;
+        height:number;
+        marginTop:number;
+        marginLeft:number;
+        marginBottom:number;
+        marginRight:number;
+        dataSets:IDataSet[];
+    }
+
+    export interface IChart2D extends IChart {
+
+        axis:{
+            x:IAxis;
+            y:IAxis;
+        }
+        dataSets:IDataSet2D[];
+    }
+
+    export interface IChart3D extends IChart {
+
+        axis: {
+            x:IAxis;
+            y:IAxis;
+            z:IAxis;
+        }
+        dataSets:IDataSet3D[];
     }
 
     export class Chart {
+
+        svg:D3.Selection;
+        elem:Element;
 
         marginLeft:Utils.Size = new Utils.Size(10);
         marginRight:Utils.Size = new Utils.Size(10);
@@ -26,15 +58,31 @@ module dChart {
         label:string;
         description:string;
 
-        constructor(config:IChartConfig) {
+        constructor(config:IChart) {
 
             this.draw();
         }
 
-        draw() {
+        clear() {
+
+            if (this.svg) {
+                this.svg.remove();
+            }
+        }
+
+        redraw() {
 
             this.drawAxis();
             this.drawData();
+        }
+
+        draw() {
+
+            this.clear();
+
+            this.svg = d3.select(this.elem).append("svg");
+
+            this.redraw();
         }
 
         drawAxis() {

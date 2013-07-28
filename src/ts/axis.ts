@@ -4,7 +4,17 @@
 
 module dChart {
 
+    export interface IAxis {
+
+        label:string;
+        scale:string;
+        autorange:bool;
+        range:number[];
+        domain:number[];
+    }
+
     export interface ITickSize {
+
         major:number;
         minor:number;
         end:number;
@@ -50,11 +60,15 @@ module dChart {
         ticks:number = 10;
 
         ticksFormat:string[];
+
         tickValues:number[];
+
         tickSubdivide:bool = false;
+
         tickSize:ITickSize = {
             major:1,minor:0,end:0
         };
+
         tickPadding:number;
 
         visible:bool = true;

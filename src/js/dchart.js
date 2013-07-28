@@ -479,17 +479,22 @@ var dChart;
     var Axis = (function () {
         function Axis(axisLabel) {
             this.axisLabel = axisLabel;
-            this.clamp = false;
             this.range = [0, 1];
             this.domain = [0, 1];
             this.autorange = true;
             this.scale = d3.scale.linear();
+            this.d3Attrs = [];
             this.length = new dChart.Utils.Size(1);
             this.orientation = "x";
             this.align = "start";
             this.labelAlign = "end";
-            this.nice = [];
             this.ticks = 10;
+            this.tickSubdivide = false;
+            this.tickSize = {
+                major: 1,
+                minor: 0,
+                end: 0
+            };
             this.visible = true;
         }
         Axis.prototype.setScale = function (scale) {
@@ -499,6 +504,12 @@ var dChart;
             this.scale.domain(this.domain).range(this.range);
 
             return this;
+        };
+
+        Axis.prototype.addScaleFn = function (fn, args) {
+            if (this.scale.prototype[fn]) {
+                this.scale[fn](args);
+            }
         };
 
         Axis.prototype.setOrientation = function (orientation) {
@@ -534,7 +545,9 @@ var dChart;
         };
 
         Axis.prototype.getAxis = function () {
-            d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+            var axis = d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+
+            return axis;
         };
 
         Axis.prototype.draw = function (length, min, max) {
@@ -627,7 +640,6 @@ var dChart;
     })(dChart.Solver || (dChart.Solver = {}));
     var Solver = dChart.Solver;
 })(dChart || (dChart = {}));
-"use strict";
 var dChart;
 (function (dChart) {
     var DataSet = (function () {
@@ -782,18 +794,44 @@ var dChart;
         return DataSet3D;
     })(DataSet);
     dChart.DataSet3D = DataSet3D;
-
+})(dChart || (dChart = {}));
+"use strict";
+var dChart;
+(function (dChart) {
     var Chart = (function () {
-        function Chart(chartWidth, chartHeight) {
-            if (typeof chartWidth === "undefined") { chartWidth = new dChart.Utils.Size(400); }
-            if (typeof chartHeight === "undefined") { chartHeight = new dChart.Utils.Size(400); }
-            this.chartWidth = chartWidth;
-            this.chartHeight = chartHeight;
-            this.chartMarginLeft = new dChart.Utils.Size(10);
-            this.chartMarginRight = new dChart.Utils.Size(10);
-            this.chartMarginTop = new dChart.Utils.Size(10);
-            this.chartMarginBottom = new dChart.Utils.Size(10);
+        function Chart(config) {
+            this.marginLeft = new dChart.Utils.Size(10);
+            this.marginRight = new dChart.Utils.Size(10);
+            this.marginTop = new dChart.Utils.Size(10);
+            this.marginBottom = new dChart.Utils.Size(10);
+            this.width = new dChart.Utils.Size(400);
+            this.height = new dChart.Utils.Size(400);
+            this.draw();
         }
+        Chart.prototype.clear = function () {
+            if (this.svg) {
+                this.svg.remove();
+            }
+        };
+
+        Chart.prototype.redraw = function () {
+            this.drawAxis();
+            this.drawData();
+        };
+
+        Chart.prototype.draw = function () {
+            this.clear();
+
+            this.svg = d3.select(this.elem).append("svg");
+
+            this.redraw();
+        };
+
+        Chart.prototype.drawAxis = function () {
+        };
+
+        Chart.prototype.drawData = function () {
+        };
         return Chart;
     })();
     dChart.Chart = Chart;
@@ -806,11 +844,11 @@ var dChart;
             this.yAxis = new dChart.Axis("y");
         }
         Chart2D.prototype.drawAxis = function () {
-            var min = this.min();
-            var max = this.max();
+            var min = [this.min("x"), this.min("y")];
+            var max = [this.max("x"), this.max("y")];
 
-            var width = (new dChart.Utils.Size(this.chartWidth.value)).sub(this.chartMarginLeft).sub(this.chartMarginRight);
-            var height = (new dChart.Utils.Size(this.chartHeight.value)).sub(this.chartMarginTop).sub(this.chartMarginBottom);
+            var width = (new dChart.Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
+            var height = (new dChart.Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
 
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
@@ -837,21 +875,21 @@ var dChart;
         __extends(Chart3D, _super);
         function Chart3D() {
             _super.apply(this, arguments);
-            this.chartDepth = new dChart.Utils.Size(400);
+            this.depth = new dChart.Utils.Size(400);
             this.xAxis = new dChart.Axis("x");
             this.yAxis = new dChart.Axis("y");
             this.zAxis = new dChart.Axis("z");
         }
         Chart3D.prototype.drawAxis = function () {
-            var min = this.min();
-            var max = this.max();
+            var min = [this.min("x"), this.min("y"), this.min("z")];
+            var max = [this.max("x"), this.max("y"), this.min("z")];
 
-            var width = new dChart.Utils.Size(this.chartWidth.value).sub(this.chartMarginLeft).sub(this.chartMarginRight);
-            var height = new dChart.Utils.Size(this.chartHeight.value).sub(this.chartMarginTop).sub(this.chartMarginBottom);
+            var width = new dChart.Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
+            var height = new dChart.Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
 
             this.xAxis.draw(width, min[0], max[0]);
             this.yAxis.draw(height, min[1], max[1]);
-            this.zAxis.draw(this.chartDepth, min[2], max[2]);
+            this.zAxis.draw(this.depth, min[2], max[2]);
         };
 
         Chart3D.prototype.min = function (axis) {

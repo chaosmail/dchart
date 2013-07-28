@@ -6,6 +6,38 @@
 
 module dChart {
 
+    export interface IDataSet {
+
+        stroke:string;
+        strokeWidth:number;
+        strokeOpacity:number;
+        fill:string;
+        fillOpacity:number;
+        label:string;
+        fn:string;
+        data:IPoint[];
+    }
+
+    export interface IDataSet2D extends IDataSet {
+
+        data:IPoint2D[];
+    }
+
+    export interface IDataSet2DTime extends IDataSet {
+
+        data:IPoint2DTime[];
+    }
+
+    export interface IDataSet3D extends IDataSet {
+
+        data:IPoint3D[];
+    }
+
+    export interface IDataSet3DTime extends IDataSet {
+
+        data:IPoint3DTime[];
+    }
+
     export class DataSet {
 
         /**

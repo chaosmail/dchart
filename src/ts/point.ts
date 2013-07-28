@@ -1,6 +1,48 @@
 module dChart {
 
+    export interface IPoint {
+
+        stroke:string;
+        strokeWidth:number;
+        strokeOpacity:number;
+        fill:string;
+        fillOpacity:number;
+        label:string;
+    }
+
+    export interface IPoint1D extends IPoint {
+
+        x:number;
+    }
+
+    export interface IPoint2D extends IPoint {
+
+        x:number;
+        y:number;
+    }
+
+    export interface IPoint2DTime extends IPoint {
+
+        t:number;
+        y:number;
+    }
+
+    export interface IPoint3D extends IPoint {
+
+        x:number;
+        y:number;
+        z:number;
+    }
+
+    export interface IPoint3DTime extends IPoint {
+
+        t:number;
+        y:number;
+        z:number;
+    }
+
     export interface IPointMap {
+
         stroke:string;
         strokeWidth:string;
         strokeOpacity:string;
