@@ -180,25 +180,44 @@ var dChart;
             this.areaStyle = new dChart.Utils.AreaStyle();
         }
         Point.prototype.normalize = function (value) {
+            if (value.hasOwnProperty("stroke")) {
+                this.lineStyle.stroke = new dChart.Utils.Color(value.stroke);
+            }
+
+            if (value.hasOwnProperty("strokeWidth")) {
+                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.strokeWidth));
+            }
+
+            if (value.hasOwnProperty("strokeOpacity")) {
+                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
+            }
+
+            if (value.hasOwnProperty("fill")) {
+                this.areaStyle.fill = new dChart.Utils.Color(value.fill);
+            }
+
+            if (value.hasOwnProperty("fillOpacity")) {
+                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            }
         };
 
         Point.prototype.parse = function (elem) {
             var _this = this;
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = new dChart.Utils.Color(value.nodeValue);
+                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.nodeValue));
+                    _this.lineStyle.strokeWidth = dChart.Utils.Elem.getSize(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    _this.lineStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = new dChart.Utils.Color(value.nodeValue);
+                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
                     return;
                 } else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    _this.areaStyle.fillOpacity = dChart.Utils.Elem.getFloat(value);
                     return;
                 }
             });
@@ -214,10 +233,17 @@ var dChart;
             this.x = x;
         }
         Point1D.prototype.normalize = function (value) {
-            _super.prototype.parse.call(this, value);
+            _super.prototype.normalize.call(this, value);
 
-            if (typeof (value) === "number") {
-                this.x = value;
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            } else if (value.hasOwnProperty("y")) {
+                this.x = parseFloat(value.y);
+            } else if (value.hasOwnProperty("val")) {
+                this.x = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.x = parseFloat(value.value);
             }
         };
 
@@ -227,16 +253,16 @@ var dChart;
 
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
+                    _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^y$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
+                    _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^val$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
+                    _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^value$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
+                    _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
                 }
             });

@@ -20,6 +20,25 @@ module dChart {
 
         normalize(value:any) {
 
+            if (value.hasOwnProperty("stroke")) {
+                this.lineStyle.stroke = new Utils.Color(value.stroke);
+            }
+
+            if (value.hasOwnProperty("strokeWidth")) {
+                this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.strokeWidth));
+            }
+
+            if (value.hasOwnProperty("strokeOpacity")) {
+                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
+            }
+
+            if (value.hasOwnProperty("fill")) {
+                this.areaStyle.fill = new Utils.Color(value.fill);
+            }
+
+            if (value.hasOwnProperty("fillOpacity")) {
+                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            }
         }
 
         parse(elem:Element) {
@@ -27,23 +46,23 @@ module dChart {
             _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = new Utils.Color(value.nodeValue);
+                    this.lineStyle.stroke = Utils.Elem.getColor(value);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.nodeValue));
+                    this.lineStyle.strokeWidth = Utils.Elem.getSize(value);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    this.lineStyle.strokeOpacity = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^fill$/i)) {
-                    this.areaStyle.fill = new Utils.Color(value.nodeValue);
+                    this.areaStyle.fill = Utils.Elem.getColor(value);
                     return;
                 }
                 else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    this.areaStyle.fillOpacity = Utils.Elem.getFloat(value);
                     return;
                 }
             });
@@ -57,10 +76,19 @@ module dChart {
         }
 
         normalize(value:any) {
-            super.parse(value);
+            super.normalize(value);
 
-            if (typeof(value) === "number") {
-                this.x = value;
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            }
+            else if (value.hasOwnProperty("y")) {
+                this.x = parseFloat(value.y);
+            }
+            else if (value.hasOwnProperty("val")) {
+                this.x = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.x = parseFloat(value.value);
             }
         }
 
@@ -70,19 +98,19 @@ module dChart {
             _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    this.x = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    this.x = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^val$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    this.x = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^value$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                    this.x = Utils.Elem.getFloat(value);
                     return;
                 }
             });
