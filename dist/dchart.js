@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Sun Jul 28 2013 17:59:16
+/** dchart - v0.0.4 - Sun Jul 28 2013 18:19:42
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -121,13 +121,7 @@ var dChart;
                 if (value.nodeName.match(/^x$/i)) {
                     _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.x = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^val$/i)) {
-                    _this.x = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^value$/i)) {
+                } else if (value.nodeName.match(/^y|val|value$/i)) {
                     _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
                 }
@@ -144,6 +138,23 @@ var dChart;
             this.x = x;
             this.y = y;
         }
+        Point2D.prototype.normalize = function (value) {
+            _super.prototype.normalize.call(this, value);
+
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            } else if (value.hasOwnProperty("val")) {
+                this.y = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.y = parseFloat(value.value);
+            }
+        };
+
         Point2D.prototype.map = function (value, map) {
             _super.prototype.map.call(this, value, map);
 
@@ -164,13 +175,7 @@ var dChart;
                 if (value.nodeName.match(/^x$/i)) {
                     _this.x = parseFloat(value.nodeValue);
                     return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^val$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^value$/i)) {
+                } else if (value.nodeName.match(/^y|val|value$/i)) {
                     _this.y = parseFloat(value.nodeValue);
                     return;
                 }
@@ -182,20 +187,43 @@ var dChart;
 
     var Point2DTime = (function (_super) {
         __extends(Point2DTime, _super);
-        function Point2DTime(x, t) {
+        function Point2DTime(t, y) {
             _super.call(this);
-            this.x = x;
             this.t = t;
+            this.y = y;
         }
+        Point2DTime.prototype.normalize = function (value) {
+            _super.prototype.normalize.call(this, value);
+
+            if (value.hasOwnProperty("x")) {
+                this.t = new Date(value.x);
+            } else if (value.hasOwnProperty("t")) {
+                this.t = new Date(value.t);
+            } else if (value.hasOwnProperty("time")) {
+                this.t = new Date(value.time);
+            } else if (value.hasOwnProperty("date")) {
+                this.t = new Date(value.date);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            } else if (value.hasOwnProperty("val")) {
+                this.y = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.y = parseFloat(value.value);
+            }
+        };
+
         Point2DTime.prototype.map = function (value, map) {
             _super.prototype.map.call(this, value, map);
 
-            if (value.hasOwnProperty(map.x)) {
-                this.x = parseFloat(value[map.x]);
-            }
-
             if (value.hasOwnProperty(map.t)) {
                 this.t = new Date(value[map.t]);
+            }
+
+            if (value.hasOwnProperty(map.y)) {
+                this.y = parseFloat(value[map.y]);
             }
         };
 
@@ -204,23 +232,11 @@ var dChart;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
+                if (value.nodeName.match(/^x|t|time|date$/i)) {
+                    _this.t = dChart.Utils.Elem.getDate(value);
                     return;
-                } else if (value.nodeName.match(/^y$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^val$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^value$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^t$/i)) {
-                    _this.t = new Date(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^time$/i)) {
-                    _this.t = new Date(value.nodeValue);
+                } else if (value.nodeName.match(/^y|val|value$/i)) {
+                    _this.y = dChart.Utils.Elem.getFloat(value);
                     return;
                 }
             });
@@ -237,6 +253,22 @@ var dChart;
             this.y = y;
             this.z = z;
         }
+        Point3D.prototype.normalize = function (value) {
+            _super.prototype.normalize.call(this, value);
+
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+
+            if (value.hasOwnProperty("z")) {
+                this.z = parseFloat(value.z);
+            }
+        };
+
         Point3D.prototype.map = function (value, map) {
             _super.prototype.map.call(this, value, map);
 
@@ -276,25 +308,47 @@ var dChart;
 
     var Point3DTime = (function (_super) {
         __extends(Point3DTime, _super);
-        function Point3DTime(x, y, t) {
+        function Point3DTime(t, y, z) {
             _super.call(this);
-            this.x = x;
-            this.y = y;
             this.t = t;
+            this.y = y;
+            this.z = z;
         }
+        Point3DTime.prototype.normalize = function (value) {
+            _super.prototype.normalize.call(this, value);
+
+            if (value.hasOwnProperty("x")) {
+                this.t = new Date(value.x);
+            } else if (value.hasOwnProperty("t")) {
+                this.t = new Date(value.t);
+            } else if (value.hasOwnProperty("time")) {
+                this.t = new Date(value.time);
+            } else if (value.hasOwnProperty("date")) {
+                this.t = new Date(value.date);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+
+            if (value.hasOwnProperty("z")) {
+                this.z = parseFloat(value.z);
+            }
+        };
+
         Point3DTime.prototype.map = function (value, map) {
             _super.prototype.map.call(this, value, map);
 
-            if (value.hasOwnProperty(map.x)) {
-                this.x = parseFloat(value[map.x]);
+            if (value.hasOwnProperty(map.t)) {
+                this.t = new Date(value[map.t]);
             }
 
             if (value.hasOwnProperty(map.y)) {
                 this.y = parseFloat(value[map.y]);
             }
 
-            if (value.hasOwnProperty(map.t)) {
-                this.t = new Date(value[map.t]);
+            if (value.hasOwnProperty(map.z)) {
+                this.z = parseFloat(value[map.z]);
             }
         };
 
@@ -303,14 +357,14 @@ var dChart;
             _super.prototype.parse.call(this, elem);
 
             _.map(elem.attributes, function (value) {
-                if (value.nodeName.match(/^x$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
+                if (value.nodeName.match(/^x|t|time|date$/i)) {
+                    _this.t = new Date(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^y$/i)) {
                     _this.y = parseFloat(value.nodeValue);
                     return;
-                } else if (value.nodeName.match(/^t$/i)) {
-                    _this.t = new Date(value.nodeValue);
+                } else if (value.nodeName.match(/^z$/i)) {
+                    _this.z = parseFloat(value.nodeValue);
                     return;
                 }
             });

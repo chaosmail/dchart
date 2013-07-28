@@ -21,8 +21,8 @@ module dChart {
 
     export interface IPoint2DTimeMap extends IPointMap {
 
-        x:string;
         t:string;
+        y:string;
     }
 
     export interface IPoint3DMap extends IPointMap {
@@ -34,9 +34,9 @@ module dChart {
 
     export interface IPoint3DTimeMap extends IPointMap {
 
-        x:string;
-        y:string;
         t:string;
+        y:string;
+        z:string;
     }
 
     export class Point {
@@ -165,15 +165,7 @@ module dChart {
                     this.x = Utils.Elem.getFloat(value);
                     return;
                 }
-                else if (value.nodeName.match(/^y$/i)) {
-                    this.x = Utils.Elem.getFloat(value);
-                    return;
-                }
-                else if (value.nodeName.match(/^val$/i)) {
-                    this.x = Utils.Elem.getFloat(value);
-                    return;
-                }
-                else if (value.nodeName.match(/^value$/i)) {
+                else if (value.nodeName.match(/^y|val|value$/i)) {
                     this.x = Utils.Elem.getFloat(value);
                     return;
                 }
@@ -185,6 +177,24 @@ module dChart {
 
         constructor(public x?:number, public y?:number) {
             super();
+        }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+            else if (value.hasOwnProperty("val")) {
+                this.y = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.y = parseFloat(value.value);
+            }
         }
 
         map(value:any, map:IPoint2DMap) {
@@ -208,15 +218,7 @@ module dChart {
                     this.x = parseFloat(value.nodeValue);
                     return;
                 }
-                else if (value.nodeName.match(/^y$/i)) {
-                    this.y = parseFloat(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^val$/i)) {
-                    this.y = parseFloat(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^value$/i)) {
+                else if (value.nodeName.match(/^y|val|value$/i)) {
                     this.y = parseFloat(value.nodeValue);
                     return;
                 }
@@ -226,19 +228,46 @@ module dChart {
 
     export class Point2DTime extends Point {
 
-        constructor(public x?:number, public t?:Date) {
+        constructor(public t?:Date, public y?:number) {
             super();
+        }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("x")) {
+                this.t = new Date(value.x);
+            }
+            else if (value.hasOwnProperty("t")) {
+                this.t = new Date(value.t);
+            }
+            else if (value.hasOwnProperty("time")) {
+                this.t = new Date(value.time);
+            }
+            else if (value.hasOwnProperty("date")) {
+                this.t = new Date(value.date);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+            else if (value.hasOwnProperty("val")) {
+                this.y = parseFloat(value.val);
+            }
+            if (value.hasOwnProperty("value")) {
+                this.y = parseFloat(value.value);
+            }
         }
 
         map(value:any, map:IPoint2DTimeMap) {
             super.map(value,map);
 
-            if (value.hasOwnProperty(map.x)) {
-                this.x = parseFloat(value[map.x]);
-            }
-
             if (value.hasOwnProperty(map.t)) {
                 this.t = new Date(value[map.t]);
+            }
+
+            if (value.hasOwnProperty(map.y)) {
+                this.y = parseFloat(value[map.y]);
             }
         }
 
@@ -247,28 +276,12 @@ module dChart {
 
             _.map(elem.attributes, (value) => {
 
-                if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                if (value.nodeName.match(/^x|t|time|date$/i)) {
+                    this.t = Utils.Elem.getDate(value);
                     return;
                 }
-                else if (value.nodeName.match(/^y$/i)) {
-                    this.t = new Date(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^val$/i)) {
-                    this.t = new Date(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^value$/i)) {
-                    this.t = new Date(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^t$/i)) {
-                    this.t = new Date(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^time$/i)) {
-                    this.t = new Date(value.nodeValue);
+                else if (value.nodeName.match(/^y|val|value$/i)) {
+                    this.y = Utils.Elem.getFloat(value);
                     return;
                 }
             });
@@ -279,6 +292,22 @@ module dChart {
 
         constructor(public x?:number, public y?:number, public z?:number) {
             super();
+        }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+
+            if (value.hasOwnProperty("z")) {
+                this.z = parseFloat(value.z);
+            }
         }
 
         map(value:any, map:IPoint3DMap) {
@@ -320,23 +349,48 @@ module dChart {
 
     export class Point3DTime extends Point {
 
-        constructor(public x?:number, public y?:number, public t?:Date) {
+        constructor(public t?:Date, public y?:number, public z?:number) {
             super();
+        }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("x")) {
+                this.t = new Date(value.x);
+            }
+            else if (value.hasOwnProperty("t")) {
+                this.t = new Date(value.t);
+            }
+            else if (value.hasOwnProperty("time")) {
+                this.t = new Date(value.time);
+            }
+            else if (value.hasOwnProperty("date")) {
+                this.t = new Date(value.date);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+
+            if (value.hasOwnProperty("z")) {
+                this.z = parseFloat(value.z);
+            }
         }
 
         map(value:any, map:IPoint3DTimeMap) {
             super.map(value,map);
 
-            if (value.hasOwnProperty(map.x)) {
-                this.x = parseFloat(value[map.x]);
+            if (value.hasOwnProperty(map.t)) {
+                this.t = new Date(value[map.t]);
             }
 
             if (value.hasOwnProperty(map.y)) {
                 this.y = parseFloat(value[map.y]);
             }
 
-            if (value.hasOwnProperty(map.t)) {
-                this.t = new Date(value[map.t]);
+            if (value.hasOwnProperty(map.z)) {
+                this.z = parseFloat(value[map.z]);
             }
         }
 
@@ -345,16 +399,16 @@ module dChart {
 
             _.map(elem.attributes, (value) => {
 
-                if (value.nodeName.match(/^x$/i)) {
-                    this.x = parseFloat(value.nodeValue);
+                if (value.nodeName.match(/^x|t|time|date$/i)) {
+                    this.t = new Date(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^y$/i)) {
                     this.y = parseFloat(value.nodeValue);
                     return;
                 }
-                else if (value.nodeName.match(/^t$/i)) {
-                    this.t = new Date(value.nodeValue);
+                else if (value.nodeName.match(/^z$/i)) {
+                    this.z = parseFloat(value.nodeValue);
                     return;
                 }
             });

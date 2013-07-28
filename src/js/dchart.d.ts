@@ -14,8 +14,8 @@ declare module dChart {
         y: string;
     }
     interface IPoint2DTimeMap extends IPointMap {
-        x: string;
         t: string;
+        y: string;
     }
     interface IPoint3DMap extends IPointMap {
         x: string;
@@ -23,9 +23,9 @@ declare module dChart {
         z: string;
     }
     interface IPoint3DTimeMap extends IPointMap {
-        x: string;
-        y: string;
         t: string;
+        y: string;
+        z: string;
     }
     class Point {
         public lineStyle: dChart.Utils.LineStyle;
@@ -45,13 +45,15 @@ declare module dChart {
         public x: number;
         public y: number;
         constructor(x?: number, y?: number);
+        public normalize(value: any): void;
         public map(value: any, map: IPoint2DMap): void;
         public parse(elem: Element): void;
     }
     class Point2DTime extends Point {
-        public x: number;
         public t: Date;
-        constructor(x?: number, t?: Date);
+        public y: number;
+        constructor(t?: Date, y?: number);
+        public normalize(value: any): void;
         public map(value: any, map: IPoint2DTimeMap): void;
         public parse(elem: Element): void;
     }
@@ -60,14 +62,16 @@ declare module dChart {
         public y: number;
         public z: number;
         constructor(x?: number, y?: number, z?: number);
+        public normalize(value: any): void;
         public map(value: any, map: IPoint3DMap): void;
         public parse(elem: Element): void;
     }
     class Point3DTime extends Point {
-        public x: number;
-        public y: number;
         public t: Date;
-        constructor(x?: number, y?: number, t?: Date);
+        public y: number;
+        public z: number;
+        constructor(t?: Date, y?: number, z?: number);
+        public normalize(value: any): void;
         public map(value: any, map: IPoint3DTimeMap): void;
         public parse(elem: Element): void;
     }
