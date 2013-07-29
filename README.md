@@ -10,10 +10,9 @@ It also can be used with jQuery (see ...) or AngularJS ([see this Repo](https://
 Example-Usage
 -------------
 ```javascript
-var chart = dChart.Chart;
 
-var lineChart1 = new chart.LineChart({
-    elem: document.getElementById(lineChart1),
+var lineChart1 = new dChart.LineChart({
+    elem: 'lineChart1',
     width: 400,
     height: 400,
     label: "My awesome Chart",
@@ -43,7 +42,12 @@ var lineChart1 = new chart.LineChart({
         {
             label: "Dataset 2: Function",
             stroke: "#ff0000",
-            fn: Math.cos
+            dataFn: {
+                fn: Math.cos,
+                min: 0,
+                max: 5,
+                step: 1
+            }
         }
     ]
 });
