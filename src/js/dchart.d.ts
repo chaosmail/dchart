@@ -153,6 +153,8 @@ declare module dChart {
     interface IAxis {
         label: string;
         labelAlign: string;
+        labelOffset: number;
+        grid: boolean;
         scale: string;
         autorange: boolean;
         ticks: number;
@@ -168,12 +170,13 @@ declare module dChart {
         public svg: D3.Selection;
         public svgLabel: D3.Selection;
         public label: string;
+        public labelOffset: number;
         public range: number[];
         public domain: number[];
         public autorange: boolean;
         public scale: string;
-        public length: dChart.Utils.Size;
-        public height: dChart.Utils.Size;
+        public length: number;
+        public height: number;
         public orientation: string;
         public align: string;
         public labelAlign: string;
@@ -326,14 +329,14 @@ declare module dChart {
         public descriptionContainer: D3.Selection;
         public elem: Element;
         public elemId: string;
-        public marginLeft: dChart.Utils.Size;
-        public marginRight: dChart.Utils.Size;
-        public marginTop: dChart.Utils.Size;
-        public marginBottom: dChart.Utils.Size;
-        public width: dChart.Utils.Size;
-        public height: dChart.Utils.Size;
-        public nettoWidth: dChart.Utils.Size;
-        public nettoHeight: dChart.Utils.Size;
+        public marginLeft: number;
+        public marginRight: number;
+        public marginTop: number;
+        public marginBottom: number;
+        public width: number;
+        public height: number;
+        public nettoWidth: number;
+        public nettoHeight: number;
         public label: string;
         public description: string;
         constructor(config?: IChart);
@@ -357,7 +360,7 @@ declare module dChart {
     }
     class Chart3D extends Chart {
         public dataSets: dChart.DataSet3D[];
-        public depth: dChart.Utils.Size;
+        public depth: number;
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
         public zAxis: dChart.Axis;

@@ -8,6 +8,8 @@ module dChart {
 
         label:string;
         labelAlign:string;
+        labelOffset:number;
+        grid:bool;
         scale:string;
         autorange:bool;
         ticks:number;
@@ -29,6 +31,8 @@ module dChart {
 
         label:string;
 
+        labelOffset:number = 34;
+
         range:number[] = [0, 1];
 
         domain:number[] = [0, 1];
@@ -37,9 +41,9 @@ module dChart {
 
         scale:string = "linear";
 
-        length:Utils.Size = new Utils.Size(1);
+        length:number = 1;
 
-        height:Utils.Size = new Utils.Size(1);
+        height:number = 1;
 
         /**
          * Axis Orientation
@@ -87,7 +91,7 @@ module dChart {
             }
 
             if (length) {
-                this.length = new Utils.Size(length);
+                this.length = length;
             }
         }
 
@@ -246,10 +250,10 @@ module dChart {
             this.clear();
 
             this.svg = container.append("g")
-                        .attr("class","dchart-axis, dchart-axis-" + this.orientation);
+                        .attr("class","dchart-axis dchart-axis-" + this.orientation);
 
             this.svgLabel = container.append("g")
-                        .attr("class","dchart-axis-label, dchart-axis-" + this.orientation + "-label")
+                        .attr("class","dchart-axis-label dchart-axis-" + this.orientation + "-label")
                         .append("text");
 
             this.redraw(min, max);
@@ -263,38 +267,38 @@ module dChart {
 
             if (this.orientation === "x") {
 
-                var pos = this.align === "middle" ? this.height.value * 0.5
+                var pos = this.align === "middle" ? this.height * 0.5
                     : this.align === "start" ? 0
-                    : this.height.value;
+                    : this.height;
 
-                var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5
+                var labelPos = this.labelAlign === "middle" ? this.length * 0.5
                     : this.labelAlign === "start" ? 0
-                    : this.length.value;
+                    : this.length;
 
                 this.svg.attr("transform", "translate(0," + pos + ")");
 
                 this.svgLabel.attr("x", labelPos)
-                             .attr("y", this.length.value);
+                             .attr("y", this.length + this.labelOffset);
 
-                this.setRange([0,this.length.value]);
+                this.setRange([0,this.length]);
             }
             else if (this.orientation === "y") {
 
-                var pos = this.align === "middle" ? this.height.value * 0.5
+                var pos = this.align === "middle" ? this.height * 0.5
                     : this.align === "start" ? 0
-                    : this.height.value;
+                    : this.height;
 
-                var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5
+                var labelPos = this.labelAlign === "middle" ? this.length * 0.5
                     : this.labelAlign === "end" ? 0
-                    : this.length.value;
+                    : this.length;
 
                 this.svg.attr("transform", "translate(" + pos + ",0)");
 
-                this.svgLabel.attr("x", 0)
-                             .attr("y", -labelPos)
+                this.svgLabel.attr("x", -labelPos)
+                             .attr("y", -this.labelOffset)
                              .attr("transform", "rotate(-90)");
 
-                this.setRange([this.length.value,0]);
+                this.setRange([this.length,0]);
             }
 
             this.svg.call(this.getAxis());
@@ -318,6 +322,11 @@ module dChart {
             if (value.hasOwnProperty("labelAlign")){
 
                 this.setLabelAlign(value.labelAlign);
+            }
+
+            if (value.hasOwnProperty("labelOffset")){
+
+                this.labelOffset = parseInt(value.labelOffset, 10);
             }
 
             if (value.hasOwnProperty("autorange")){

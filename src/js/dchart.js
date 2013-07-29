@@ -498,12 +498,13 @@ var dChart;
 (function (dChart) {
     var Axis = (function () {
         function Axis(orientation, length) {
+            this.labelOffset = 34;
             this.range = [0, 1];
             this.domain = [0, 1];
             this.autorange = true;
             this.scale = "linear";
-            this.length = new dChart.Utils.Size(1);
-            this.height = new dChart.Utils.Size(1);
+            this.length = 1;
+            this.height = 1;
             this.orientation = "x";
             this.align = "start";
             this.labelAlign = "end";
@@ -520,7 +521,7 @@ var dChart;
             }
 
             if (length) {
-                this.length = new dChart.Utils.Size(length);
+                this.length = length;
             }
         }
         Axis.prototype.addScaleFn = function (fn, args) {
@@ -591,9 +592,9 @@ var dChart;
         Axis.prototype.draw = function (container, min, max) {
             this.clear();
 
-            this.svg = container.append("g").attr("class", "dchart-axis, dchart-axis-" + this.orientation);
+            this.svg = container.append("g").attr("class", "dchart-axis dchart-axis-" + this.orientation);
 
-            this.svgLabel = container.append("g").attr("class", "dchart-axis-label, dchart-axis-" + this.orientation + "-label").append("text");
+            this.svgLabel = container.append("g").attr("class", "dchart-axis-label dchart-axis-" + this.orientation + "-label").append("text");
 
             this.redraw(min, max);
         };
@@ -606,25 +607,25 @@ var dChart;
             }
 
             if (this.orientation === "x") {
-                var pos = this.align === "middle" ? this.height.value * 0.5 : this.align === "start" ? 0 : this.height.value;
+                var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
 
-                var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5 : this.labelAlign === "start" ? 0 : this.length.value;
+                var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
 
                 this.svg.attr("transform", "translate(0," + pos + ")");
 
-                this.svgLabel.attr("x", labelPos).attr("y", this.length.value);
+                this.svgLabel.attr("x", labelPos).attr("y", this.length + this.labelOffset);
 
-                this.setRange([0, this.length.value]);
+                this.setRange([0, this.length]);
             } else if (this.orientation === "y") {
-                var pos = this.align === "middle" ? this.height.value * 0.5 : this.align === "start" ? 0 : this.height.value;
+                var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
 
-                var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5 : this.labelAlign === "end" ? 0 : this.length.value;
+                var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "end" ? 0 : this.length;
 
                 this.svg.attr("transform", "translate(" + pos + ",0)");
 
-                this.svgLabel.attr("x", 0).attr("y", -labelPos).attr("transform", "rotate(-90)");
+                this.svgLabel.attr("x", -labelPos).attr("y", -this.labelOffset).attr("transform", "rotate(-90)");
 
-                this.setRange([this.length.value, 0]);
+                this.setRange([this.length, 0]);
             }
 
             this.svg.call(this.getAxis());
@@ -643,6 +644,10 @@ var dChart;
 
             if (value.hasOwnProperty("labelAlign")) {
                 this.setLabelAlign(value.labelAlign);
+            }
+
+            if (value.hasOwnProperty("labelOffset")) {
+                this.labelOffset = parseInt(value.labelOffset, 10);
             }
 
             if (value.hasOwnProperty("autorange")) {
@@ -895,14 +900,14 @@ var dChart;
 (function (dChart) {
     var Chart = (function () {
         function Chart(config) {
-            this.marginLeft = new dChart.Utils.Size(10);
-            this.marginRight = new dChart.Utils.Size(10);
-            this.marginTop = new dChart.Utils.Size(10);
-            this.marginBottom = new dChart.Utils.Size(10);
-            this.width = new dChart.Utils.Size(400);
-            this.height = new dChart.Utils.Size(400);
-            this.nettoWidth = new dChart.Utils.Size(380);
-            this.nettoHeight = new dChart.Utils.Size(380);
+            this.marginLeft = 50;
+            this.marginRight = 10;
+            this.marginTop = 10;
+            this.marginBottom = 50;
+            this.width = 400;
+            this.height = 400;
+            this.nettoWidth = 340;
+            this.nettoHeight = 340;
             var css = '.dchart-axis path,' + '.dchart-axis line {' + '         fill: none;' + '         stroke: black;' + '         shape-rendering: crispEdges;' + '     }' + ' .dchart-axis text,' + ' .dchart-axis-label text {' + '         font-family: sans-serif;' + '         font-size: 11px;' + '     }';
 
             dChart.Utils.Doc.css(css);
@@ -914,9 +919,9 @@ var dChart;
         };
 
         Chart.prototype.redraw = function () {
-            this.svg.attr("width", this.width.value).attr("height", this.height.value);
+            this.svg.attr("width", this.width).attr("height", this.height);
 
-            this.container.attr("width", this.nettoWidth.value).attr("height", this.nettoHeight.value).attr("transform", "translate(" + this.marginLeft.value + ", " + this.marginTop.value + ")");
+            this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
 
             this.drawAxis();
             this.drawData();
@@ -961,27 +966,27 @@ var dChart;
             }
 
             if (value.hasOwnProperty("width")) {
-                this.width = new dChart.Utils.Size(parseFloat(value.width));
+                this.width = parseFloat(value.width);
             }
 
             if (value.hasOwnProperty("height")) {
-                this.height = new dChart.Utils.Size(parseFloat(value.height));
+                this.height = parseFloat(value.height);
             }
 
             if (value.hasOwnProperty("marginTop")) {
-                this.marginTop = new dChart.Utils.Size(parseFloat(value.marginTop));
+                this.marginTop = parseFloat(value.marginTop);
             }
 
             if (value.hasOwnProperty("marginLeft")) {
-                this.marginLeft = new dChart.Utils.Size(parseFloat(value.marginLeft));
+                this.marginLeft = parseFloat(value.marginLeft);
             }
 
             if (value.hasOwnProperty("marginBottom")) {
-                this.marginBottom = new dChart.Utils.Size(parseFloat(value.marginBottom));
+                this.marginBottom = parseFloat(value.marginBottom);
             }
 
             if (value.hasOwnProperty("marginRight")) {
-                this.marginRight = new dChart.Utils.Size(parseFloat(value.marginRight));
+                this.marginRight = parseFloat(value.marginRight);
             }
         };
         return Chart;
@@ -996,8 +1001,8 @@ var dChart;
             this.xAxis = new dChart.Axis("x");
             this.yAxis = new dChart.Axis("y");
 
-            this.nettoWidth = (new dChart.Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
-            this.nettoHeight = (new dChart.Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
             this.xAxis.length = this.nettoWidth;
             this.xAxis.height = this.nettoHeight;
@@ -1062,13 +1067,13 @@ var dChart;
         function Chart3D(config) {
             _super.call(this, config);
             this.dataSets = [];
-            this.depth = new dChart.Utils.Size(400);
+            this.depth = 400;
             this.xAxis = new dChart.Axis("x");
             this.yAxis = new dChart.Axis("y");
             this.zAxis = new dChart.Axis("z");
 
-            this.nettoWidth = new dChart.Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
-            this.nettoHeight = new dChart.Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
             this.xAxis.length = this.nettoWidth;
             this.xAxis.height = this.nettoHeight;

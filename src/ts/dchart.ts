@@ -60,15 +60,15 @@ module dChart {
         elem:Element;
         elemId:string;
 
-        marginLeft:Utils.Size = new Utils.Size(10);
-        marginRight:Utils.Size = new Utils.Size(10);
-        marginTop:Utils.Size = new Utils.Size(10);
-        marginBottom:Utils.Size = new Utils.Size(10);
+        marginLeft:number = 50;
+        marginRight:number = 10;
+        marginTop:number = 10;
+        marginBottom:number = 50;
 
-        width:Utils.Size = new Utils.Size(400);
-        height:Utils.Size = new Utils.Size(400);
-        nettoWidth:Utils.Size = new Utils.Size(380);
-        nettoHeight:Utils.Size = new Utils.Size(380);
+        width:number = 400;
+        height:number = 400;
+        nettoWidth:number = 340;
+        nettoHeight:number = 340;
 
         label:string;
         description:string;
@@ -99,12 +99,12 @@ module dChart {
 
         redraw() {
 
-            this.svg.attr("width", this.width.value)
-                    .attr("height", this.height.value);
+            this.svg.attr("width", this.width)
+                    .attr("height", this.height);
 
-            this.container.attr("width", this.nettoWidth.value)
-                          .attr("height", this.nettoHeight.value)
-                          .attr("transform","translate("+ this.marginLeft.value +", "+ this.marginTop.value +")");
+            this.container.attr("width", this.nettoWidth)
+                          .attr("height", this.nettoHeight)
+                          .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
 
             this.drawAxis();
             this.drawData();
@@ -160,27 +160,27 @@ module dChart {
             }
 
             if (value.hasOwnProperty("width")) {
-                this.width = new Utils.Size(parseFloat(value.width));
+                this.width = parseFloat(value.width);
             }
 
             if (value.hasOwnProperty("height")) {
-                this.height = new Utils.Size(parseFloat(value.height));
+                this.height = parseFloat(value.height);
             }
 
             if (value.hasOwnProperty("marginTop")) {
-                this.marginTop = new Utils.Size(parseFloat(value.marginTop));
+                this.marginTop = parseFloat(value.marginTop);
             }
 
             if (value.hasOwnProperty("marginLeft")) {
-                this.marginLeft = new Utils.Size(parseFloat(value.marginLeft));
+                this.marginLeft = parseFloat(value.marginLeft);
             }
 
             if (value.hasOwnProperty("marginBottom")) {
-                this.marginBottom = new Utils.Size(parseFloat(value.marginBottom));
+                this.marginBottom = parseFloat(value.marginBottom);
             }
 
             if (value.hasOwnProperty("marginRight")) {
-                this.marginRight = new Utils.Size(parseFloat(value.marginRight));
+                this.marginRight = parseFloat(value.marginRight);
             }
         }
     }
@@ -194,14 +194,13 @@ module dChart {
         constructor(config?:IChart2D) {
             super(config);
 
-            this.nettoWidth = (new Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
-            this.nettoHeight = (new Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
             this.xAxis.length = this.nettoWidth;
             this.xAxis.height = this.nettoHeight;
             this.yAxis.length = this.nettoHeight;
             this.yAxis.height = this.nettoWidth;
-
         }
 
         drawAxis() {
@@ -259,7 +258,7 @@ module dChart {
 
         public dataSets:DataSet3D[] = [];
 
-        depth:Utils.Size = new Utils.Size(400);
+        depth:number = 400;
 
         xAxis:Axis = new Axis("x");
         yAxis:Axis = new Axis("y");
@@ -268,8 +267,8 @@ module dChart {
         constructor(config?:IChart3D) {
             super(config);
 
-            this.nettoWidth = new Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
-            this.nettoHeight = new Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
             this.xAxis.length = this.nettoWidth;
             this.xAxis.height = this.nettoHeight;
