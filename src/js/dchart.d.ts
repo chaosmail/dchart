@@ -112,41 +112,19 @@ declare module dChart.Utils {
     }
     class Elem {
         static getFloat(value: Element): number;
-        static getSize(value: Element): Size;
-        static getColor(value: Element): Color;
+        static getColor(value: Element): string;
         static getDate(value: Element): Date;
     }
-    class Color {
-        public value: string;
-        constructor(value?: string);
-        public get(): string;
-        public RGB();
-        public HSL();
-        public HCL();
-        public LAB();
-    }
-    class Size {
-        public value: number;
-        constructor(value?: number);
-        public get(): string;
-        public sub(d: Size): Size;
-        public add(d: Size): Size;
-        public mul(d: Size): Size;
-        public div(d: Size): Size;
-    }
-    interface IStyle {
-        get();
-    }
-    class LineStyle implements IStyle {
-        public stroke: Color;
-        public strokeWidth: Size;
+    class LineStyle {
+        public stroke: string;
+        public strokeWidth: number;
         public strokeOpacity: number;
-        public get(): string;
+        public strokeLinecap: string;
+        public strokeDasharray: string;
     }
-    class AreaStyle implements IStyle {
-        public fill: Color;
+    class AreaStyle {
+        public fill: string;
         public fillOpacity: number;
-        public get(): string;
     }
 }
 declare module dChart {
@@ -239,6 +217,8 @@ declare module dChart {
         stroke: string;
         strokeWidth: number;
         strokeOpacity: number;
+        strokeLinecap: string;
+        strokeDasharray: string;
         fill: string;
         fillOpacity: number;
         interpolate: string;
@@ -268,7 +248,9 @@ declare module dChart {
         public interpolate: string;
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
+        public dotslineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
+        public dotsAreaStyle: dChart.Utils.AreaStyle;
         constructor();
         public recalculate(): void;
         public parse(elem: Element): void;

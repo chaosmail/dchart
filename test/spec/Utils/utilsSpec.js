@@ -22,16 +22,9 @@ describe('dChart.Utils.Elem', function(){
 
         it('should return float', function(){
 
+            assert.equal(0.2, dChart.Utils.Elem.getFloat(strokeWidthElement));
             assert.equal(0.8, dChart.Utils.Elem.getFloat(fillOpacityElement));
             assert.equal(0.95, dChart.Utils.Elem.getFloat(strokeOpacityElement));
-        })
-    })
-
-    describe('#getSize()', function(){
-
-        it('should return Size', function(){
-
-            assert.deepEqual(new dChart.Utils.Size(0.2), dChart.Utils.Elem.getSize(strokeWidthElement));
         })
     })
 
@@ -39,8 +32,8 @@ describe('dChart.Utils.Elem', function(){
 
         it('should return Color', function(){
 
-            assert.deepEqual(new dChart.Utils.Color('#ffff00'), dChart.Utils.Elem.getColor(strokeElement));
-            assert.deepEqual(new dChart.Utils.Color('#ff00ff'), dChart.Utils.Elem.getColor(fillElement));
+            assert.deepEqual('#ffff00', dChart.Utils.Elem.getColor(strokeElement));
+            assert.deepEqual('#ff00ff', dChart.Utils.Elem.getColor(fillElement));
         })
     })
 

@@ -13,11 +13,11 @@ var dChart;
         }
         Point.prototype.normalize = function (value) {
             if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = new dChart.Utils.Color(value.stroke);
+                this.lineStyle.stroke = value.stroke;
             }
 
             if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.strokeWidth));
+                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
             }
 
             if (value.hasOwnProperty("strokeOpacity")) {
@@ -25,7 +25,7 @@ var dChart;
             }
 
             if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = new dChart.Utils.Color(value.fill);
+                this.areaStyle.fill = value.fill;
             }
 
             if (value.hasOwnProperty("fillOpacity")) {
@@ -35,11 +35,11 @@ var dChart;
 
         Point.prototype.map = function (value, map) {
             if (value.hasOwnProperty(map.stroke)) {
-                this.lineStyle.stroke = new dChart.Utils.Color(value[map.stroke]);
+                this.lineStyle.stroke = value[map.stroke];
             }
 
             if (value.hasOwnProperty(map.strokeWidth)) {
-                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value[map.strokeWidth]));
+                this.lineStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
             }
 
             if (value.hasOwnProperty(map.strokeOpacity)) {
@@ -47,7 +47,7 @@ var dChart;
             }
 
             if (value.hasOwnProperty(map.fill)) {
-                this.areaStyle.fill = new dChart.Utils.Color(value[map.fill]);
+                this.areaStyle.fill = value[map.fill];
             }
 
             if (value.hasOwnProperty(map.fillOpacity)) {
@@ -62,7 +62,7 @@ var dChart;
                     _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = dChart.Utils.Elem.getSize(value);
+                    _this.lineStyle.strokeWidth = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
                     _this.lineStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
@@ -399,12 +399,8 @@ var dChart;
                 return parseFloat(value.nodeValue);
             };
 
-            Elem.getSize = function (value) {
-                return new Size(parseFloat(value.nodeValue));
-            };
-
             Elem.getColor = function (value) {
-                return new Color(value.nodeValue);
+                return value.nodeValue;
             };
 
             Elem.getDate = function (value) {
@@ -414,87 +410,23 @@ var dChart;
         })();
         Utils.Elem = Elem;
 
-        var Color = (function () {
-            function Color(value) {
-                if (typeof value === "undefined") { value = "#000000"; }
-                this.value = value;
-            }
-            Color.prototype.get = function () {
-                return this.value;
-            };
-
-            Color.prototype.RGB = function () {
-                return d3.rgb(this.value);
-            };
-
-            Color.prototype.HSL = function () {
-                return d3.hsl(this.value);
-            };
-
-            Color.prototype.HCL = function () {
-                return d3.hcl(this.value);
-            };
-
-            Color.prototype.LAB = function () {
-                return d3.lab(this.value);
-            };
-            return Color;
-        })();
-        Utils.Color = Color;
-
-        var Size = (function () {
-            function Size(value) {
-                if (typeof value === "undefined") { value = 1; }
-                this.value = value;
-            }
-            Size.prototype.get = function () {
-                return this.value.toString(10) + "px";
-            };
-
-            Size.prototype.sub = function (d) {
-                this.value -= d.value;
-                return this;
-            };
-
-            Size.prototype.add = function (d) {
-                this.value += d.value;
-                return this;
-            };
-
-            Size.prototype.mul = function (d) {
-                this.value *= d.value;
-                return this;
-            };
-
-            Size.prototype.div = function (d) {
-                this.value /= d.value;
-                return this;
-            };
-            return Size;
-        })();
-        Utils.Size = Size;
-
         var LineStyle = (function () {
             function LineStyle() {
-                this.stroke = new Color();
-                this.strokeWidth = new Size();
+                this.stroke = "red";
+                this.strokeWidth = 1;
                 this.strokeOpacity = 1;
+                this.strokeLinecap = "butt";
+                this.strokeDasharray = "0";
             }
-            LineStyle.prototype.get = function () {
-                return "";
-            };
             return LineStyle;
         })();
         Utils.LineStyle = LineStyle;
 
         var AreaStyle = (function () {
             function AreaStyle() {
-                this.fill = new Color();
+                this.fill = "blue";
                 this.fillOpacity = 1;
             }
-            AreaStyle.prototype.get = function () {
-                return "";
-            };
             return AreaStyle;
         })();
         Utils.AreaStyle = AreaStyle;
@@ -752,7 +684,9 @@ var dChart;
             this.interpolate = "linear";
             this.visible = true;
             this.lineStyle = new dChart.Utils.LineStyle();
+            this.dotslineStyle = new dChart.Utils.LineStyle();
             this.areaStyle = new dChart.Utils.AreaStyle();
+            this.dotsAreaStyle = new dChart.Utils.AreaStyle();
         }
         DataSet.prototype.recalculate = function () {
         };
@@ -767,16 +701,16 @@ var dChart;
                     _this.interpolate = value.nodeValue;
                     return;
                 } else if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = new dChart.Utils.Color(value.nodeValue);
+                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.nodeValue));
+                    _this.lineStyle.strokeWidth = parseFloat(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
                     _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
                     return;
                 } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = new dChart.Utils.Color(value.nodeValue);
+                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
                     return;
                 } else if (value.nodeName.match(/^fill-opacity$/i)) {
                     _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
@@ -791,11 +725,11 @@ var dChart;
             }
 
             if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = new dChart.Utils.Color(value.stroke);
+                this.lineStyle.stroke = value.stroke;
             }
 
             if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = new dChart.Utils.Size(parseFloat(value.strokeWidth));
+                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
             }
 
             if (value.hasOwnProperty("strokeOpacity")) {
@@ -803,7 +737,7 @@ var dChart;
             }
 
             if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = new dChart.Utils.Color(value.fill);
+                this.areaStyle.fill = value.fill;
             }
 
             if (value.hasOwnProperty("fillOpacity")) {
@@ -1242,7 +1176,7 @@ var dChart;
                         return yScale(d.y);
                     });
 
-                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke.get()).style("fill", "none").style("stroke-width", dataSet.lineStyle.strokeWidth.value).style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke).style("fill", "none").style("stroke-width", dataSet.lineStyle.strokeWidth).style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
                 }
 
                 if (dataSet.showDots) {
@@ -1252,7 +1186,7 @@ var dChart;
 
                     group.exit().remove();
 
-                    group.enter().append("circle").style("stroke", dataSet.lineStyle.stroke.get()).style("fill", dataSet.areaStyle.fill.get()).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("fill-opacity", dataSet.areaStyle.fillOpacity).style("stroke-width", dataSet.lineStyle.strokeWidth.value).attr("cx", function (d) {
+                    group.enter().append("circle").style("stroke", dataSet.lineStyle.stroke).style("fill", dataSet.areaStyle.fill).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("fill-opacity", dataSet.areaStyle.fillOpacity).style("stroke-width", dataSet.lineStyle.strokeWidth).attr("cx", function (d) {
                         return xScale(d.x);
                     }).attr("cy", function (d) {
                         return yScale(d.y);

@@ -100,11 +100,11 @@ module dChart {
         normalize(value:any) {
 
             if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = new Utils.Color(value.stroke);
+                this.lineStyle.stroke = value.stroke;
             }
 
             if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.strokeWidth));
+                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
             }
 
             if (value.hasOwnProperty("strokeOpacity")) {
@@ -112,7 +112,7 @@ module dChart {
             }
 
             if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = new Utils.Color(value.fill);
+                this.areaStyle.fill = value.fill;
             }
 
             if (value.hasOwnProperty("fillOpacity")) {
@@ -123,11 +123,11 @@ module dChart {
         map(value:any, map:IPointMap) {
 
             if (value.hasOwnProperty(map.stroke)) {
-                this.lineStyle.stroke = new Utils.Color(value[map.stroke]);
+                this.lineStyle.stroke = value[map.stroke];
             }
 
             if (value.hasOwnProperty(map.strokeWidth)) {
-                this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value[map.strokeWidth]));
+                this.lineStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
             }
 
             if (value.hasOwnProperty(map.strokeOpacity)) {
@@ -135,7 +135,7 @@ module dChart {
             }
 
             if (value.hasOwnProperty(map.fill)) {
-                this.areaStyle.fill = new Utils.Color(value[map.fill]);
+                this.areaStyle.fill = value[map.fill];
             }
 
             if (value.hasOwnProperty(map.fillOpacity)) {
@@ -152,7 +152,7 @@ module dChart {
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = Utils.Elem.getSize(value);
+                    this.lineStyle.strokeWidth = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {

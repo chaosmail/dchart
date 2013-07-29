@@ -28,12 +28,8 @@ module dChart.Utils {
             return parseFloat(value.nodeValue);
         }
 
-        static getSize(value:Element) {
-            return new Size(parseFloat(value.nodeValue));
-        }
-
         static  getColor(value:Element) {
-            return new Color(value.nodeValue);
+            return value.nodeValue;
         }
 
         static  getDate(value:Element) {
@@ -41,87 +37,22 @@ module dChart.Utils {
         }
     }
 
-    export class Color {
+    /**
+     * Styles for strokes
+     * @see http://www.w3schools.com/svg/svg_stroking.asp
+     */
+    export class LineStyle {
 
-        constructor(public value:string = "#000000") {
-
-        }
-
-        get() {
-            return this.value;
-        }
-
-        RGB() {
-            return d3.rgb(this.value);
-        }
-
-        HSL() {
-            return d3.hsl(this.value);
-        }
-
-        HCL() {
-            return d3.hcl(this.value);
-        }
-
-        LAB() {
-            return d3.lab(this.value);
-        }
+        stroke:string = "red";
+        strokeWidth:number = 1;
+        strokeOpacity:number = 1;
+        strokeLinecap:string = "butt";
+        strokeDasharray:string = "0";
     }
 
-    export class Size {
+    export class AreaStyle {
 
-        constructor(public value:number = 1) {
-
-        }
-
-        get() {
-            return this.value.toString(10) + "px";
-        }
-
-        sub(d:Size) {
-            this.value -= d.value;
-            return this;
-        }
-
-        add(d:Size) {
-            this.value += d.value;
-            return this;
-        }
-
-        mul(d:Size) {
-            this.value *= d.value;
-            return this;
-        }
-
-        div(d:Size) {
-            this.value /= d.value;
-            return this;
-        }
-    }
-
-    export interface IStyle {
-
-        get();
-    }
-
-    export class LineStyle implements IStyle {
-
-        stroke: Color = new Color();
-        strokeWidth: Size = new Size();
-        strokeOpacity: number = 1;
-
-        get() {
-            return "";
-        }
-    }
-
-    export class AreaStyle implements IStyle {
-
-        fill: Color = new Color();
-        fillOpacity: number = 1;
-
-        get() {
-            return "";
-        }
+        fill:string = "blue";
+        fillOpacity:number = 1;
     }
 }

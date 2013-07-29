@@ -426,9 +426,9 @@ module dChart {
                         .y(function(d:Point2D) { return yScale(d.y); });
 
                     this.svgLine[key].attr("d", lineFn[key](dataSet.data))
-                        .style("stroke", dataSet.lineStyle.stroke.get())
+                        .style("stroke", dataSet.lineStyle.stroke)
                         .style("fill", "none")
-                        .style("stroke-width", dataSet.lineStyle.strokeWidth.value)
+                        .style("stroke-width", dataSet.lineStyle.strokeWidth)
                         .style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
 
                 }
@@ -443,11 +443,11 @@ module dChart {
 
                     group.enter()
                         .append("circle")
-                        .style("stroke", dataSet.lineStyle.stroke.get())
-                        .style("fill", dataSet.areaStyle.fill.get())
+                        .style("stroke", dataSet.lineStyle.stroke)
+                        .style("fill", dataSet.areaStyle.fill)
                         .style("stroke-opacity", dataSet.lineStyle.strokeOpacity)
                         .style("fill-opacity", dataSet.areaStyle.fillOpacity)
-                        .style("stroke-width", dataSet.lineStyle.strokeWidth.value)
+                        .style("stroke-width", dataSet.lineStyle.strokeWidth)
                         .attr("cx", (d:Point2D) => xScale(d.x))
                         .attr("cy", (d:Point2D) => yScale(d.y))
                         .attr("r", (d:Point2D) => dataSet.dotsRadius);

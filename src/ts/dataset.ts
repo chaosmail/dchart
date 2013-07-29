@@ -16,6 +16,8 @@ module dChart {
         stroke:string;
         strokeWidth:number;
         strokeOpacity:number;
+        strokeLinecap:string;
+        strokeDasharray:string;
         fill:string;
         fillOpacity:number;
         interpolate:string;
@@ -90,11 +92,13 @@ module dChart {
          * Line Element, that stores all Attribute Styles
          */
         lineStyle:Utils.LineStyle = new Utils.LineStyle();
+        dotslineStyle:Utils.LineStyle = new Utils.LineStyle();
 
         /**
          * Area Element, that stores all Attribute Styles
          */
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
+        dotsAreaStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
         /**
          * Constructor
@@ -128,11 +132,11 @@ module dChart {
                     return;
                 }
                 else if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = new Utils.Color(value.nodeValue);
+                    this.lineStyle.stroke = Utils.Elem.getColor(value);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.nodeValue));
+                    this.lineStyle.strokeWidth = parseFloat(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {
@@ -140,7 +144,7 @@ module dChart {
                     return;
                 }
                 else if (value.nodeName.match(/^fill$/i)) {
-                    this.areaStyle.fill = new Utils.Color(value.nodeValue);
+                    this.areaStyle.fill = Utils.Elem.getColor(value);
                     return;
                 }
                 else if (value.nodeName.match(/^fill-opacity$/i)) {
@@ -157,11 +161,11 @@ module dChart {
             }
 
             if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = new Utils.Color(value.stroke);
+                this.lineStyle.stroke = value.stroke;
             }
 
             if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.strokeWidth));
+                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
             }
 
             if (value.hasOwnProperty("strokeOpacity")) {
@@ -169,7 +173,7 @@ module dChart {
             }
 
             if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = new Utils.Color(value.fill);
+                this.areaStyle.fill = value.fill;
             }
 
             if (value.hasOwnProperty("fillOpacity")) {

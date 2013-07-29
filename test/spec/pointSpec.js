@@ -25,8 +25,8 @@ describe('dChart.Point', function(){
             p.parse(element);
 
             var line = new dChart.Utils.LineStyle();
-            line.stroke = new dChart.Utils.Color('#ffff00');
-            line.strokeWidth = new dChart.Utils.Size(0.2);
+            line.stroke = '#ffff00';
+            line.strokeWidth = 0.2;
             line.strokeOpacity = 0.95;
 
             assert.deepEqual(line, p.lineStyle);
@@ -37,7 +37,7 @@ describe('dChart.Point', function(){
             p.parse(element);
 
             var area = new dChart.Utils.AreaStyle();
-            area.fill = new dChart.Utils.Color('#ff00ff');
+            area.fill = '#ff00ff';
             area.fillOpacity = 0.8;
 
             assert.deepEqual(area, p.areaStyle);
@@ -53,8 +53,8 @@ describe('dChart.Point', function(){
             p.map(mapElement, customMap);
 
             var line = new dChart.Utils.LineStyle();
-            line.stroke = new dChart.Utils.Color('#ffff00');
-            line.strokeWidth = new dChart.Utils.Size(0.2);
+            line.stroke = '#ffff00';
+            line.strokeWidth = 0.2;
             line.strokeOpacity = 0.95;
 
             assert.deepEqual(line, p.lineStyle);
@@ -65,7 +65,7 @@ describe('dChart.Point', function(){
             p.map(mapElement, customMap);
 
             var area = new dChart.Utils.AreaStyle();
-            area.fill = new dChart.Utils.Color('#ff00ff');
+            area.fill = '#ff00ff';
             area.fillOpacity = 0.8;
 
             assert.deepEqual(area, p.areaStyle);
@@ -81,8 +81,8 @@ describe('dChart.Point', function(){
             p.normalize(normalizeElement);
 
             var line = new dChart.Utils.LineStyle();
-            line.stroke = new dChart.Utils.Color('#ffff00');
-            line.strokeWidth = new dChart.Utils.Size(0.2);
+            line.stroke = '#ffff00';
+            line.strokeWidth = 0.2;
             line.strokeOpacity = 0.95;
 
             assert.deepEqual(line, p.lineStyle);
@@ -93,7 +93,7 @@ describe('dChart.Point', function(){
             p.normalize(normalizeElement);
 
             var area = new dChart.Utils.AreaStyle();
-            area.fill = new dChart.Utils.Color('#ff00ff');
+            area.fill = '#ff00ff';
             area.fillOpacity = 0.8;
 
             assert.deepEqual(area, p.areaStyle);
