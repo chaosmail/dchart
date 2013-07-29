@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Mon Jul 29 2013 17:49:47
+/** dchart - v0.0.4 - Mon Jul 29 2013 23:14:20
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -420,6 +420,7 @@ var dChart;
 
         var Color = (function () {
             function Color(value) {
+                if (typeof value === "undefined") { value = "#000000"; }
                 this.value = value;
             }
             Color.prototype.get = function () {
@@ -447,6 +448,7 @@ var dChart;
 
         var Size = (function () {
             function Size(value) {
+                if (typeof value === "undefined") { value = 1; }
                 this.value = value;
             }
             Size.prototype.get = function () {
@@ -478,6 +480,9 @@ var dChart;
 
         var LineStyle = (function () {
             function LineStyle() {
+                this.stroke = new Color();
+                this.strokeWidth = new Size();
+                this.strokeOpacity = 1;
             }
             LineStyle.prototype.get = function () {
                 return "";
@@ -488,6 +493,8 @@ var dChart;
 
         var AreaStyle = (function () {
             function AreaStyle() {
+                this.fill = new Color();
+                this.fillOpacity = 1;
             }
             AreaStyle.prototype.get = function () {
                 return "";
@@ -842,7 +849,9 @@ var dChart;
             var _this = this;
             _super.prototype.normalize.call(this, value);
 
-            if (value.hasOwnProperty("data")) {
+            if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
+                this.data = [];
+
                 _.map(value.data, function (config) {
                     var p = new dChart.Point2D();
                     p.normalize(config);
@@ -885,6 +894,8 @@ var dChart;
             _super.prototype.normalize.call(this, value);
 
             if (value.hasOwnProperty("data")) {
+                this.data = [];
+
                 _.map(value.data, function (config) {
                     var p = new dChart.Point3D();
                     p.normalize(config);
@@ -927,8 +938,8 @@ var dChart;
 
             this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
 
-            this.drawAxis();
-            this.drawData();
+            this.redrawAxis();
+            this.redrawData();
         };
 
         Chart.prototype.draw = function () {
@@ -946,13 +957,24 @@ var dChart;
 
             this.descriptionContainer = this.container.append("g").attr("class", "dchart-container-description");
 
-            this.redraw();
+            this.svg.attr("width", this.width).attr("height", this.height);
+
+            this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
+
+            this.drawAxis();
+            this.drawData();
         };
 
         Chart.prototype.drawAxis = function () {
         };
 
+        Chart.prototype.redrawAxis = function () {
+        };
+
         Chart.prototype.drawData = function () {
+        };
+
+        Chart.prototype.redrawData = function () {
         };
 
         Chart.prototype.normalize = function (value) {
@@ -1021,7 +1043,18 @@ var dChart;
             this.yAxis.draw(this.axisContainer, min[1], max[1]);
         };
 
+        Chart2D.prototype.redrawAxis = function () {
+            var min = [this.min("x"), this.min("y")];
+            var max = [this.max("x"), this.max("y")];
+
+            this.xAxis.redraw(min[0], max[0]);
+            this.yAxis.redraw(min[1], max[1]);
+        };
+
         Chart2D.prototype.drawData = function () {
+        };
+
+        Chart2D.prototype.redrawData = function () {
         };
 
         Chart2D.prototype.min = function (axis) {
@@ -1046,7 +1079,9 @@ var dChart;
                 this.dataSets = [];
 
                 _.map(value.dataSets, function (config) {
-                    _this.dataSets.push(new dChart.DataSet2D(config));
+                    var dataSet = new dChart.DataSet2D();
+                    dataSet.normalize(config);
+                    _this.dataSets.push(dataSet);
                 });
             }
 
@@ -1095,7 +1130,19 @@ var dChart;
             this.zAxis.draw(this.axisContainer, min[2], max[2]);
         };
 
+        Chart3D.prototype.redrawAxis = function () {
+            var min = [this.min("x"), this.min("y"), this.min("z")];
+            var max = [this.max("x"), this.max("y"), this.min("z")];
+
+            this.xAxis.redraw(min[0], max[0]);
+            this.yAxis.redraw(min[1], max[1]);
+            this.zAxis.redraw(min[2], max[2]);
+        };
+
         Chart3D.prototype.drawData = function () {
+        };
+
+        Chart3D.prototype.redrawData = function () {
         };
 
         Chart3D.prototype.min = function (axis) {
@@ -1148,6 +1195,7 @@ var dChart;
         __extends(LineChart, _super);
         function LineChart(config) {
             _super.call(this, config);
+            this.svgLine = [];
 
             if (config) {
                 this.normalize(config);
@@ -1156,6 +1204,31 @@ var dChart;
 
             console.log(this);
         }
+        LineChart.prototype.drawData = function () {
+            var _this = this;
+            _.map(this.dataSets, function (dataSet, key) {
+                _this.svgLine[key] = _this.dataContainer.append("path").attr("class", "dchart-data-set dchart-data-set-" + key);
+            });
+
+            this.redrawData();
+        };
+
+        LineChart.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+            var lineFn = [];
+
+            _.map(this.dataSets, function (dataSet, key) {
+                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
+                    return xScale(d.x);
+                }).y(function (d) {
+                    return yScale(d.y);
+                });
+
+                _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke.get()).style("fill", "none").style("stroke-width", dataSet.lineStyle.strokeWidth.value).style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+            });
+        };
         return LineChart;
     })(Chart2D);
     dChart.LineChart = LineChart;

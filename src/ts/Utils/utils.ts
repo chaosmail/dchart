@@ -43,7 +43,7 @@ module dChart.Utils {
 
     export class Color {
 
-        constructor(public value:string) {
+        constructor(public value:string = "#000000") {
 
         }
 
@@ -70,7 +70,7 @@ module dChart.Utils {
 
     export class Size {
 
-        constructor(public value:number) {
+        constructor(public value:number = 1) {
 
         }
 
@@ -106,9 +106,9 @@ module dChart.Utils {
 
     export class LineStyle implements IStyle {
 
-        stroke: Color;
-        strokeWidth: Size;
-        strokeOpacity: number;
+        stroke: Color = new Color();
+        strokeWidth: Size = new Size();
+        strokeOpacity: number = 1;
 
         get() {
             return "";
@@ -117,8 +117,8 @@ module dChart.Utils {
 
     export class AreaStyle implements IStyle {
 
-        fill: Color;
-        fillOpacity: number;
+        fill: Color = new Color();
+        fillOpacity: number = 1;
 
         get() {
             return "";

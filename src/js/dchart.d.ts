@@ -118,7 +118,7 @@ declare module dChart.Utils {
     }
     class Color {
         public value: string;
-        constructor(value: string);
+        constructor(value?: string);
         public get(): string;
         public RGB();
         public HSL();
@@ -127,7 +127,7 @@ declare module dChart.Utils {
     }
     class Size {
         public value: number;
-        constructor(value: number);
+        constructor(value?: number);
         public get(): string;
         public sub(d: Size): Size;
         public add(d: Size): Size;
@@ -344,7 +344,9 @@ declare module dChart {
         public redraw(): void;
         public draw(): void;
         public drawAxis(): void;
+        public redrawAxis(): void;
         public drawData(): void;
+        public redrawData(): void;
         public normalize(value: any): void;
     }
     class Chart2D extends Chart {
@@ -353,7 +355,9 @@ declare module dChart {
         public yAxis: dChart.Axis;
         constructor(config?: IChart2D);
         public drawAxis(): void;
+        public redrawAxis(): void;
         public drawData(): void;
+        public redrawData(): void;
         public min(axis?: string): number;
         public max(axis?: string): number;
         public normalize(value: any): void;
@@ -366,12 +370,17 @@ declare module dChart {
         public zAxis: dChart.Axis;
         constructor(config?: IChart3D);
         public drawAxis(): void;
+        public redrawAxis(): void;
         public drawData(): void;
+        public redrawData(): void;
         public min(axis?: string): number;
         public max(axis?: string): number;
         public normalize(value: any): void;
     }
     class LineChart extends Chart2D {
+        public svgLine: D3.Selection[];
         constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
     }
 }

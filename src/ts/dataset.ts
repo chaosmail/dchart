@@ -46,10 +46,7 @@ module dChart {
 
     export class DataSet {
 
-        /**
-         * Array of Points
-         */
-        public data:Point[] = [];
+        data:Point[] = [];
 
         /**
          * DataSet label
@@ -136,7 +133,6 @@ module dChart {
                     this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
                     return;
                 }
-                // parse Data
             });
         }
 
@@ -194,7 +190,9 @@ module dChart {
         normalize(value:any) {
             super.normalize(value);
 
-            if (value.hasOwnProperty("data")) {
+            if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
+
+                this.data = [];
 
                 _.map(value.data, (config) => {
 
@@ -235,6 +233,8 @@ module dChart {
             super.normalize(value);
 
             if (value.hasOwnProperty("data")) {
+
+                this.data = [];
 
                 _.map(value.data, (config) => {
 

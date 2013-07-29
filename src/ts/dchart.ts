@@ -106,8 +106,8 @@ module dChart {
                           .attr("height", this.nettoHeight)
                           .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
 
-            this.drawAxis();
-            this.drawData();
+            this.redrawAxis();
+            this.redrawData();
         }
 
         draw() {
@@ -133,14 +133,30 @@ module dChart {
             this.descriptionContainer = this.container.append("g")
                 .attr("class","dchart-container-description");
 
-            this.redraw();
+            this.svg.attr("width", this.width)
+                .attr("height", this.height);
+
+            this.container.attr("width", this.nettoWidth)
+                .attr("height", this.nettoHeight)
+                .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
+
+            this.drawAxis();
+            this.drawData();
         }
 
         drawAxis() {
 
         }
 
+        redrawAxis() {
+
+        }
+
         drawData() {
+
+        }
+
+        redrawData() {
 
         }
 
@@ -212,7 +228,20 @@ module dChart {
             this.yAxis.draw(this.axisContainer, min[1], max[1]);
         }
 
+        redrawAxis() {
+
+            var min = [this.min("x"),this.min("y")];
+            var max = [this.max("x"),this.max("y")];
+
+            this.xAxis.redraw(min[0], max[0]);
+            this.yAxis.redraw(min[1], max[1]);
+        }
+
         drawData() {
+
+        }
+
+        redrawData() {
 
         }
 
@@ -233,7 +262,9 @@ module dChart {
 
                 _.map(value.dataSets, (config) => {
 
-                    this.dataSets.push(new DataSet2D(config));
+                    var dataSet = new DataSet2D();
+                    dataSet.normalize(config);
+                    this.dataSets.push(dataSet);
                 });
             }
 
@@ -287,7 +318,20 @@ module dChart {
             this.zAxis.draw(this.axisContainer, min[2], max[2]);
         }
 
+        redrawAxis() {
+            var min = [this.min("x"),this.min("y"),this.min("z")];
+            var max = [this.max("x"),this.max("y"),this.min("z")];
+
+            this.xAxis.redraw(min[0], max[0]);
+            this.yAxis.redraw(min[1], max[1]);
+            this.zAxis.redraw(min[2], max[2]);
+        }
+
         drawData() {
+
+        }
+
+        redrawData() {
 
         }
 
@@ -308,7 +352,9 @@ module dChart {
 
                 _.map(value.dataSets, (config) => {
 
-                    this.dataSets.push(new DataSet3D(config));
+                    var dataSet = new DataSet3D();
+                    dataSet.normalize(config);
+                    this.dataSets.push(dataSet);
                 });
             }
 
@@ -336,6 +382,8 @@ module dChart {
 
     export class LineChart extends Chart2D {
 
+        svgLine:D3.Selection[] = [];
+
         constructor(config?:IChart2D) {
             super(config);
 
@@ -345,6 +393,38 @@ module dChart {
             }
 
             console.log(this);
+        }
+
+        drawData() {
+
+            _.map(this.dataSets, (dataSet:DataSet2D,key:number) => {
+
+                this.svgLine[key] = this.dataContainer.append("path")
+                                                        .attr("class", "dchart-data-set dchart-data-set-" + key);
+            });
+
+            this.redrawData()
+        }
+
+        redrawData() {
+
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+            var lineFn = [];
+
+            _.map(this.dataSets, (dataSet:DataSet2D,key:number) => {
+
+                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate)
+                    .x(function(d:Point2D) { return xScale(d.x); })
+                    .y(function(d:Point2D) { return yScale(d.y); });
+
+                this.svgLine[key].attr("d", lineFn[key](dataSet.data))
+                    .style("stroke", dataSet.lineStyle.stroke.get())
+                    .style("fill", "none")
+                    .style("stroke-width", dataSet.lineStyle.strokeWidth.value)
+                    .style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+
+            });
         }
     }
 }
