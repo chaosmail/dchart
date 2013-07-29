@@ -70,6 +70,26 @@ var lineChart1 = new dChart.LineChart({
             ]
         },
         {
+            label: "Dataset 2: Points",
+            lineStyle: {
+                stroke: "green",
+                strokeWidth: 2
+            },
+            dotStyle: {
+                stroke: "none",
+                fill: "green"
+            },
+            dotRadius: 3,
+            data: [
+                {x:0,y:0.4},
+                {x:1,y:0.6},
+                {x:2,y:0.75},
+                {x:3,y:0.8},
+                {x:4,y:0.85},
+                {x:5,y:0.87}
+            ]
+        },
+        {
             label: "Dataset 3: Function",
             lineStyle: {
                 stroke: "red",
