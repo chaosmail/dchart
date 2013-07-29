@@ -25,6 +25,7 @@ module dChart {
     export class Axis {
 
         svg:D3.Selection;
+        svgLabel:D3.Selection;
 
         label:string;
 
@@ -38,6 +39,8 @@ module dChart {
 
         length:Utils.Size = new Utils.Size(1);
 
+        height:Utils.Size = new Utils.Size(1);
+
         /**
          * Axis Orientation
          * x,y or z
@@ -47,7 +50,7 @@ module dChart {
 
         /**
          * start        Show the Axis at the beginning (left, top) of the Charts
-         * center       Show the Axis in the center of the Charts
+         * middle       Show the Axis in the center of the Charts
          * end          Show the Axis at the end (bottom, right) of the Charts
          * @type {string}
          */
@@ -55,7 +58,7 @@ module dChart {
 
         /**
          * start        Show the Axis-Label at the beginning (left, top) of the Axis
-         * center       Show the Axis-Label in the center of the Axis
+         * middle       Show the Axis-Label in the center of the Axis
          * end          Show the Axis-Label at the end (bottom, right) of the Axis
          * @type {string}
          */
@@ -198,7 +201,7 @@ module dChart {
 
             this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start"
                 : (labelAlign.match(/^bottom|right|end$/i)) ? "end"
-                : "center";
+                : "middle";
 
             return this;
         }
@@ -222,27 +225,55 @@ module dChart {
             this.svg = container.append("g")
                         .attr("class","dchart-axis, dchart-axis-" + this.orientation);
 
+            this.svgLabel = container.append("g")
+                        .attr("class","dchart-axis-label, dchart-axis-" + this.orientation + "-label")
+                        .append("text");
+
             this.redraw(min, max);
         }
 
-        redraw(min:number, max:number) {
+        redraw(min:number = 0, max:number = 1) {
 
             if (this.autorange === true) {
                 this.range = [min, max];
             }
 
-            var pos = this.align === "center" ? this.length.value * 0.5
-                : this.align === "start" ? 0
-                : this.length.value;
+            if (this.orientation === "x") {
 
+                var pos = this.align === "middle" ? this.height.value * 0.5
+                    : this.align === "start" ? 0
+                    : this.height.value;
 
-            var labelOrient = this.align === "start" ? "top" : "bottom";
+                var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5
+                    : this.labelAlign === "start" ? 0
+                    : this.length.value;
 
-            var labelPos = this.labelAlign === "start" ? 0
-                : this.labelAlign === "center" ? this.length.value * 0.5
-                : this.length.value;
+                this.svg.attr("transform", "translate(0," + pos + ")");
 
-            this.svg.call(this.getAxis())
+                this.svgLabel.attr("x", labelPos)
+                             .attr("y", this.length.value - 34);
+            }
+            else if (this.orientation === "y") {
+
+                var pos = this.align === "middle" ? this.height.value * 0.5
+                    : this.align === "end" ? 0
+                    : this.height.value;
+
+                var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5
+                    : this.labelAlign === "end" ? 0
+                    : this.length.value;
+
+                this.svg.attr("transform", "translate(" + pos + ",0)");
+
+                this.svgLabel.attr("x", -34)
+                             .attr("y", -labelPos)
+                             .attr("transform", "rotate(-90)");
+            }
+
+            this.svg.call(this.getAxis());
+
+            this.svgLabel.text(this.label)
+                         .attr("text-anchor", this.labelAlign);
         }
 
         normalize(value:any) {
@@ -275,6 +306,7 @@ module dChart {
             if (value.hasOwnProperty("range")){
 
                 this.setRange(value.range);
+                this.autorange = false;
             }
 
             if (value.hasOwnProperty("domain")){

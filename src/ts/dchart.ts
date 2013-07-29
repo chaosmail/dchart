@@ -67,6 +67,8 @@ module dChart {
 
         width:Utils.Size = new Utils.Size(400);
         height:Utils.Size = new Utils.Size(400);
+        nettoWidth:Utils.Size = new Utils.Size(380);
+        nettoHeight:Utils.Size = new Utils.Size(380);
 
         label:string;
         description:string;
@@ -97,6 +99,13 @@ module dChart {
 
         redraw() {
 
+            this.svg.attr("width", this.width.value)
+                    .attr("height", this.height.value);
+
+            this.container.attr("width", this.nettoWidth.value)
+                          .attr("height", this.nettoHeight.value)
+                          .attr("transform","translate("+ this.marginLeft.value +", "+ this.marginTop.value +")");
+
             this.drawAxis();
             this.drawData();
         }
@@ -107,13 +116,10 @@ module dChart {
 
             this.svg = d3.select(this.elem)
                          .append("svg")
-                         .attr("width", this.width.value)
-                         .attr("height", this.height.value)
                          .attr("id", "dchart-" + this.elemId);
 
             this.container = this.svg.append("g")
-                         .attr("class","dchart-container")
-                         .attr("transform","translate("+ this.marginLeft.value +", "+ this.marginTop.value +")");
+                         .attr("class","dchart-container");
 
             this.axisContainer = this.container.append("g")
                 .attr("class","dchart-container-axis");
@@ -188,15 +194,17 @@ module dChart {
         constructor(config?:IChart2D) {
             super(config);
 
-            var width = (new Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
-            var height = (new Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
+            this.nettoWidth = (new Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
+            this.nettoHeight = (new Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
 
-            this.xAxis.length = width;
-            this.yAxis.length = height;
+            this.xAxis.length = this.nettoWidth;
+            this.xAxis.height = this.nettoHeight;
+            this.yAxis.length = this.nettoHeight;
+            this.yAxis.height = this.nettoWidth;
+
         }
 
         drawAxis() {
-            super.drawAxis();
 
             var min = [this.min("x"),this.min("y")];
             var max = [this.max("x"),this.max("y")];
@@ -206,7 +214,6 @@ module dChart {
         }
 
         drawData() {
-            super.drawData();
 
         }
 
@@ -261,17 +268,18 @@ module dChart {
         constructor(config?:IChart3D) {
             super(config);
 
-            var width = new Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
-            var height = new Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
+            this.nettoWidth = new Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
+            this.nettoHeight = new Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
 
-            this.xAxis.length = width;
-            this.yAxis.length = height;
+            this.xAxis.length = this.nettoWidth;
+            this.xAxis.height = this.nettoHeight;
+            this.yAxis.length = this.nettoHeight;
+            this.yAxis.height = this.nettoWidth;
             this.zAxis.length = this.depth;
+            this.zAxis.height = this.depth;
         }
 
         drawAxis() {
-            super.drawAxis();
-
             var min = [this.min("x"),this.min("y"),this.min("z")];
             var max = [this.max("x"),this.max("y"),this.min("z")];
 
@@ -281,7 +289,6 @@ module dChart {
         }
 
         drawData() {
-            super.drawData();
 
         }
 
