@@ -73,7 +73,7 @@ module dChart {
         label:string;
         description:string;
 
-        constructor(config?:IChart) {
+        constructor() {
 
             var css =  '.dchart-axis path,' +
                        '.dchart-axis line {' +
@@ -133,15 +133,11 @@ module dChart {
             this.descriptionContainer = this.container.append("g")
                 .attr("class","dchart-container-description");
 
-            this.svg.attr("width", this.width)
-                .attr("height", this.height);
-
-            this.container.attr("width", this.nettoWidth)
-                .attr("height", this.nettoHeight)
-                .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
 
             this.drawAxis();
             this.drawData();
+
+            this.redraw();
         }
 
         drawAxis() {
@@ -207,9 +203,12 @@ module dChart {
         xAxis:Axis = new Axis("x");
         yAxis:Axis = new Axis("y");
 
-        constructor(config?:IChart2D) {
-            super(config);
+        constructor() {
+            super();
 
+        }
+
+        redraw() {
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
             this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
@@ -217,6 +216,8 @@ module dChart {
             this.xAxis.height = this.nettoHeight;
             this.yAxis.length = this.nettoHeight;
             this.yAxis.height = this.nettoWidth;
+
+            super.redraw();
         }
 
         drawAxis() {
@@ -282,6 +283,8 @@ module dChart {
                     this.yAxis.normalize(axis.y)
                 }
             }
+
+
         }
     }
 
@@ -295,18 +298,9 @@ module dChart {
         yAxis:Axis = new Axis("y");
         zAxis:Axis = new Axis("z");
 
-        constructor(config?:IChart3D) {
-            super(config);
+        constructor() {
+            super();
 
-            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
-            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
-
-            this.xAxis.length = this.nettoWidth;
-            this.xAxis.height = this.nettoHeight;
-            this.yAxis.length = this.nettoHeight;
-            this.yAxis.height = this.nettoWidth;
-            this.zAxis.length = this.depth;
-            this.zAxis.height = this.depth;
         }
 
         drawAxis() {
@@ -377,6 +371,16 @@ module dChart {
                     this.zAxis.normalize(axis.z)
                 }
             }
+
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
+
+            this.xAxis.length = this.nettoWidth;
+            this.xAxis.height = this.nettoHeight;
+            this.yAxis.length = this.nettoHeight;
+            this.yAxis.height = this.nettoWidth;
+            this.zAxis.length = this.depth;
+            this.zAxis.height = this.depth;
         }
     }
 
@@ -386,7 +390,7 @@ module dChart {
         svgLine:D3.Selection[] = [];
 
         constructor(config?:IChart2D) {
-            super(config);
+            super();
 
             if (config) {
                 this.normalize(config);
@@ -407,8 +411,6 @@ module dChart {
                 this.svgLine[key] = this.svgLineContainer[key].append("path");
 
             });
-
-            this.redrawData()
         }
 
         redrawData() {

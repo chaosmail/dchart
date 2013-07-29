@@ -900,7 +900,7 @@ var dChart;
 var dChart;
 (function (dChart) {
     var Chart = (function () {
-        function Chart(config) {
+        function Chart() {
             this.marginLeft = 50;
             this.marginRight = 10;
             this.marginTop = 10;
@@ -943,12 +943,10 @@ var dChart;
 
             this.descriptionContainer = this.container.append("g").attr("class", "dchart-container-description");
 
-            this.svg.attr("width", this.width).attr("height", this.height);
-
-            this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
-
             this.drawAxis();
             this.drawData();
+
+            this.redraw();
         };
 
         Chart.prototype.drawAxis = function () {
@@ -1007,12 +1005,13 @@ var dChart;
 
     var Chart2D = (function (_super) {
         __extends(Chart2D, _super);
-        function Chart2D(config) {
-            _super.call(this, config);
+        function Chart2D() {
+            _super.call(this);
             this.dataSets = [];
             this.xAxis = new dChart.Axis("x");
             this.yAxis = new dChart.Axis("y");
-
+        }
+        Chart2D.prototype.redraw = function () {
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
             this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
@@ -1020,7 +1019,10 @@ var dChart;
             this.xAxis.height = this.nettoHeight;
             this.yAxis.length = this.nettoHeight;
             this.yAxis.height = this.nettoWidth;
-        }
+
+            _super.prototype.redraw.call(this);
+        };
+
         Chart2D.prototype.drawAxis = function () {
             var min = [this.min("x"), this.min("y")];
             var max = [this.max("x"), this.max("y")];
@@ -1089,23 +1091,13 @@ var dChart;
 
     var Chart3D = (function (_super) {
         __extends(Chart3D, _super);
-        function Chart3D(config) {
-            _super.call(this, config);
+        function Chart3D() {
+            _super.call(this);
             this.dataSets = [];
             this.depth = 400;
             this.xAxis = new dChart.Axis("x");
             this.yAxis = new dChart.Axis("y");
             this.zAxis = new dChart.Axis("z");
-
-            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
-            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
-
-            this.xAxis.length = this.nettoWidth;
-            this.xAxis.height = this.nettoHeight;
-            this.yAxis.length = this.nettoHeight;
-            this.yAxis.height = this.nettoWidth;
-            this.zAxis.length = this.depth;
-            this.zAxis.height = this.depth;
         }
         Chart3D.prototype.drawAxis = function () {
             var min = [this.min("x"), this.min("y"), this.min("z")];
@@ -1174,6 +1166,16 @@ var dChart;
                     this.zAxis.normalize(axis.z);
                 }
             }
+
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
+
+            this.xAxis.length = this.nettoWidth;
+            this.xAxis.height = this.nettoHeight;
+            this.yAxis.length = this.nettoHeight;
+            this.yAxis.height = this.nettoWidth;
+            this.zAxis.length = this.depth;
+            this.zAxis.height = this.depth;
         };
         return Chart3D;
     })(Chart);
@@ -1182,7 +1184,7 @@ var dChart;
     var LineChart = (function (_super) {
         __extends(LineChart, _super);
         function LineChart(config) {
-            _super.call(this, config);
+            _super.call(this);
             this.svgLineContainer = [];
             this.svgLine = [];
 
@@ -1200,8 +1202,6 @@ var dChart;
 
                 _this.svgLine[key] = _this.svgLineContainer[key].append("path");
             });
-
-            this.redrawData();
         };
 
         LineChart.prototype.redrawData = function () {

@@ -323,7 +323,7 @@ declare module dChart {
         public nettoHeight: number;
         public label: string;
         public description: string;
-        constructor(config?: IChart);
+        constructor();
         public clear(): void;
         public redraw(): void;
         public draw(): void;
@@ -337,7 +337,8 @@ declare module dChart {
         public dataSets: dChart.DataSet2D[];
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
-        constructor(config?: IChart2D);
+        constructor();
+        public redraw(): void;
         public drawAxis(): void;
         public redrawAxis(): void;
         public drawData(): void;
@@ -352,7 +353,7 @@ declare module dChart {
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
         public zAxis: dChart.Axis;
-        constructor(config?: IChart3D);
+        constructor();
         public drawAxis(): void;
         public redrawAxis(): void;
         public drawData(): void;
