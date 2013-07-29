@@ -165,6 +165,7 @@ declare module dChart {
         end: number;
     }
     class Axis {
+        public svg: D3.Selection;
         public label: string;
         public range: number[];
         public domain: number[];
@@ -189,7 +190,9 @@ declare module dChart {
         public setRange(range?: number[]): Axis;
         public setLabelAlign(labelAlign: string): Axis;
         public getAxis(): D3.Axis;
-        public draw(min: number, max: number): void;
+        public clear(): void;
+        public draw(container: D3.Selection, min: number, max: number): void;
+        public redraw(min: number, max: number): void;
         public normalize(value: any): void;
     }
 }
@@ -313,7 +316,13 @@ declare module dChart {
     }
     class Chart {
         public svg: D3.Selection;
+        public container: D3.Selection;
+        public axisContainer: D3.Selection;
+        public dataContainer: D3.Selection;
+        public labelContainer: D3.Selection;
+        public descriptionContainer: D3.Selection;
         public elem: Element;
+        public elemId: string;
         public marginLeft: dChart.Utils.Size;
         public marginRight: dChart.Utils.Size;
         public marginTop: dChart.Utils.Size;

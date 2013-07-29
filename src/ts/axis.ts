@@ -24,6 +24,8 @@ module dChart {
 
     export class Axis {
 
+        svg:D3.Selection;
+
         label:string;
 
         range:number[] = [0, 1];
@@ -203,36 +205,44 @@ module dChart {
 
         getAxis() {
 
-            var axis = d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
-
-            return axis;
+            return d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
         }
 
-        /**
-         * Utils Axis as SVG
-         * @param length {Utils.Size}
-         * @param min {number}
-         * @param max {number}
-         */
-         draw(min:number, max:number) {
+        clear() {
+
+            if (this.svg) {
+                this.svg.remove();
+            }
+        }
+
+        draw(container:D3.Selection, min:number, max:number) {
+
+            this.clear();
+
+            this.svg = container.append("g")
+                        .attr("class","dchart-axis, dchart-axis-" + this.orientation);
+
+            this.redraw(min, max);
+        }
+
+        redraw(min:number, max:number) {
 
             if (this.autorange === true) {
                 this.range = [min, max];
             }
 
             var pos = this.align === "center" ? this.length.value * 0.5
-                    : this.align === "start" ? 0
-                    : this.length.value;
+                : this.align === "start" ? 0
+                : this.length.value;
 
 
             var labelOrient = this.align === "start" ? "top" : "bottom";
 
             var labelPos = this.labelAlign === "start" ? 0
-                         : this.labelAlign === "center" ? this.length.value * 0.5
-                         : this.length.value;
+                : this.labelAlign === "center" ? this.length.value * 0.5
+                : this.length.value;
 
-
-            var axis = this.getAxis();
+            this.svg.call(this.getAxis())
         }
 
         normalize(value:any) {

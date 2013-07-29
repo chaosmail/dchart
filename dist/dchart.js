@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Mon Jul 29 2013 11:17:51
+/** dchart - v0.0.4 - Mon Jul 29 2013 12:13:00
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -569,12 +569,24 @@ var dChart;
         };
 
         Axis.prototype.getAxis = function () {
-            var axis = d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
-
-            return axis;
+            return d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
         };
 
-        Axis.prototype.draw = function (min, max) {
+        Axis.prototype.clear = function () {
+            if (this.svg) {
+                this.svg.remove();
+            }
+        };
+
+        Axis.prototype.draw = function (container, min, max) {
+            this.clear();
+
+            this.svg = container.append("g").attr("class", "dchart-axis, dchart-axis-" + this.orientation);
+
+            this.redraw(min, max);
+        };
+
+        Axis.prototype.redraw = function (min, max) {
             if (this.autorange === true) {
                 this.range = [min, max];
             }
@@ -585,7 +597,7 @@ var dChart;
 
             var labelPos = this.labelAlign === "start" ? 0 : this.labelAlign === "center" ? this.length.value * 0.5 : this.length.value;
 
-            var axis = this.getAxis();
+            this.svg.call(this.getAxis());
         };
 
         Axis.prototype.normalize = function (value) {
@@ -856,7 +868,7 @@ var dChart;
             this.marginBottom = new dChart.Utils.Size(10);
             this.width = new dChart.Utils.Size(400);
             this.height = new dChart.Utils.Size(400);
-            var css = '.axis path,' + '.axis line {' + '         fill: none;' + '         stroke: black;' + '         shape-rendering: crispEdges;' + '     }' + ' .axis text,' + ' .axis-label text {' + '         font-family: sans-serif;' + '         font-size: 11px;' + '     }';
+            var css = '.dchart-axis path,' + '.dchart-axis line {' + '         fill: none;' + '         stroke: black;' + '         shape-rendering: crispEdges;' + '     }' + ' .dchart-axis text,' + ' .dchart-axis-label text {' + '         font-family: sans-serif;' + '         font-size: 11px;' + '     }';
 
             dChart.Utils.Doc.css(css);
         }
@@ -874,7 +886,17 @@ var dChart;
         Chart.prototype.draw = function () {
             this.clear();
 
-            this.svg = d3.select(this.elem).append("svg");
+            this.svg = d3.select(this.elem).append("svg").attr("width", this.width.value).attr("height", this.height.value).attr("id", "dchart-" + this.elemId);
+
+            this.container = this.svg.append("g").attr("class", "dchart-container").attr("transform", "translate(" + this.marginLeft.value + ", " + this.marginTop.value + ")");
+
+            this.axisContainer = this.container.append("g").attr("class", "dchart-container-axis");
+
+            this.dataContainer = this.container.append("g").attr("class", "dchart-container-data");
+
+            this.labelContainer = this.container.append("g").attr("class", "dchart-container-label");
+
+            this.descriptionContainer = this.container.append("g").attr("class", "dchart-container-description");
 
             this.redraw();
         };
@@ -887,6 +909,7 @@ var dChart;
 
         Chart.prototype.normalize = function (value) {
             if (value.hasOwnProperty("elem")) {
+                this.elemId = value.elem;
                 this.elem = document.getElementById(value.elem);
             }
 
@@ -946,8 +969,8 @@ var dChart;
             var min = [this.min("x"), this.min("y")];
             var max = [this.max("x"), this.max("y")];
 
-            this.xAxis.draw(min[0], max[0]);
-            this.yAxis.draw(min[1], max[1]);
+            this.xAxis.draw(this.axisContainer, min[0], max[0]);
+            this.yAxis.draw(this.axisContainer, min[1], max[1]);
         };
 
         Chart2D.prototype.drawData = function () {
@@ -1019,9 +1042,9 @@ var dChart;
             var min = [this.min("x"), this.min("y"), this.min("z")];
             var max = [this.max("x"), this.max("y"), this.min("z")];
 
-            this.xAxis.draw(min[0], max[0]);
-            this.yAxis.draw(min[1], max[1]);
-            this.zAxis.draw(min[2], max[2]);
+            this.xAxis.draw(this.axisContainer, min[0], max[0]);
+            this.yAxis.draw(this.axisContainer, min[1], max[1]);
+            this.zAxis.draw(this.axisContainer, min[2], max[2]);
         };
 
         Chart3D.prototype.drawData = function () {
@@ -1083,6 +1106,8 @@ var dChart;
                 this.normalize(config);
                 this.draw();
             }
+
+            console.log(this);
         }
         return LineChart;
     })(Chart2D);
