@@ -34,7 +34,9 @@
             dataSets:[
                 {
                     label: "Dataset 1: Points",
-                    stroke: "#ff0000",
+                    stroke: "#0000ff",
+                    interpolate: "linear",
+                    showDots: false,
                     data: [
                         {x:0,y:0},
                         {x:1,y:0.5},
@@ -45,8 +47,24 @@
                     ]
                 },
                 {
-                    label: "Dataset 2: Function",
+                    label: "Dataset 2: Points",
                     stroke: "#ff0000",
+                    interpolate: "linear",
+                    showLine: false,
+                    data: [
+
+                        {x:0,y:0.92},
+                        {x:1,y:0.9},
+                        {x:2,y:0.85},
+                        {x:3,y:0.7},
+                        {x:4,y:0.5},
+                        {x:5,y:0}
+                    ]
+                },
+                {
+                    label: "Dataset 3: Function",
+                    stroke: "#ff0000",
+                    showDots: false,
                     dataFn: {
                         fn: Math.cos,
                         min: 0,

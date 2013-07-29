@@ -382,6 +382,7 @@ module dChart {
 
     export class LineChart extends Chart2D {
 
+        svgLineContainer:D3.Selection[] = [];
         svgLine:D3.Selection[] = [];
 
         constructor(config?:IChart2D) {
@@ -399,8 +400,12 @@ module dChart {
 
             _.map(this.dataSets, (dataSet:DataSet2D,key:number) => {
 
-                this.svgLine[key] = this.dataContainer.append("path")
-                                                        .attr("class", "dchart-data-set dchart-data-set-" + key);
+                this.svgLineContainer[key] = this.dataContainer
+                    .append("g")
+                    .attr("class", "dchart-data-set dchart-data-set-" + key);
+
+                this.svgLine[key] = this.svgLineContainer[key].append("path");
+
             });
 
             this.redrawData()
@@ -414,16 +419,39 @@ module dChart {
 
             _.map(this.dataSets, (dataSet:DataSet2D,key:number) => {
 
-                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate)
-                    .x(function(d:Point2D) { return xScale(d.x); })
-                    .y(function(d:Point2D) { return yScale(d.y); });
+                if (dataSet.showLine) {
 
-                this.svgLine[key].attr("d", lineFn[key](dataSet.data))
-                    .style("stroke", dataSet.lineStyle.stroke.get())
-                    .style("fill", "none")
-                    .style("stroke-width", dataSet.lineStyle.strokeWidth.value)
-                    .style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+                    lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate)
+                        .x(function(d:Point2D) { return xScale(d.x); })
+                        .y(function(d:Point2D) { return yScale(d.y); });
 
+                    this.svgLine[key].attr("d", lineFn[key](dataSet.data))
+                        .style("stroke", dataSet.lineStyle.stroke.get())
+                        .style("fill", "none")
+                        .style("stroke-width", dataSet.lineStyle.strokeWidth.value)
+                        .style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+
+                }
+
+                if (dataSet.showDots) {
+
+                    var group = this.svgLineContainer[key].selectAll("circle")
+                        .data(dataSet.data, (d:Point2D) => d.x);
+
+                    group.exit()
+                         .remove();
+
+                    group.enter()
+                        .append("circle")
+                        .style("stroke", dataSet.lineStyle.stroke.get())
+                        .style("fill", dataSet.areaStyle.fill.get())
+                        .style("stroke-opacity", dataSet.lineStyle.strokeOpacity)
+                        .style("fill-opacity", dataSet.areaStyle.fillOpacity)
+                        .style("stroke-width", dataSet.lineStyle.strokeWidth.value)
+                        .attr("cx", (d:Point2D) => xScale(d.x))
+                        .attr("cy", (d:Point2D) => yScale(d.y))
+                        .attr("r", (d:Point2D) => dataSet.dotsRadius);
+                }
             });
         }
     }

@@ -46,6 +46,10 @@ module dChart {
 
     export class DataSet {
 
+        showDots:bool = true;
+        showLine:bool = true;
+        dotsRadius:number = 3;
+
         data:Point[] = [];
 
         /**
@@ -58,7 +62,21 @@ module dChart {
 
         /**
          * Interpolation between the points in the DataSet
+         * linear           piecewise linear segments, as in a polyline.
+         * linear-closed    close the linear segments to form a polygon.
+         * step             alternate between horizontal and vertical segments, as in a step function.
+         * step-before      alternate between vertical and horizontal segments, as in a step function.
+         * step-after       alternate between horizontal and vertical segments, as in a step function.
+         * basis            a B-spline, with control point duplication on the ends.
+         * basis-open       an open B-spline; may not intersect the start or end.
+         * basis-closed     a closed B-spline, as in a loop.
+         * bundle           equivalent to basis, except the tension parameter is used to straighten the spline.
+         * cardinal         a Cardinal spline, with control point duplication on the ends.
+         * cardinal-open    an open Cardinal spline; may not intersect the start or end, but will intersect other control points.
+         * cardinal-closed  a closed Cardinal spline, as in a loop.
+         * monotone         cubic interpolation that preserves monotonicity in y.
          * @type {string}
+         * @see https://github.com/mbostock/d3/wiki/SVG-Shapes#wiki-line_interpolate
          */
         interpolate:string = "linear";
 
@@ -82,12 +100,8 @@ module dChart {
          * Constructor
          * @param dataSetLabel
          */
-        constructor(config?:IDataSet) {
+        constructor() {
 
-            if (config) {
-
-                this.normalize(config);
-            }
         }
 
         /**
@@ -138,6 +152,10 @@ module dChart {
 
         normalize(value:any) {
 
+            if (value.hasOwnProperty("interpolate")) {
+                this.interpolate = value.interpolate;
+            }
+
             if (value.hasOwnProperty("stroke")) {
                 this.lineStyle.stroke = new Utils.Color(value.stroke);
             }
@@ -156,6 +174,21 @@ module dChart {
 
             if (value.hasOwnProperty("fillOpacity")) {
                 this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            }
+
+            if (value.hasOwnProperty("showDots")) {
+
+                this.showDots = value.showDots;
+            }
+
+            if (value.hasOwnProperty("showLine")) {
+
+                this.showLine = value.showLine;
+            }
+
+            if (value.hasOwnProperty("dotRadius")) {
+
+                this.dotsRadius = value.dotRadius;
             }
         }
 
@@ -191,8 +224,6 @@ module dChart {
             super.normalize(value);
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
-
-                this.data = [];
 
                 _.map(value.data, (config) => {
 

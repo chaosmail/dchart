@@ -259,6 +259,9 @@ declare module dChart {
         data: dChart.IPoint3DTime[];
     }
     class DataSet {
+        public showDots: boolean;
+        public showLine: boolean;
+        public dotsRadius: number;
         public data: dChart.Point[];
         public label: string;
         public solver: dChart.Solver.ISolver;
@@ -266,7 +269,7 @@ declare module dChart {
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
-        constructor(config?: IDataSet);
+        constructor();
         public recalculate(): void;
         public parse(elem: Element): void;
         public normalize(value: any): void;
@@ -378,6 +381,7 @@ declare module dChart {
         public normalize(value: any): void;
     }
     class LineChart extends Chart2D {
+        public svgLineContainer: D3.Selection[];
         public svgLine: D3.Selection[];
         constructor(config?: IChart2D);
         public drawData(): void;

@@ -743,16 +743,16 @@ var dChart;
 var dChart;
 (function (dChart) {
     var DataSet = (function () {
-        function DataSet(config) {
+        function DataSet() {
+            this.showDots = true;
+            this.showLine = true;
+            this.dotsRadius = 3;
             this.data = [];
             this.label = "";
             this.interpolate = "linear";
             this.visible = true;
             this.lineStyle = new dChart.Utils.LineStyle();
             this.areaStyle = new dChart.Utils.AreaStyle();
-            if (config) {
-                this.normalize(config);
-            }
         }
         DataSet.prototype.recalculate = function () {
         };
@@ -786,6 +786,10 @@ var dChart;
         };
 
         DataSet.prototype.normalize = function (value) {
+            if (value.hasOwnProperty("interpolate")) {
+                this.interpolate = value.interpolate;
+            }
+
             if (value.hasOwnProperty("stroke")) {
                 this.lineStyle.stroke = new dChart.Utils.Color(value.stroke);
             }
@@ -804,6 +808,18 @@ var dChart;
 
             if (value.hasOwnProperty("fillOpacity")) {
                 this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            }
+
+            if (value.hasOwnProperty("showDots")) {
+                this.showDots = value.showDots;
+            }
+
+            if (value.hasOwnProperty("showLine")) {
+                this.showLine = value.showLine;
+            }
+
+            if (value.hasOwnProperty("dotRadius")) {
+                this.dotsRadius = value.dotRadius;
             }
         };
 
@@ -846,8 +862,6 @@ var dChart;
             _super.prototype.normalize.call(this, value);
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
-                this.data = [];
-
                 _.map(value.data, function (config) {
                     var p = new dChart.Point2D();
                     p.normalize(config);
@@ -1163,7 +1177,9 @@ var dChart;
                 this.dataSets = [];
 
                 _.map(value.dataSets, function (config) {
-                    _this.dataSets.push(new dChart.DataSet3D(config));
+                    var dataSet = new dChart.DataSet3D();
+                    dataSet.normalize(config);
+                    _this.dataSets.push(dataSet);
                 });
             }
 
@@ -1191,6 +1207,7 @@ var dChart;
         __extends(LineChart, _super);
         function LineChart(config) {
             _super.call(this, config);
+            this.svgLineContainer = [];
             this.svgLine = [];
 
             if (config) {
@@ -1203,7 +1220,9 @@ var dChart;
         LineChart.prototype.drawData = function () {
             var _this = this;
             _.map(this.dataSets, function (dataSet, key) {
-                _this.svgLine[key] = _this.dataContainer.append("path").attr("class", "dchart-data-set dchart-data-set-" + key);
+                _this.svgLineContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+
+                _this.svgLine[key] = _this.svgLineContainer[key].append("path");
             });
 
             this.redrawData();
@@ -1216,13 +1235,31 @@ var dChart;
             var lineFn = [];
 
             _.map(this.dataSets, function (dataSet, key) {
-                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
-                    return xScale(d.x);
-                }).y(function (d) {
-                    return yScale(d.y);
-                });
+                if (dataSet.showLine) {
+                    lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
+                        return xScale(d.x);
+                    }).y(function (d) {
+                        return yScale(d.y);
+                    });
 
-                _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke.get()).style("fill", "none").style("stroke-width", dataSet.lineStyle.strokeWidth.value).style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke.get()).style("fill", "none").style("stroke-width", dataSet.lineStyle.strokeWidth.value).style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+                }
+
+                if (dataSet.showDots) {
+                    var group = _this.svgLineContainer[key].selectAll("circle").data(dataSet.data, function (d) {
+                        return d.x;
+                    });
+
+                    group.exit().remove();
+
+                    group.enter().append("circle").style("stroke", dataSet.lineStyle.stroke.get()).style("fill", dataSet.areaStyle.fill.get()).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("fill-opacity", dataSet.areaStyle.fillOpacity).style("stroke-width", dataSet.lineStyle.strokeWidth.value).attr("cx", function (d) {
+                        return xScale(d.x);
+                    }).attr("cy", function (d) {
+                        return yScale(d.y);
+                    }).attr("r", function (d) {
+                        return dataSet.dotsRadius;
+                    });
+                }
             });
         };
         return LineChart;
