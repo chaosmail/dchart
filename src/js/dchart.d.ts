@@ -152,8 +152,10 @@ declare module dChart.Utils {
 declare module dChart {
     interface IAxis {
         label: string;
+        labelAlign: string;
         scale: string;
         autorange: boolean;
+        ticks: number;
         range: number[];
         domain: number[];
     }
@@ -179,16 +181,15 @@ declare module dChart {
         public tickSize: ITickSize;
         public tickPadding: number;
         public visible: boolean;
-        constructor(orientation?: string);
+        constructor(orientation?: string, length?: number);
         public setScale(scale?: string): Axis;
         public addScaleFn(fn: string, args: any): void;
         public setOrientation(orientation?: string): Axis;
         public setDomain(domain?: number[]): Axis;
         public setRange(range?: number[]): Axis;
-        public setTicks(ticks?: number): void;
         public setLabelAlign(labelAlign: string): Axis;
         public getAxis(): D3.Axis;
-        public draw(length: dChart.Utils.Size, min: number, max: number): void;
+        public draw(min: number, max: number): void;
         public normalize(value: any): void;
     }
 }

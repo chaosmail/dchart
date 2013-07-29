@@ -7,8 +7,10 @@ module dChart {
     export interface IAxis {
 
         label:string;
+        labelAlign:string;
         scale:string;
         autorange:bool;
+        ticks:number;
         range:number[];
         domain:number[];
     }
@@ -73,10 +75,14 @@ module dChart {
 
         visible:bool = true;
 
-        constructor(orientation?:string) {
+        constructor(orientation?:string, length?:number) {
 
             if (orientation) {
                 this.setOrientation(orientation);
+            }
+
+            if (length) {
+                this.length = new Utils.Size(length);
             }
         }
 
@@ -186,11 +192,6 @@ module dChart {
             return this;
         }
 
-        setTicks(ticks:number = 10) {
-
-            this.ticks = ticks;
-        }
-
         setLabelAlign(labelAlign:string) {
 
             this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start"
@@ -213,37 +214,63 @@ module dChart {
          * @param min {number}
          * @param max {number}
          */
-         draw(length:Utils.Size, min:number, max:number) {
+         draw(min:number, max:number) {
 
-            /*if (this.autorange === true) {
+            if (this.autorange === true) {
                 this.range = [min, max];
             }
 
-            var pos = this.align === "center" ? length.value * 0.5 :
-                this.align === "start" ? 0 :
-                    length.value;
+            var pos = this.align === "center" ? this.length.value * 0.5
+                    : this.align === "start" ? 0
+                    : this.length.value;
 
 
             var labelOrient = this.align === "start" ? "top" : "bottom";
 
-            var labelPos = this.labelAlign === "start" ? 0 :
-                this.labelAlign === "center" ? length.value * 0.5 :
-                    length.value;
-
-            var scale = null;
+            var labelPos = this.labelAlign === "start" ? 0
+                         : this.labelAlign === "center" ? this.length.value * 0.5
+                         : this.length.value;
 
 
-            scale = scale.domain(this.range).range([0, length.value]);
-
-            var axis = d3.svg.axis().scale(scale).orient(labelOrient).ticks(this.ticks);
-
-            if (this.ticksFormat.length > 0) {
-                axis.tickFormat((d:number) => this.ticksFormat[d]);
-            }                                            */
+            var axis = this.getAxis();
         }
 
         normalize(value:any) {
 
+            if (value.hasOwnProperty("label")){
+
+                this.label = value.label
+            }
+
+            if (value.hasOwnProperty("labelAlign")){
+
+                this.setLabelAlign(value.labelAlign);
+            }
+
+            if (value.hasOwnProperty("autorange")){
+
+                this.autorange = value.autorange
+            }
+
+            if (value.hasOwnProperty("ticks")){
+
+                this.ticks = parseInt(value.ticks,10);
+            }
+
+            if (value.hasOwnProperty("scale")){
+
+                this.setScale(value.scale);
+            }
+
+            if (value.hasOwnProperty("range")){
+
+                this.setRange(value.range);
+            }
+
+            if (value.hasOwnProperty("domain")){
+
+                this.setDomain(value.domain);
+            }
         }
     }
 }

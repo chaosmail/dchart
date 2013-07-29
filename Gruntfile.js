@@ -18,20 +18,9 @@ module.exports = function(grunt) {
         stripBanners: true,
         banner: banner
       },
-      css: {
-        src: ['src/css/*.css'],
-        dest: 'dist/<%= pkg.name %>.css'
-      },
       js: {
         src: ['src/js/<%= pkg.name %>.js','src/js/<%= pkg.name %>.*.js'],
         dest: 'dist/<%= pkg.name %>.js'
-      }
-    },
-    cssmin: {
-      dist: {
-        files: {
-          'dist/<%= pkg.name %>.min.css': ['dist/<%= pkg.name %>.css']
-        }
       }
     },
     uglify: {
@@ -66,11 +55,10 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-typescript');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean:dist', 'typescript', 'concat', 'cssmin', 'uglify']);
+  grunt.registerTask('default', ['clean:dist', 'typescript', 'concat', 'uglify']);
 };

@@ -160,6 +160,11 @@ module dChart {
         constructor(config?:IChart2D) {
             super(config);
 
+            var width = (new Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
+            var height = (new Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
+
+            this.xAxis.length = width;
+            this.yAxis.length = height;
         }
 
         drawAxis() {
@@ -168,11 +173,8 @@ module dChart {
             var min = [this.min("x"),this.min("y")];
             var max = [this.max("x"),this.max("y")];
 
-            var width = (new Utils.Size(this.width.value)).sub(this.marginLeft).sub(this.marginRight);
-            var height = (new Utils.Size(this.height.value)).sub(this.marginTop).sub(this.marginBottom);
-
-            this.xAxis.draw(width, min[0], max[0]);
-            this.yAxis.draw(height, min[1], max[1]);
+            this.xAxis.draw(min[0], max[0]);
+            this.yAxis.draw(min[1], max[1]);
         }
 
         drawData() {
@@ -231,6 +233,12 @@ module dChart {
         constructor(config?:IChart3D) {
             super(config);
 
+            var width = new Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
+            var height = new Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
+
+            this.xAxis.length = width;
+            this.yAxis.length = height;
+            this.zAxis.length = this.depth;
         }
 
         drawAxis() {
@@ -239,12 +247,9 @@ module dChart {
             var min = [this.min("x"),this.min("y"),this.min("z")];
             var max = [this.max("x"),this.max("y"),this.min("z")];
 
-            var width = new Utils.Size(this.width.value).sub(this.marginLeft).sub(this.marginRight);
-            var height = new Utils.Size(this.height.value).sub(this.marginTop).sub(this.marginBottom);
-
-            this.xAxis.draw(width, min[0], max[0]);
-            this.yAxis.draw(height, min[1], max[1]);
-            this.zAxis.draw(this.depth, min[2], max[2]);
+            this.xAxis.draw(min[0], max[0]);
+            this.yAxis.draw(min[1], max[1]);
+            this.zAxis.draw(min[2], max[2]);
         }
 
         drawData() {
