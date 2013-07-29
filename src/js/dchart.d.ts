@@ -59,6 +59,7 @@ declare module dChart {
     class Point {
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
+        constructor();
         public normalize(value: any): void;
         public map(value: any, map: IPointMap): void;
         public parse(elem: Element): void;
@@ -106,6 +107,9 @@ declare module dChart {
     }
 }
 declare module dChart.Utils {
+    class Doc {
+        static css(code: string): void;
+    }
     class Elem {
         static getFloat(value: Element): number;
         static getSize(value: Element): Size;
@@ -159,12 +163,11 @@ declare module dChart {
         end: number;
     }
     class Axis {
-        public axisLabel: string;
+        public label: string;
         public range: number[];
         public domain: number[];
         public autorange: boolean;
         public scale: D3.Scale;
-        public d3Attrs: any[];
         public length: dChart.Utils.Size;
         public orientation: string;
         public align: string;
@@ -176,7 +179,7 @@ declare module dChart {
         public tickSize: ITickSize;
         public tickPadding: number;
         public visible: boolean;
-        constructor(axisLabel: string);
+        constructor(orientation?: string);
         public setScale(scale?: string): Axis;
         public addScaleFn(fn: string, args: any): void;
         public setOrientation(orientation?: string): Axis;
@@ -186,6 +189,7 @@ declare module dChart {
         public setLabelAlign(labelAlign: string): Axis;
         public getAxis(): D3.Axis;
         public draw(length: dChart.Utils.Size, min: number, max: number): void;
+        public normalize(value: any): void;
     }
 }
 declare module dChart.Solver {
@@ -218,14 +222,18 @@ declare module dChart.Solver {
     }
 }
 declare module dChart {
+    interface IDataSetFn extends dChart.Solver.ISolver {
+        fn: string;
+    }
     interface IDataSet {
         stroke: string;
         strokeWidth: number;
         strokeOpacity: number;
         fill: string;
         fillOpacity: number;
+        interpolate: string;
         label: string;
-        fn: string;
+        fn: IDataSetFn;
         data: dChart.IPoint[];
     }
     interface IDataSet2D extends IDataSet {
@@ -241,7 +249,6 @@ declare module dChart {
         data: dChart.IPoint3DTime[];
     }
     class DataSet {
-        public dataSetLabel: string;
         public data: dChart.Point[];
         public label: string;
         public solver: dChart.Solver.ISolver;
@@ -249,34 +256,33 @@ declare module dChart {
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
-        constructor(dataSetLabel: string);
-        public Point(): dChart.Point;
+        constructor(config?: IDataSet);
         public recalculate(): void;
         public parse(elem: Element): void;
+        public normalize(value: any): void;
         public min(axis: string): number;
         public max(axis: string): number;
-        public parseDataAttr(value: Node): void;
     }
     class DataSet2D extends DataSet {
         public data: dChart.Point2D[];
         public solver: dChart.Solver.ISolver2D;
-        public Point(): dChart.Point2D;
         public recalculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
+        public normalize(value: any): void;
     }
     class DataSet3D extends DataSet {
         public data: dChart.Point3D[];
         public solver: dChart.Solver.ISolver3D;
-        public Point(): dChart.Point3D;
         public recalculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
+        public normalize(value: any): void;
     }
 }
 declare module dChart {
     interface IChart {
-        elem: Element;
+        elem: string;
         label: string;
         description: string;
         width: number;
@@ -287,19 +293,21 @@ declare module dChart {
         marginRight: number;
         dataSets: dChart.IDataSet[];
     }
+    interface IChart2DAxis {
+        x: dChart.IAxis;
+        y: dChart.IAxis;
+    }
     interface IChart2D extends IChart {
-        axis: {
-            x: dChart.IAxis;
-            y: dChart.IAxis;
-        };
+        axis: IChart2DAxis;
         dataSets: dChart.IDataSet2D[];
     }
+    interface IChart3DAxis {
+        x: dChart.IAxis;
+        y: dChart.IAxis;
+        z: dChart.IAxis;
+    }
     interface IChart3D extends IChart {
-        axis: {
-            x: dChart.IAxis;
-            y: dChart.IAxis;
-            z: dChart.IAxis;
-        };
+        axis: IChart3DAxis;
         dataSets: dChart.IDataSet3D[];
     }
     class Chart {
@@ -313,20 +321,24 @@ declare module dChart {
         public height: dChart.Utils.Size;
         public label: string;
         public description: string;
-        constructor(config: IChart);
+        constructor(config?: IChart);
         public clear(): void;
         public redraw(): void;
         public draw(): void;
         public drawAxis(): void;
         public drawData(): void;
+        public normalize(value: any): void;
     }
     class Chart2D extends Chart {
         public dataSets: dChart.DataSet2D[];
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
+        constructor(config?: IChart2D);
         public drawAxis(): void;
+        public drawData(): void;
         public min(axis?: string): number;
         public max(axis?: string): number;
+        public normalize(value: any): void;
     }
     class Chart3D extends Chart {
         public dataSets: dChart.DataSet3D[];
@@ -334,8 +346,14 @@ declare module dChart {
         public xAxis: dChart.Axis;
         public yAxis: dChart.Axis;
         public zAxis: dChart.Axis;
+        constructor(config?: IChart3D);
         public drawAxis(): void;
+        public drawData(): void;
         public min(axis?: string): number;
         public max(axis?: string): number;
+        public normalize(value: any): void;
+    }
+    class LineChart extends Chart2D {
+        constructor(config?: IChart2D);
     }
 }

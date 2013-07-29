@@ -11,7 +11,7 @@ module dChart {
 
     export interface IChart {
 
-        elem:Element;
+        elem:string;
         label:string;
         description:string;
         width:number;
@@ -23,22 +23,28 @@ module dChart {
         dataSets:IDataSet[];
     }
 
+    export interface IChart2DAxis {
+
+        x:IAxis;
+        y:IAxis;
+    }
+
     export interface IChart2D extends IChart {
 
-        axis:{
-            x:IAxis;
-            y:IAxis;
-        }
+        axis:IChart2DAxis;
         dataSets:IDataSet2D[];
+    }
+
+    export interface IChart3DAxis {
+
+        x:IAxis;
+        y:IAxis;
+        z:IAxis;
     }
 
     export interface IChart3D extends IChart {
 
-        axis: {
-            x:IAxis;
-            y:IAxis;
-            z:IAxis;
-        }
+        axis: IChart3DAxis;
         dataSets:IDataSet3D[];
     }
 
@@ -58,9 +64,21 @@ module dChart {
         label:string;
         description:string;
 
-        constructor(config:IChart) {
+        constructor(config?:IChart) {
 
-            this.draw();
+            var css =  '.axis path,' +
+                       '.axis line {' +
+                       '         fill: none;' +
+                       '         stroke: black;' +
+                       '         shape-rendering: crispEdges;' +
+                       '     }' +
+                       ' .axis text,' +
+                       ' .axis-label text {' +
+                       '         font-family: sans-serif;' +
+                       '         font-size: 11px;' +
+                       '     }';
+
+            Utils.Doc.css(css);
         }
 
         clear() {
@@ -92,16 +110,61 @@ module dChart {
         drawData() {
 
         }
+
+        normalize(value:any) {
+
+            if (value.hasOwnProperty("elem")) {
+                this.elem = document.getElementById(value.elem);
+            }
+
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
+
+            if (value.hasOwnProperty("description")) {
+                this.description = value.description;
+            }
+
+            if (value.hasOwnProperty("width")) {
+                this.width = new Utils.Size(parseFloat(value.width));
+            }
+
+            if (value.hasOwnProperty("height")) {
+                this.height = new Utils.Size(parseFloat(value.height));
+            }
+
+            if (value.hasOwnProperty("marginTop")) {
+                this.marginTop = new Utils.Size(parseFloat(value.marginTop));
+            }
+
+            if (value.hasOwnProperty("marginLeft")) {
+                this.marginLeft = new Utils.Size(parseFloat(value.marginLeft));
+            }
+
+            if (value.hasOwnProperty("marginBottom")) {
+                this.marginBottom = new Utils.Size(parseFloat(value.marginBottom));
+            }
+
+            if (value.hasOwnProperty("marginRight")) {
+                this.marginRight = new Utils.Size(parseFloat(value.marginRight));
+            }
+        }
     }
 
     export class Chart2D extends Chart {
 
-        public dataSets:DataSet2D[];
-
+        dataSets:DataSet2D[] = [];
         xAxis:Axis = new Axis("x");
         yAxis:Axis = new Axis("y");
 
+        constructor(config?:IChart2D) {
+            super(config);
+
+        }
+
         drawAxis() {
+            super.drawAxis();
+
             var min = [this.min("x"),this.min("y")];
             var max = [this.max("x"),this.max("y")];
 
@@ -112,6 +175,11 @@ module dChart {
             this.yAxis.draw(height, min[1], max[1]);
         }
 
+        drawData() {
+            super.drawData();
+
+        }
+
         min(axis:string = "x") {
             return d3.min(this.dataSets, (dataSet:DataSet2D) => dataSet.min(axis));
         }
@@ -119,11 +187,40 @@ module dChart {
         max(axis:string = "x") {
             return d3.max(this.dataSets, (dataSet:DataSet2D) => dataSet.max(axis));
         }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("dataSets")) {
+
+                this.dataSets = [];
+
+                _.map(value.dataSets, (config) => {
+
+                    this.dataSets.push(new DataSet2D(config));
+                });
+            }
+
+            if (value.hasOwnProperty("axis")) {
+
+                var axis = value.axis;
+
+                if (axis.hasOwnProperty("x")) {
+
+                    this.xAxis.normalize(axis.x)
+                }
+
+                if (axis.hasOwnProperty("y")) {
+
+                    this.yAxis.normalize(axis.y)
+                }
+            }
+        }
     }
 
     export class Chart3D extends Chart {
 
-        public dataSets:DataSet3D[];
+        public dataSets:DataSet3D[] = [];
 
         depth:Utils.Size = new Utils.Size(400);
 
@@ -131,7 +228,14 @@ module dChart {
         yAxis:Axis = new Axis("y");
         zAxis:Axis = new Axis("z");
 
+        constructor(config?:IChart3D) {
+            super(config);
+
+        }
+
         drawAxis() {
+            super.drawAxis();
+
             var min = [this.min("x"),this.min("y"),this.min("z")];
             var max = [this.max("x"),this.max("y"),this.min("z")];
 
@@ -143,12 +247,63 @@ module dChart {
             this.zAxis.draw(this.depth, min[2], max[2]);
         }
 
+        drawData() {
+            super.drawData();
+
+        }
+
         min(axis:string = "x") {
             return d3.min(this.dataSets, (dataSet:DataSet3D) => dataSet.min(axis));
         }
 
         max(axis:string = "x") {
             return d3.max(this.dataSets, (dataSet:DataSet3D) => dataSet.max(axis));
+        }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("dataSets")) {
+
+                this.dataSets = [];
+
+                _.map(value.dataSets, (config) => {
+
+                    this.dataSets.push(new DataSet3D(config));
+                });
+            }
+
+            if (value.hasOwnProperty("axis")) {
+
+                var axis = value.axis;
+
+                if (axis.hasOwnProperty("x")) {
+
+                    this.xAxis.normalize(axis.x)
+                }
+
+                if (axis.hasOwnProperty("y")) {
+
+                    this.yAxis.normalize(axis.y)
+                }
+
+                if (axis.hasOwnProperty("z")) {
+
+                    this.zAxis.normalize(axis.z)
+                }
+            }
+        }
+    }
+
+    export class LineChart extends Chart2D {
+
+        constructor(config?:IChart2D) {
+            super(config);
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
         }
     }
 }

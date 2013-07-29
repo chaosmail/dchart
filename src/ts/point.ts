@@ -93,6 +93,10 @@ module dChart {
          */
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
+        constructor() {
+
+        }
+
         normalize(value:any) {
 
             if (value.hasOwnProperty("stroke")) {

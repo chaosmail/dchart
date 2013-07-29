@@ -2,6 +2,26 @@
 
 module dChart.Utils {
 
+    export class Doc {
+
+        static css( code:string ) {
+
+            var style = <any> document.createElement('style');
+
+            style.type = 'text/css';
+
+            if (style.styleSheet) {
+                // IE
+                style.styleSheet.cssText = code;
+            } else {
+                // Other browsers
+                style.innerHTML = code;
+            }
+
+            document.body.appendChild( style );
+        }
+    }
+
     export class Elem {
 
         static getFloat(value:Element) {

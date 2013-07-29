@@ -22,6 +22,8 @@ module dChart {
 
     export class Axis {
 
+        label:string;
+
         range:number[] = [0, 1];
 
         domain:number[] = [0, 1];
@@ -29,8 +31,6 @@ module dChart {
         autorange:bool = true;
 
         scale:D3.Scale = d3.scale.linear();
-
-        d3Attrs:any[] = [];
 
         length:Utils.Size = new Utils.Size(1);
 
@@ -42,9 +42,9 @@ module dChart {
         orientation:string = "x";
 
         /**
-         * start        Show the Axis at the beginning (left, top) of the Chart
-         * center       Show the Axis in the center of the Chart
-         * end          Show the Axis at the end (bottom, right) of the Chart
+         * start        Show the Axis at the beginning (left, top) of the Charts
+         * center       Show the Axis in the center of the Charts
+         * end          Show the Axis at the end (bottom, right) of the Charts
          * @type {string}
          */
         align:string = "start";
@@ -73,8 +73,11 @@ module dChart {
 
         visible:bool = true;
 
-        constructor(public axisLabel:string) {
+        constructor(orientation?:string) {
 
+            if (orientation) {
+                this.setOrientation(orientation);
+            }
         }
 
         /**
@@ -155,7 +158,7 @@ module dChart {
 
         addScaleFn(fn:string,args:any) {
 
-            if (this.scale.prototype[fn]) {
+            if (this.scale[fn] && typeof this.scale[fn] === "function") {
                 this.scale[fn](args);
             }
         }
@@ -210,9 +213,9 @@ module dChart {
          * @param min {number}
          * @param max {number}
          */
-            draw(length:Utils.Size, min:number, max:number) {
+         draw(length:Utils.Size, min:number, max:number) {
 
-            if (this.autorange === true) {
+            /*if (this.autorange === true) {
                 this.range = [min, max];
             }
 
@@ -236,7 +239,11 @@ module dChart {
 
             if (this.ticksFormat.length > 0) {
                 axis.tickFormat((d:number) => this.ticksFormat[d]);
-            }
+            }                                            */
+        }
+
+        normalize(value:any) {
+
         }
     }
 }

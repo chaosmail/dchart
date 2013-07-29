@@ -6,6 +6,11 @@
 
 module dChart {
 
+    export interface IDataSetFn extends Solver.ISolver {
+
+        fn:string;
+    }
+
     export interface IDataSet {
 
         stroke:string;
@@ -13,8 +18,9 @@ module dChart {
         strokeOpacity:number;
         fill:string;
         fillOpacity:number;
+        interpolate:string;
         label:string;
-        fn:string;
+        fn:IDataSetFn;
         data:IPoint[];
     }
 
@@ -79,12 +85,12 @@ module dChart {
          * Constructor
          * @param dataSetLabel
          */
-            constructor(public dataSetLabel:string) {
+        constructor(config?:IDataSet) {
 
-        }
+            if (config) {
 
-        public Point() {
-            return new Point();
+                this.normalize(config);
+            }
         }
 
         /**
@@ -98,7 +104,7 @@ module dChart {
          * Parse the Attributes of the HTML-Element of the DataSet
          * @param {Element} elem The <dataset> HTML-Element
          */
-            parse(elem:Element) {
+         parse(elem:Element) {
 
             _.map(elem.attributes, (value) => {
 
@@ -108,18 +114,6 @@ module dChart {
                 }
                 else if (value.nodeName.match(/^interpolate$/i)) {
                     this.interpolate = value.nodeValue;
-                    return;
-                }
-                else if (value.nodeName.match(/^min$/i)) {
-                    //this.solver.min = parseFloat(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^max$/i)) {
-                    //this.solver.max = parseFloat(value.nodeValue);
-                    return;
-                }
-                else if (value.nodeName.match(/^step$/i)) {
-                    //this.solver.step = parseFloat(value.nodeValue);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke$/i)) {
@@ -142,20 +136,31 @@ module dChart {
                     this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
                     return;
                 }
-                else if (value.nodeName.match(/^data$/i)) {
-                    this.parseDataAttr(value);
-                    return;
-                }
+                // parse Data
             });
+        }
 
-            _.map(elem.childNodes, (value) => {
+        normalize(value:any) {
 
-                var point = this.Point();
-                point.parse(value);
+            if (value.hasOwnProperty("stroke")) {
+                this.lineStyle.stroke = new Utils.Color(value.stroke);
+            }
 
-                this.data.push(point);
-            });
+            if (value.hasOwnProperty("strokeWidth")) {
+                this.lineStyle.strokeWidth = new Utils.Size(parseFloat(value.strokeWidth));
+            }
 
+            if (value.hasOwnProperty("strokeOpacity")) {
+                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
+            }
+
+            if (value.hasOwnProperty("fill")) {
+                this.areaStyle.fill = new Utils.Color(value.fill);
+            }
+
+            if (value.hasOwnProperty("fillOpacity")) {
+                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            }
         }
 
         min(axis:string) {
@@ -165,48 +170,12 @@ module dChart {
         max(axis:string) {
             return 0.0;
         }
-
-        /**
-         * Parse the data attribute of the DataSet
-         * data="[1,2,3]"
-         * data="[{Point},{Point},{Point}]"
-         * @param {Node} value Value of the Data Attribute
-         */
-            parseDataAttr(value:Node) {
-
-            if (value.nodeValue === undefined || value.nodeValue === null || value.nodeValue.trim() === "") {
-                return;
-            }
-
-            var parsedData = [];
-
-            try {
-                parsedData = JSON.parse(value.nodeValue);
-            }
-            catch (e) {
-
-            }
-
-            // TODO Parse data="[{Point},{Point},{Point}]"
-
-            _.map(parsedData, (value) => {
-
-                var point = this.Point();
-                point.normalize(value);
-
-                this.data.push(point);
-            });
-        }
     }
 
     export class DataSet2D extends DataSet {
 
         data:Point2D[] = [];
         solver:Solver.ISolver2D = new Solver.Solver2D();
-
-        public Point() {
-            return new Point2D();
-        }
 
         public recalculate() {
             this.data = this.solver.solve();
@@ -221,16 +190,32 @@ module dChart {
 
             return d3.max(this.data, (d:Point2D) => d[axis]);
         }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("data")) {
+
+                _.map(value.data, (config) => {
+
+                    var p = new Point2D();
+                    p.normalize(config);
+                    this.data.push(p);
+                });
+            }
+
+            if (value.hasOwnProperty("dataFn")) {
+
+
+
+            }
+        }
     }
 
     export class DataSet3D extends DataSet {
 
         data:Point3D[] = [];
         solver:Solver.ISolver3D = new Solver.Solver3D();
-
-        public Point() {
-            return new Point3D();
-        }
 
         public recalculate() {
             this.data = this.solver.solve();
@@ -244,6 +229,26 @@ module dChart {
         max(axis:string) {
 
             return d3.max(this.data, (d:Point3D) => d[axis]);
+        }
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("data")) {
+
+                _.map(value.data, (config) => {
+
+                    var p = new Point3D();
+                    p.normalize(config);
+                    this.data.push(p);
+                });
+            }
+
+            if (value.hasOwnProperty("dataFn")) {
+
+
+
+            }
         }
     }
 }

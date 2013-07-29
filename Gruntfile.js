@@ -51,7 +51,7 @@ module.exports = function(grunt) {
         options: {
           target: 'es3', //or es5
           fullSourceMapPath: true,
-          sourcemap: true,
+          sourcemap: false,
           declaration: true
         }
       }
