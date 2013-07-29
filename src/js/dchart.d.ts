@@ -171,7 +171,7 @@ declare module dChart {
         public range: number[];
         public domain: number[];
         public autorange: boolean;
-        public scale: D3.Scale;
+        public scale: string;
         public length: dChart.Utils.Size;
         public height: dChart.Utils.Size;
         public orientation: string;
@@ -185,12 +185,13 @@ declare module dChart {
         public tickPadding: number;
         public visible: boolean;
         constructor(orientation?: string, length?: number);
-        public setScale(scale?: string): Axis;
         public addScaleFn(fn: string, args: any): void;
         public setOrientation(orientation?: string): Axis;
-        public setDomain(domain?: number[]): Axis;
-        public setRange(range?: number[]): Axis;
+        public setDomain(domain: number[]): Axis;
+        public setRange(range: number[]): Axis;
+        public setAlign(align: string): Axis;
         public setLabelAlign(labelAlign: string): Axis;
+        public getScale();
         public getAxis(): D3.Axis;
         public clear(): void;
         public draw(container: D3.Selection, min: number, max: number): void;

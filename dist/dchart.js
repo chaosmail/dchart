@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Mon Jul 29 2013 13:35:09
+/** dchart - v0.0.4 - Mon Jul 29 2013 14:37:16
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -505,7 +505,7 @@ var dChart;
             this.range = [0, 1];
             this.domain = [0, 1];
             this.autorange = true;
-            this.scale = d3.scale.linear();
+            this.scale = "linear";
             this.length = new dChart.Utils.Size(1);
             this.height = new dChart.Utils.Size(1);
             this.orientation = "x";
@@ -527,15 +527,6 @@ var dChart;
                 this.length = new dChart.Utils.Size(length);
             }
         }
-        Axis.prototype.setScale = function (scale) {
-            if (typeof scale === "undefined") { scale = "linear"; }
-            this.scale = (scale.match(/^identity$/i)) ? d3.scale.identity() : (scale.match(/^pow|power$/i)) ? d3.scale.pow() : (scale.match(/^sqrt$/)) ? d3.scale.sqrt() : (scale.match(/^log$/)) ? d3.scale.log() : (scale.match(/^quantize/)) ? d3.scale.quantize() : (scale.match(/^quantile$/)) ? d3.scale.quantile() : (scale.match(/^treshold$/)) ? d3.scale.treshold() : d3.scale.linear();
-
-            this.scale.domain(this.domain).range(this.range);
-
-            return this;
-        };
-
         Axis.prototype.addScaleFn = function (fn, args) {
             if (this.scale[fn] && typeof this.scale[fn] === "function") {
                 this.scale[fn](args);
@@ -550,15 +541,19 @@ var dChart;
         };
 
         Axis.prototype.setDomain = function (domain) {
-            if (typeof domain === "undefined") { domain = [0, 1]; }
             this.domain = domain;
 
             return this;
         };
 
         Axis.prototype.setRange = function (range) {
-            if (typeof range === "undefined") { range = [0, this.length.value]; }
             this.range = range;
+
+            return this;
+        };
+
+        Axis.prototype.setAlign = function (align) {
+            this.align = (align.match(/^top|left|start$/i)) ? "start" : (align.match(/^bottom|right|end$/i)) ? "end" : "middle";
 
             return this;
         };
@@ -569,8 +564,26 @@ var dChart;
             return this;
         };
 
+        Axis.prototype.getScale = function () {
+            var d3Scale = (this.scale.match(/^identity$/i)) ? d3.scale.identity() : (this.scale.match(/^pow|power$/i)) ? d3.scale.pow() : (this.scale.match(/^sqrt$/)) ? d3.scale.sqrt() : (this.scale.match(/^log$/)) ? d3.scale.log() : (this.scale.match(/^quantize/)) ? d3.scale.quantize() : (this.scale.match(/^quantile$/)) ? d3.scale.quantile() : (this.scale.match(/^treshold$/)) ? d3.scale.treshold() : d3.scale.linear();
+
+            d3Scale.domain(this.domain).range(this.range);
+
+            return d3Scale;
+        };
+
         Axis.prototype.getAxis = function () {
-            return d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+            var orient = "top";
+
+            if (this.orientation === "x") {
+                orient = this.align === "end" ? "bottom" : "top";
+            }
+
+            if (this.orientation === "y") {
+                orient = this.align === "end" ? "right" : "left";
+            }
+
+            return d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks);
         };
 
         Axis.prototype.clear = function () {
@@ -593,7 +606,7 @@ var dChart;
             if (typeof min === "undefined") { min = 0; }
             if (typeof max === "undefined") { max = 1; }
             if (this.autorange === true) {
-                this.range = [min, max];
+                this.setDomain([min, max]);
             }
 
             if (this.orientation === "x") {
@@ -603,15 +616,19 @@ var dChart;
 
                 this.svg.attr("transform", "translate(0," + pos + ")");
 
-                this.svgLabel.attr("x", labelPos).attr("y", this.length.value - 34);
+                this.svgLabel.attr("x", labelPos).attr("y", this.length.value);
+
+                this.setRange([0, this.length.value]);
             } else if (this.orientation === "y") {
-                var pos = this.align === "middle" ? this.height.value * 0.5 : this.align === "end" ? 0 : this.height.value;
+                var pos = this.align === "middle" ? this.height.value * 0.5 : this.align === "start" ? 0 : this.height.value;
 
                 var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5 : this.labelAlign === "end" ? 0 : this.length.value;
 
                 this.svg.attr("transform", "translate(" + pos + ",0)");
 
-                this.svgLabel.attr("x", -34).attr("y", -labelPos).attr("transform", "rotate(-90)");
+                this.svgLabel.attr("x", 0).attr("y", -labelPos).attr("transform", "rotate(-90)");
+
+                this.setRange([this.length.value, 0]);
             }
 
             this.svg.call(this.getAxis());
@@ -622,6 +639,10 @@ var dChart;
         Axis.prototype.normalize = function (value) {
             if (value.hasOwnProperty("label")) {
                 this.label = value.label;
+            }
+
+            if (value.hasOwnProperty("align")) {
+                this.setAlign(value.align);
             }
 
             if (value.hasOwnProperty("labelAlign")) {
@@ -637,16 +658,12 @@ var dChart;
             }
 
             if (value.hasOwnProperty("scale")) {
-                this.setScale(value.scale);
+                this.scale = value.scale;
             }
 
             if (value.hasOwnProperty("range")) {
-                this.setRange(value.range);
+                this.setDomain(value.range);
                 this.autorange = false;
-            }
-
-            if (value.hasOwnProperty("domain")) {
-                this.setDomain(value.domain);
             }
         };
         return Axis;

@@ -35,7 +35,7 @@ module dChart {
 
         autorange:bool = true;
 
-        scale:D3.Scale = d3.scale.linear();
+        scale:string = "linear";
 
         length:Utils.Size = new Utils.Size(1);
 
@@ -90,6 +90,55 @@ module dChart {
                 this.length = new Utils.Size(length);
             }
         }
+
+        addScaleFn(fn:string,args:any) {
+
+            if (this.scale[fn] && typeof this.scale[fn] === "function") {
+                this.scale[fn](args);
+            }
+        }
+
+        setOrientation(orientation:string = "x") {
+
+            this.orientation = (orientation.match(/^y|v|vertical$/i)) ? "y"
+                : (orientation.match(/^z$/i)) ? "z"
+                : "x";
+
+            return this;
+        }
+
+        setDomain(domain:number[]) {
+
+            this.domain = domain;
+
+            return this;
+        }
+
+        setRange(range:number[]) {
+
+            this.range = range;
+
+            return this;
+        }
+
+        setAlign(align:string) {
+
+            this.align = (align.match(/^top|left|start$/i)) ? "start"
+                : (align.match(/^bottom|right|end$/i)) ? "end"
+                : "middle";
+
+            return this;
+        }
+
+        setLabelAlign(labelAlign:string) {
+
+            this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start"
+                : (labelAlign.match(/^bottom|right|end$/i)) ? "end"
+                : "middle";
+
+            return this;
+        }
+
 
         /**
          * linear       d3.scale.linear()
@@ -151,64 +200,38 @@ module dChart {
          * @param scale {string}
          * @see https://github.com/mbostock/d3/wiki/Quantitative-Scales
          */
-         setScale(scale:string = "linear") {
+        getScale() {
 
-            this.scale = (scale.match(/^identity$/i)) ? d3.scale.identity()
-                : (scale.match(/^pow|power$/i)) ? d3.scale.pow()
-                : (scale.match(/^sqrt$/)) ? d3.scale.sqrt()
-                : (scale.match(/^log$/)) ? d3.scale.log()
-                : (scale.match(/^quantize/)) ? d3.scale.quantize()
-                : (scale.match(/^quantile$/)) ? d3.scale.quantile()
-                : (scale.match(/^treshold$/)) ? d3.scale.treshold()
+            var d3Scale = (this.scale.match(/^identity$/i)) ? d3.scale.identity()
+                : (this.scale.match(/^pow|power$/i)) ? d3.scale.pow()
+                : (this.scale.match(/^sqrt$/)) ? d3.scale.sqrt()
+                : (this.scale.match(/^log$/)) ? d3.scale.log()
+                : (this.scale.match(/^quantize/)) ? d3.scale.quantize()
+                : (this.scale.match(/^quantile$/)) ? d3.scale.quantile()
+                : (this.scale.match(/^treshold$/)) ? d3.scale.treshold()
                 : d3.scale.linear();
 
-            this.scale.domain(this.domain).range(this.range);
+            d3Scale.domain(this.domain).range(this.range);
 
-            return this;
-        }
-
-        addScaleFn(fn:string,args:any) {
-
-            if (this.scale[fn] && typeof this.scale[fn] === "function") {
-                this.scale[fn](args);
-            }
-        }
-
-        setOrientation(orientation:string = "x") {
-
-            this.orientation = (orientation.match(/^y|v|vertical$/i)) ? "y"
-                : (orientation.match(/^z$/i)) ? "z"
-                : "x";
-
-            return this;
-        }
-
-        setDomain(domain:number[] = [0, 1]) {
-
-            this.domain = domain;
-
-            return this;
-        }
-
-        setRange(range:number[] = [0, this.length.value]) {
-
-            this.range = range;
-
-            return this;
-        }
-
-        setLabelAlign(labelAlign:string) {
-
-            this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start"
-                : (labelAlign.match(/^bottom|right|end$/i)) ? "end"
-                : "middle";
-
-            return this;
+            return d3Scale;
         }
 
         getAxis() {
 
-            return d3.svg.axis().scale(this.scale).orient(this.labelAlign).ticks(this.ticks);
+            var orient = "top";
+
+            if (this.orientation === "x") {
+                orient = this.align === "end" ? "bottom" : "top";
+            }
+
+            if (this.orientation === "y") {
+                orient = this.align === "end" ? "right" : "left";
+            }
+
+            return d3.svg.axis()
+                         .scale(this.getScale())
+                         .orient(orient)
+                         .ticks(this.ticks);
         }
 
         clear() {
@@ -235,7 +258,7 @@ module dChart {
         redraw(min:number = 0, max:number = 1) {
 
             if (this.autorange === true) {
-                this.range = [min, max];
+                this.setDomain([min, max]);
             }
 
             if (this.orientation === "x") {
@@ -251,12 +274,14 @@ module dChart {
                 this.svg.attr("transform", "translate(0," + pos + ")");
 
                 this.svgLabel.attr("x", labelPos)
-                             .attr("y", this.length.value - 34);
+                             .attr("y", this.length.value);
+
+                this.setRange([0,this.length.value]);
             }
             else if (this.orientation === "y") {
 
                 var pos = this.align === "middle" ? this.height.value * 0.5
-                    : this.align === "end" ? 0
+                    : this.align === "start" ? 0
                     : this.height.value;
 
                 var labelPos = this.labelAlign === "middle" ? this.length.value * 0.5
@@ -265,9 +290,11 @@ module dChart {
 
                 this.svg.attr("transform", "translate(" + pos + ",0)");
 
-                this.svgLabel.attr("x", -34)
+                this.svgLabel.attr("x", 0)
                              .attr("y", -labelPos)
                              .attr("transform", "rotate(-90)");
+
+                this.setRange([this.length.value,0]);
             }
 
             this.svg.call(this.getAxis());
@@ -281,6 +308,11 @@ module dChart {
             if (value.hasOwnProperty("label")){
 
                 this.label = value.label
+            }
+
+            if (value.hasOwnProperty("align")){
+
+                this.setAlign(value.align);
             }
 
             if (value.hasOwnProperty("labelAlign")){
@@ -300,18 +332,13 @@ module dChart {
 
             if (value.hasOwnProperty("scale")){
 
-                this.setScale(value.scale);
+                this.scale = value.scale;
             }
 
             if (value.hasOwnProperty("range")){
 
-                this.setRange(value.range);
+                this.setDomain(value.range);
                 this.autorange = false;
-            }
-
-            if (value.hasOwnProperty("domain")){
-
-                this.setDomain(value.domain);
             }
         }
     }
