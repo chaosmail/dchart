@@ -121,10 +121,12 @@ declare module dChart.Utils {
         public strokeOpacity: number;
         public strokeLinecap: string;
         public strokeDasharray: string;
+        public normalize(value: any): void;
     }
-    class AreaStyle {
+    class AreaStyle extends LineStyle {
         public fill: string;
         public fillOpacity: number;
+        public normalize(value: any): void;
     }
 }
 declare module dChart {
@@ -214,16 +216,13 @@ declare module dChart {
         fn: string;
     }
     interface IDataSet {
-        stroke: string;
-        strokeWidth: number;
-        strokeOpacity: number;
-        strokeLinecap: string;
-        strokeDasharray: string;
-        fill: string;
-        fillOpacity: number;
+        lineStyle: dChart.Utils.LineStyle;
+        areaStyle: dChart.Utils.AreaStyle;
+        dotStyle: dChart.Utils.AreaStyle;
+        dotRadius: number;
         interpolate: string;
         label: string;
-        fn: IDataSetFn;
+        dataFn: IDataSetFn;
         data: dChart.IPoint[];
     }
     interface IDataSet2D extends IDataSet {
@@ -239,18 +238,18 @@ declare module dChart {
         data: dChart.IPoint3DTime[];
     }
     class DataSet {
-        public showDots: boolean;
         public showLine: boolean;
-        public dotsRadius: number;
+        public showArea: boolean;
+        public showDots: boolean;
+        public dotRadius: number;
         public data: dChart.Point[];
         public label: string;
         public solver: dChart.Solver.ISolver;
         public interpolate: string;
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
-        public dotslineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
-        public dotsAreaStyle: dChart.Utils.AreaStyle;
+        public dotStyle: dChart.Utils.AreaStyle;
         constructor();
         public recalculate(): void;
         public parse(elem: Element): void;

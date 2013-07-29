@@ -13,23 +13,37 @@ Example-Usage
 
 var lineChart1 = new dChart.LineChart({
     elem: 'lineChart1',
-    width: 400,
+    width: 800,
     height: 400,
     label: "My awesome Chart",
     description: "This awesome chart lib is using D3.js",
     axis: {
         x: {
-            label: "x-Axis"
+            label: "x-Axis",
+            align: "bottom",
+            labelAlign: "right"
         },
         y: {
             label: "y-Axis",
+            align: "left",
+            labelAlign: "center",
             range: [0,1]
         }
     },
     dataSets:[
         {
             label: "Dataset 1: Points",
-            stroke: "#ff0000",
+            lineStyle: {
+                stroke: "mediumslateblue",
+                strokeWidth: 2,
+                strokeDasharray: "5,5"
+            },
+            dotStyle: {
+                stroke: "mediumslateblue",
+                strokeWidth: 2,
+                fill: "#fff"
+            },
+            interpolate: "linear",
             data: [
                 {x:0,y:0},
                 {x:1,y:0.5},
@@ -40,8 +54,27 @@ var lineChart1 = new dChart.LineChart({
             ]
         },
         {
-            label: "Dataset 2: Function",
-            stroke: "#ff0000",
+            label: "Dataset 2: Points",
+            lineStyle: {
+                stroke: "orange",
+                strokeWidth: 2
+            },
+            interpolate: "cardinal",
+            data: [
+                {x:0,y:0.92},
+                {x:1,y:0.9},
+                {x:2,y:0.85},
+                {x:3,y:0.7},
+                {x:4,y:0.5},
+                {x:5,y:0}
+            ]
+        },
+        {
+            label: "Dataset 3: Function",
+            lineStyle: {
+                stroke: "red",
+                strokeWidth: 2
+            },
             dataFn: {
                 fn: Math.cos,
                 min: 0,

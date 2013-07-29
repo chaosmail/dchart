@@ -418,17 +418,51 @@ var dChart;
                 this.strokeLinecap = "butt";
                 this.strokeDasharray = "0";
             }
+            LineStyle.prototype.normalize = function (value) {
+                if (value.hasOwnProperty("stroke")) {
+                    this.stroke = value.stroke;
+                }
+
+                if (value.hasOwnProperty("strokeWidth")) {
+                    this.strokeWidth = parseFloat(value.strokeWidth);
+                }
+
+                if (value.hasOwnProperty("strokeOpacity")) {
+                    this.strokeOpacity = parseFloat(value.strokeOpacity);
+                }
+
+                if (value.hasOwnProperty("strokeLinecap")) {
+                    this.strokeLinecap = value.strokeLinecap;
+                }
+
+                if (value.hasOwnProperty("strokeDasharray")) {
+                    this.strokeDasharray = value.strokeDasharray;
+                }
+            };
             return LineStyle;
         })();
         Utils.LineStyle = LineStyle;
 
-        var AreaStyle = (function () {
+        var AreaStyle = (function (_super) {
+            __extends(AreaStyle, _super);
             function AreaStyle() {
+                _super.apply(this, arguments);
                 this.fill = "blue";
                 this.fillOpacity = 1;
             }
+            AreaStyle.prototype.normalize = function (value) {
+                _super.prototype.normalize.call(this, value);
+
+                if (value.hasOwnProperty("fill")) {
+                    this.fill = value.fill;
+                }
+
+                if (value.hasOwnProperty("fillOpacity")) {
+                    this.fillOpacity = parseFloat(value.fillOpacity);
+                }
+            };
             return AreaStyle;
-        })();
+        })(LineStyle);
         Utils.AreaStyle = AreaStyle;
     })(dChart.Utils || (dChart.Utils = {}));
     var Utils = dChart.Utils;
@@ -676,17 +710,17 @@ var dChart;
 (function (dChart) {
     var DataSet = (function () {
         function DataSet() {
-            this.showDots = true;
             this.showLine = true;
-            this.dotsRadius = 3;
+            this.showArea = false;
+            this.showDots = false;
+            this.dotRadius = 3;
             this.data = [];
             this.label = "";
             this.interpolate = "linear";
             this.visible = true;
             this.lineStyle = new dChart.Utils.LineStyle();
-            this.dotslineStyle = new dChart.Utils.LineStyle();
             this.areaStyle = new dChart.Utils.AreaStyle();
-            this.dotsAreaStyle = new dChart.Utils.AreaStyle();
+            this.dotStyle = new dChart.Utils.AreaStyle();
         }
         DataSet.prototype.recalculate = function () {
         };
@@ -724,24 +758,28 @@ var dChart;
                 this.interpolate = value.interpolate;
             }
 
-            if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = value.stroke;
+            if (value.hasOwnProperty("dotStyle")) {
+                var areaStyle = new dChart.Utils.AreaStyle();
+                areaStyle.normalize(value.dotStyle);
+                this.dotStyle = areaStyle;
+
+                this.showDots = true;
             }
 
-            if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
+            if (value.hasOwnProperty("lineStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
+
+                this.showLine = true;
             }
 
-            if (value.hasOwnProperty("strokeOpacity")) {
-                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
-            }
+            if (value.hasOwnProperty("areaStyle")) {
+                var areaStyle = new dChart.Utils.AreaStyle();
+                areaStyle.normalize(value.areaStyle);
+                this.areaStyle = areaStyle;
 
-            if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = value.fill;
-            }
-
-            if (value.hasOwnProperty("fillOpacity")) {
-                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+                this.showArea = true;
             }
 
             if (value.hasOwnProperty("showDots")) {
@@ -752,8 +790,12 @@ var dChart;
                 this.showLine = value.showLine;
             }
 
+            if (value.hasOwnProperty("showArea")) {
+                this.showArea = value.showArea;
+            }
+
             if (value.hasOwnProperty("dotRadius")) {
-                this.dotsRadius = value.dotRadius;
+                this.dotRadius = value.dotRadius;
             }
         };
 
@@ -1176,7 +1218,7 @@ var dChart;
                         return yScale(d.y);
                     });
 
-                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke).style("fill", "none").style("stroke-width", dataSet.lineStyle.strokeWidth).style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke).style("stroke-width", dataSet.lineStyle.strokeWidth).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("stroke-dasharray", dataSet.lineStyle.strokeDasharray).style("fill", "none");
                 }
 
                 if (dataSet.showDots) {
@@ -1186,12 +1228,12 @@ var dChart;
 
                     group.exit().remove();
 
-                    group.enter().append("circle").style("stroke", dataSet.lineStyle.stroke).style("fill", dataSet.areaStyle.fill).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("fill-opacity", dataSet.areaStyle.fillOpacity).style("stroke-width", dataSet.lineStyle.strokeWidth).attr("cx", function (d) {
+                    group.enter().append("circle").style("stroke", dataSet.dotStyle.stroke).style("stroke-width", dataSet.dotStyle.strokeWidth).style("stroke-opacity", dataSet.dotStyle.strokeOpacity).style("stroke-linecap", dataSet.dotStyle.strokeLinecap).style("stroke-dasharray", dataSet.dotStyle.strokeDasharray).style("fill", dataSet.dotStyle.fill).style("fill-opacity", dataSet.dotStyle.fillOpacity).attr("cx", function (d) {
                         return xScale(d.x);
                     }).attr("cy", function (d) {
                         return yScale(d.y);
                     }).attr("r", function (d) {
-                        return dataSet.dotsRadius;
+                        return dataSet.dotRadius;
                     });
                 }
             });

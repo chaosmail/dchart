@@ -48,11 +48,46 @@ module dChart.Utils {
         strokeOpacity:number = 1;
         strokeLinecap:string = "butt";
         strokeDasharray:string = "0";
+
+        normalize(value:any) {
+
+            if (value.hasOwnProperty("stroke")) {
+                this.stroke = value.stroke;
+            }
+
+            if (value.hasOwnProperty("strokeWidth")) {
+                this.strokeWidth = parseFloat(value.strokeWidth);
+            }
+
+            if (value.hasOwnProperty("strokeOpacity")) {
+                this.strokeOpacity = parseFloat(value.strokeOpacity);
+            }
+
+            if (value.hasOwnProperty("strokeLinecap")) {
+                this.strokeLinecap = value.strokeLinecap;
+            }
+
+            if (value.hasOwnProperty("strokeDasharray")) {
+                this.strokeDasharray = value.strokeDasharray;
+            }
+        }
     }
 
-    export class AreaStyle {
+    export class AreaStyle extends LineStyle {
 
         fill:string = "blue";
         fillOpacity:number = 1;
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("fill")) {
+                this.fill = value.fill;
+            }
+
+            if (value.hasOwnProperty("fillOpacity")) {
+                this.fillOpacity = parseFloat(value.fillOpacity);
+            }
+        }
     }
 }

@@ -13,16 +13,13 @@ module dChart {
 
     export interface IDataSet {
 
-        stroke:string;
-        strokeWidth:number;
-        strokeOpacity:number;
-        strokeLinecap:string;
-        strokeDasharray:string;
-        fill:string;
-        fillOpacity:number;
+        lineStyle:Utils.LineStyle;
+        areaStyle:Utils.AreaStyle;
+        dotStyle:Utils.AreaStyle;
+        dotRadius:number;
         interpolate:string;
         label:string;
-        fn:IDataSetFn;
+        dataFn:IDataSetFn;
         data:IPoint[];
     }
 
@@ -48,9 +45,11 @@ module dChart {
 
     export class DataSet {
 
-        showDots:bool = true;
         showLine:bool = true;
-        dotsRadius:number = 3;
+        showArea:bool = false;
+        showDots:bool = false;
+
+        dotRadius:number = 3;
 
         data:Point[] = [];
 
@@ -88,22 +87,10 @@ module dChart {
          */
         visible:bool = true;
 
-        /**
-         * Line Element, that stores all Attribute Styles
-         */
         lineStyle:Utils.LineStyle = new Utils.LineStyle();
-        dotslineStyle:Utils.LineStyle = new Utils.LineStyle();
-
-        /**
-         * Area Element, that stores all Attribute Styles
-         */
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
-        dotsAreaStyle:Utils.AreaStyle = new Utils.AreaStyle();
+        dotStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
-        /**
-         * Constructor
-         * @param dataSetLabel
-         */
         constructor() {
 
         }
@@ -160,24 +147,31 @@ module dChart {
                 this.interpolate = value.interpolate;
             }
 
-            if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = value.stroke;
+            if (value.hasOwnProperty("dotStyle")) {
+
+                var areaStyle = new Utils.AreaStyle();
+                areaStyle.normalize(value.dotStyle);
+                this.dotStyle = areaStyle;
+
+                this.showDots = true;
             }
 
-            if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
+            if (value.hasOwnProperty("lineStyle")) {
+
+                var lineStyle = new Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
+
+                this.showLine = true;
             }
 
-            if (value.hasOwnProperty("strokeOpacity")) {
-                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
-            }
+            if (value.hasOwnProperty("areaStyle")) {
 
-            if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = value.fill;
-            }
+                var areaStyle = new Utils.AreaStyle();
+                areaStyle.normalize(value.areaStyle);
+                this.areaStyle = areaStyle;
 
-            if (value.hasOwnProperty("fillOpacity")) {
-                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+                this.showArea = true;
             }
 
             if (value.hasOwnProperty("showDots")) {
@@ -190,9 +184,14 @@ module dChart {
                 this.showLine = value.showLine;
             }
 
+            if (value.hasOwnProperty("showArea")) {
+
+                this.showArea = value.showArea;
+            }
+
             if (value.hasOwnProperty("dotRadius")) {
 
-                this.dotsRadius = value.dotRadius;
+                this.dotRadius = value.dotRadius;
             }
         }
 

@@ -427,9 +427,11 @@ module dChart {
 
                     this.svgLine[key].attr("d", lineFn[key](dataSet.data))
                         .style("stroke", dataSet.lineStyle.stroke)
-                        .style("fill", "none")
                         .style("stroke-width", dataSet.lineStyle.strokeWidth)
-                        .style("stroke-opacity", dataSet.lineStyle.strokeOpacity);
+                        .style("stroke-opacity", dataSet.lineStyle.strokeOpacity)
+                        .style("stroke-linecap", dataSet.lineStyle.strokeLinecap)
+                        .style("stroke-dasharray", dataSet.lineStyle.strokeDasharray)
+                        .style("fill","none");
 
                 }
 
@@ -443,14 +445,16 @@ module dChart {
 
                     group.enter()
                         .append("circle")
-                        .style("stroke", dataSet.lineStyle.stroke)
-                        .style("fill", dataSet.areaStyle.fill)
-                        .style("stroke-opacity", dataSet.lineStyle.strokeOpacity)
-                        .style("fill-opacity", dataSet.areaStyle.fillOpacity)
-                        .style("stroke-width", dataSet.lineStyle.strokeWidth)
+                        .style("stroke", dataSet.dotStyle.stroke)
+                        .style("stroke-width", dataSet.dotStyle.strokeWidth)
+                        .style("stroke-opacity", dataSet.dotStyle.strokeOpacity)
+                        .style("stroke-linecap", dataSet.dotStyle.strokeLinecap)
+                        .style("stroke-dasharray", dataSet.dotStyle.strokeDasharray)
+                        .style("fill", dataSet.dotStyle.fill)
+                        .style("fill-opacity", dataSet.dotStyle.fillOpacity)
                         .attr("cx", (d:Point2D) => xScale(d.x))
                         .attr("cy", (d:Point2D) => yScale(d.y))
-                        .attr("r", (d:Point2D) => dataSet.dotsRadius);
+                        .attr("r", (d:Point2D) => dataSet.dotRadius);
                 }
             });
         }
