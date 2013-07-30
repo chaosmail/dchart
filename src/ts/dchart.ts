@@ -226,8 +226,8 @@ module dChart {
     export class Chart2D extends Chart {
 
         dataSets:DataSet2D[] = [];
-        xAxis:Axis = new Axis("x");
-        yAxis:Axis = new Axis("y");
+        xAxis:xAxis = new xAxis();
+        yAxis:yAxis = new yAxis();
 
         constructor() {
             super();
@@ -320,9 +320,9 @@ module dChart {
 
         depth:number = 400;
 
-        xAxis:Axis = new Axis("x");
-        yAxis:Axis = new Axis("y");
-        zAxis:Axis = new Axis("z");
+        xAxis:xAxis = new xAxis();
+        yAxis:yAxis = new yAxis();
+        zAxis:zAxis = new zAxis();
 
         constructor() {
             super();

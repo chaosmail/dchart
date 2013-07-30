@@ -77,15 +77,8 @@ module dChart {
 
         visible:bool = true;
 
-        constructor(orientation?:string, length?:number) {
+        constructor() {
 
-            if (orientation) {
-                this.setOrientation(orientation);
-            }
-
-            if (length) {
-                this.length = length;
-            }
         }
 
         addScaleFn(fn:string,args:any) {
@@ -265,46 +258,10 @@ module dChart {
                 this.setDomain([min, max]);
             }
 
-            if (this.orientation === "x") {
-
-                var pos = this.align === "middle" ? this.height * 0.5
-                    : this.align === "start" ? 0
-                    : this.height;
-
-                var labelPos = this.labelAlign === "middle" ? this.length * 0.5
-                    : this.labelAlign === "start" ? 0
-                    : this.length;
-
-                this.svg.attr("transform", "translate(0," + pos + ")");
-
-                this.svgLabel.attr("x", labelPos)
-                             .attr("y", this.height + this.labelOffset);
-
-                this.setRange([0,this.length]);
-            }
-            else if (this.orientation === "y") {
-
-                var pos = this.align === "middle" ? this.height * 0.5
-                    : this.align === "start" ? 0
-                    : this.height;
-
-                var labelPos = this.labelAlign === "middle" ? this.length * 0.5
-                    : this.labelAlign === "end" ? 0
-                    : this.length;
-
-                this.svg.attr("transform", "translate(" + pos + ",0)");
-
-                this.svgLabel.attr("x", -labelPos)
-                             .attr("y", -this.labelOffset)
-                             .attr("transform", "rotate(-90)");
-
-                this.setRange([this.length,0]);
-            }
-
             this.svg.call(this.getAxis());
 
-            this.svgLabel.text(this.label)
-                         .attr("text-anchor", this.labelAlign);
+            this.svgLabel.text(this.label);
+
         }
 
         normalize(value:any) {
@@ -355,5 +312,67 @@ module dChart {
                 this.autorange = false;
             }
         }
+    }
+
+    export class xAxis extends Axis {
+
+        orientation:string = "x";
+
+        redraw(min:number = 0, max:number = 1) {
+
+            var pos = this.align === "middle" ? this.height * 0.5
+                : this.align === "start" ? 0
+                : this.height;
+
+            var labelPos = this.labelAlign === "middle" ? this.length * 0.5
+                : this.labelAlign === "start" ? 0
+                : this.length;
+
+            this.svg.attr("transform", "translate(0," + pos + ")");
+
+            this.svgLabel.attr("x", labelPos)
+                .attr("y", this.height + this.labelOffset)
+                .attr("text-anchor", this.labelAlign);
+
+            this.setRange([0,this.length]);
+
+            super.redraw(min, max);
+        }
+    }
+
+    export class yAxis extends Axis {
+
+        orientation:string = "y";
+
+        redraw(min:number = 0, max:number = 1) {
+
+            var pos = this.align === "middle" ? this.height * 0.5
+                : this.align === "start" ? 0
+                : this.height;
+
+            var labelPos = this.labelAlign === "middle" ? this.length * 0.5
+                : this.labelAlign === "start" ? 0
+                : this.length;
+
+            var labelAlign = this.labelAlign === "start" ? "end"
+                : this.labelAlign === "end" ? "start"
+                : "middle";
+
+            this.svg.attr("transform", "translate(" + pos + ",0)");
+
+            this.svgLabel.attr("x", -labelPos)
+                .attr("y", -this.labelOffset)
+                .attr("transform", "rotate(-90)")
+                .attr("text-anchor", labelAlign);
+
+            this.setRange([this.length,0]);
+
+            super.redraw(min, max);
+        }
+    }
+
+    export class zAxis extends Axis {
+
+        orientation:string = "z";
     }
 }

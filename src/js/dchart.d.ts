@@ -163,7 +163,7 @@ declare module dChart {
         public tickSize: number[];
         public tickPadding: number;
         public visible: boolean;
-        constructor(orientation?: string, length?: number);
+        constructor();
         public addScaleFn(fn: string, args: any): void;
         public setOrientation(orientation?: string): Axis;
         public setDomain(domain: number[]): Axis;
@@ -176,6 +176,17 @@ declare module dChart {
         public draw(container: D3.Selection, min: number, max: number): void;
         public redraw(min?: number, max?: number): void;
         public normalize(value: any): void;
+    }
+    class xAxis extends Axis {
+        public orientation: string;
+        public redraw(min?: number, max?: number): void;
+    }
+    class yAxis extends Axis {
+        public orientation: string;
+        public redraw(min?: number, max?: number): void;
+    }
+    class zAxis extends Axis {
+        public orientation: string;
     }
 }
 declare module dChart.Solver {
@@ -331,8 +342,8 @@ declare module dChart {
     }
     class Chart2D extends Chart {
         public dataSets: dChart.DataSet2D[];
-        public xAxis: dChart.Axis;
-        public yAxis: dChart.Axis;
+        public xAxis: dChart.xAxis;
+        public yAxis: dChart.yAxis;
         constructor();
         public redraw(): void;
         public drawAxis(): void;
@@ -346,9 +357,9 @@ declare module dChart {
     class Chart3D extends Chart {
         public dataSets: dChart.DataSet3D[];
         public depth: number;
-        public xAxis: dChart.Axis;
-        public yAxis: dChart.Axis;
-        public zAxis: dChart.Axis;
+        public xAxis: dChart.xAxis;
+        public yAxis: dChart.yAxis;
+        public zAxis: dChart.zAxis;
         constructor();
         public drawAxis(): void;
         public redrawAxis(): void;

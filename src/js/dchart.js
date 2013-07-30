@@ -470,7 +470,7 @@ var dChart;
 var dChart;
 (function (dChart) {
     var Axis = (function () {
-        function Axis(orientation, length) {
+        function Axis() {
             this.labelOffset = 34;
             this.range = [0, 1];
             this.domain = [0, 1];
@@ -485,13 +485,6 @@ var dChart;
             this.ticks = 10;
             this.tickSubdivide = false;
             this.visible = true;
-            if (orientation) {
-                this.setOrientation(orientation);
-            }
-
-            if (length) {
-                this.length = length;
-            }
         }
         Axis.prototype.addScaleFn = function (fn, args) {
             if (this.scale[fn] && typeof this.scale[fn] === "function") {
@@ -581,31 +574,9 @@ var dChart;
                 this.setDomain([min, max]);
             }
 
-            if (this.orientation === "x") {
-                var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
-
-                var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
-
-                this.svg.attr("transform", "translate(0," + pos + ")");
-
-                this.svgLabel.attr("x", labelPos).attr("y", this.height + this.labelOffset);
-
-                this.setRange([0, this.length]);
-            } else if (this.orientation === "y") {
-                var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
-
-                var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "end" ? 0 : this.length;
-
-                this.svg.attr("transform", "translate(" + pos + ",0)");
-
-                this.svgLabel.attr("x", -labelPos).attr("y", -this.labelOffset).attr("transform", "rotate(-90)");
-
-                this.setRange([this.length, 0]);
-            }
-
             this.svg.call(this.getAxis());
 
-            this.svgLabel.text(this.label).attr("text-anchor", this.labelAlign);
+            this.svgLabel.text(this.label);
         };
 
         Axis.prototype.normalize = function (value) {
@@ -649,6 +620,68 @@ var dChart;
         return Axis;
     })();
     dChart.Axis = Axis;
+
+    var xAxis = (function (_super) {
+        __extends(xAxis, _super);
+        function xAxis() {
+            _super.apply(this, arguments);
+            this.orientation = "x";
+        }
+        xAxis.prototype.redraw = function (min, max) {
+            if (typeof min === "undefined") { min = 0; }
+            if (typeof max === "undefined") { max = 1; }
+            var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
+
+            var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
+
+            this.svg.attr("transform", "translate(0," + pos + ")");
+
+            this.svgLabel.attr("x", labelPos).attr("y", this.height + this.labelOffset).attr("text-anchor", this.labelAlign);
+
+            this.setRange([0, this.length]);
+
+            _super.prototype.redraw.call(this, min, max);
+        };
+        return xAxis;
+    })(Axis);
+    dChart.xAxis = xAxis;
+
+    var yAxis = (function (_super) {
+        __extends(yAxis, _super);
+        function yAxis() {
+            _super.apply(this, arguments);
+            this.orientation = "y";
+        }
+        yAxis.prototype.redraw = function (min, max) {
+            if (typeof min === "undefined") { min = 0; }
+            if (typeof max === "undefined") { max = 1; }
+            var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
+
+            var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
+
+            var labelAlign = this.labelAlign === "start" ? "end" : this.labelAlign === "end" ? "start" : "middle";
+
+            this.svg.attr("transform", "translate(" + pos + ",0)");
+
+            this.svgLabel.attr("x", -labelPos).attr("y", -this.labelOffset).attr("transform", "rotate(-90)").attr("text-anchor", labelAlign);
+
+            this.setRange([this.length, 0]);
+
+            _super.prototype.redraw.call(this, min, max);
+        };
+        return yAxis;
+    })(Axis);
+    dChart.yAxis = yAxis;
+
+    var zAxis = (function (_super) {
+        __extends(zAxis, _super);
+        function zAxis() {
+            _super.apply(this, arguments);
+            this.orientation = "z";
+        }
+        return zAxis;
+    })(Axis);
+    dChart.zAxis = zAxis;
 })(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
@@ -1018,8 +1051,8 @@ var dChart;
         function Chart2D() {
             _super.call(this);
             this.dataSets = [];
-            this.xAxis = new dChart.Axis("x");
-            this.yAxis = new dChart.Axis("y");
+            this.xAxis = new dChart.xAxis();
+            this.yAxis = new dChart.yAxis();
         }
         Chart2D.prototype.redraw = function () {
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
@@ -1105,9 +1138,9 @@ var dChart;
             _super.call(this);
             this.dataSets = [];
             this.depth = 400;
-            this.xAxis = new dChart.Axis("x");
-            this.yAxis = new dChart.Axis("y");
-            this.zAxis = new dChart.Axis("z");
+            this.xAxis = new dChart.xAxis();
+            this.yAxis = new dChart.yAxis();
+            this.zAxis = new dChart.zAxis();
         }
         Chart3D.prototype.drawAxis = function () {
             var min = [this.min("x"), this.min("y"), this.min("z")];
