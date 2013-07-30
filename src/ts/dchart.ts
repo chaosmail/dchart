@@ -74,34 +74,7 @@ module dChart {
         description:string;
 
         constructor() {
-
-            var css =  '.dchart-axis path,' +
-                       '.dchart-axis line {' +
-                       '         fill: none;' +
-                       '         stroke: black;' +
-                       '         shape-rendering: crispEdges;' +
-                       '     }' +
-                       ' .dchart-axis .tick line { ' +
-                       '         stroke: lightgrey; ' +
-                       '         opacity: 0.9; ' +
-                       '     } ' +
-                       ' .dchart-axis .tick:first-child line { ' +
-                       '         stroke: black; ' +
-                       '         opacity: 1; ' +
-                       '     } ' +
-                       ' .dchart-axis text,' +
-                       ' .dchart-container-description text,' +
-                       ' .dchart-axis-label text {' +
-                       '         font-family: sans-serif;' +
-                       '         font-size: 11px;' +
-                       '     }' +
-                       ' .dchart-container-label text {' +
-                       '         font-family: sans-serif;' +
-                       '         font-size: 13px;' +
-                       '         font-weight: bold;' +
-                       '     }' ;
-
-            Utils.Doc.css(css);
+;
         }
 
         clear() {
@@ -463,7 +436,7 @@ module dChart {
 
                 }
 
-                if (dataSet.showDots) {
+                if (dataSet.showDot) {
 
                     var group = this.svgLineContainer[key].selectAll("circle")
                         .data(dataSet.data, (d:Point2D) => d.x);

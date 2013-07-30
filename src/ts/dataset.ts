@@ -13,6 +13,9 @@ module dChart {
 
     export interface IDataSet {
 
+        dot:bool;
+        line:bool;
+        area:bool;
         lineStyle:Utils.LineStyle;
         areaStyle:Utils.AreaStyle;
         dotStyle:Utils.AreaStyle;
@@ -47,7 +50,7 @@ module dChart {
 
         showLine:bool = true;
         showArea:bool = false;
-        showDots:bool = false;
+        showDot:bool = false;
 
         dotRadius:number = 3;
 
@@ -153,7 +156,7 @@ module dChart {
                 areaStyle.normalize(value.dotStyle);
                 this.dotStyle = areaStyle;
 
-                this.showDots = true;
+                this.showDot = true;
             }
 
             if (value.hasOwnProperty("lineStyle")) {
@@ -174,17 +177,17 @@ module dChart {
                 this.showArea = true;
             }
 
-            if (value.hasOwnProperty("showDots")) {
+            if (value.hasOwnProperty("dot")) {
 
-                this.showDots = value.showDots;
+                this.showDot = value.showDots;
             }
 
-            if (value.hasOwnProperty("showLine")) {
+            if (value.hasOwnProperty("line")) {
 
                 this.showLine = value.showLine;
             }
 
-            if (value.hasOwnProperty("showArea")) {
+            if (value.hasOwnProperty("area")) {
 
                 this.showArea = value.showArea;
             }

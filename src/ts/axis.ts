@@ -10,6 +10,7 @@ module dChart {
         labelAlign:string;
         labelOffset:number;
         grid:bool;
+        gridStyle:Utils.LineStyle;
         scale:string;
         autorange:bool;
         ticks:number;
@@ -22,6 +23,8 @@ module dChart {
         svg:D3.Selection;
         svgLabel:D3.Selection;
 
+        gridStyle:Utils.LineStyle = new Utils.LineStyle();
+
         label:string;
 
         labelOffset:number = 34;
@@ -32,7 +35,7 @@ module dChart {
 
         autorange:bool = true;
 
-        grid:bool = false;
+        showGrid:bool = false;
 
         scale:string = "linear";
 
@@ -79,6 +82,9 @@ module dChart {
 
         constructor() {
 
+            this.gridStyle.stroke = "black";
+            this.gridStyle.strokeWidth = 1;
+            this.gridStyle.strokeOpacity = 0.25;
         }
 
         addScaleFn(fn:string,args:any) {
@@ -223,9 +229,9 @@ module dChart {
                          .orient(orient)
                          .ticks(this.ticks);
 
-            if (this.grid) {
+            if (this.showGrid) {
 
-                axis.tickSize(-this.height, 0, 0);
+                axis.tickSize(-this.height, 0, 3);
             }
 
             return axis;
@@ -249,6 +255,8 @@ module dChart {
                         .attr("class","dchart-axis-label dchart-axis-" + this.orientation + "-label")
                         .append("text");
 
+
+
             this.redraw(min, max);
         }
 
@@ -259,6 +267,13 @@ module dChart {
             }
 
             this.svg.call(this.getAxis());
+
+            this.svg.selectAll(".tick line").style("fill", "none")
+                .style("stroke", (d,i) => i>0 ? this.gridStyle.stroke : "black")
+                .style("stroke-width", (d,i) => i>0 ? this.gridStyle.strokeWidth : 1)
+                .style("stroke-opacity", (d,i) => i>0 ? this.gridStyle.strokeOpacity : 1)
+                .style("stroke-linecap", (d,i) => i>0 ? this.gridStyle.strokeLinecap : "butt")
+                .style("stroke-dasharray", (d,i) => i>0 ? this.gridStyle.strokeDasharray : "0");
 
             this.svgLabel.text(this.label);
 
@@ -293,7 +308,16 @@ module dChart {
 
             if (value.hasOwnProperty("grid")){
 
-                this.grid = value.grid;
+                this.showGrid = value.grid;
+            }
+
+            if (value.hasOwnProperty("gridStyle")){
+
+                var lineStyle = new Utils.LineStyle();
+                lineStyle.normalize(value.gridStyle);
+                this.gridStyle = lineStyle;
+
+                this.showGrid = true;
             }
 
             if (value.hasOwnProperty("ticks")){

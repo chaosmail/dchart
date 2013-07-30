@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>dChart Demo</title>
+    <link rel="stylesheet" href="../dist/dchart.css"/>
 </head>
 <body>
 
@@ -29,8 +30,11 @@
                     align: "left",
                     scale: "sqrt",
                     labelAlign: "top",
-                    range: [0,1],
-                    grid:true
+                    gridStyle: {
+                        stroke: "black",
+                        strokeOpacity: 0.25
+                    },
+                    range: [0,1]
                 }
             },
             dataSets:[

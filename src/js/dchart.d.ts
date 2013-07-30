@@ -107,9 +107,6 @@ declare module dChart {
     }
 }
 declare module dChart.Utils {
-    class Doc {
-        static css(code: string): void;
-    }
     class Elem {
         static getFloat(value: Element): number;
         static getColor(value: Element): string;
@@ -135,6 +132,7 @@ declare module dChart {
         labelAlign: string;
         labelOffset: number;
         grid: boolean;
+        gridStyle: dChart.Utils.LineStyle;
         scale: string;
         autorange: boolean;
         ticks: number;
@@ -144,12 +142,13 @@ declare module dChart {
     class Axis {
         public svg: D3.Selection;
         public svgLabel: D3.Selection;
+        public gridStyle: dChart.Utils.LineStyle;
         public label: string;
         public labelOffset: number;
         public range: number[];
         public domain: number[];
         public autorange: boolean;
-        public grid: boolean;
+        public showGrid: boolean;
         public scale: string;
         public length: number;
         public height: number;
@@ -223,6 +222,9 @@ declare module dChart {
         fn: string;
     }
     interface IDataSet {
+        dot: boolean;
+        line: boolean;
+        area: boolean;
         lineStyle: dChart.Utils.LineStyle;
         areaStyle: dChart.Utils.AreaStyle;
         dotStyle: dChart.Utils.AreaStyle;
@@ -247,7 +249,7 @@ declare module dChart {
     class DataSet {
         public showLine: boolean;
         public showArea: boolean;
-        public showDots: boolean;
+        public showDot: boolean;
         public dotRadius: number;
         public data: dChart.Point[];
         public label: string;

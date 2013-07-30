@@ -372,26 +372,6 @@ var dChart;
 var dChart;
 (function (dChart) {
     (function (Utils) {
-        var Doc = (function () {
-            function Doc() {
-            }
-            Doc.css = function (code) {
-                var style = document.createElement('style');
-
-                style.type = 'text/css';
-
-                if (style.styleSheet) {
-                    style.styleSheet.cssText = code;
-                } else {
-                    style.innerHTML = code;
-                }
-
-                document.body.appendChild(style);
-            };
-            return Doc;
-        })();
-        Utils.Doc = Doc;
-
         var Elem = (function () {
             function Elem() {
             }
@@ -471,11 +451,12 @@ var dChart;
 (function (dChart) {
     var Axis = (function () {
         function Axis() {
+            this.gridStyle = new dChart.Utils.LineStyle();
             this.labelOffset = 34;
             this.range = [0, 1];
             this.domain = [0, 1];
             this.autorange = true;
-            this.grid = false;
+            this.showGrid = false;
             this.scale = "linear";
             this.length = 1;
             this.height = 1;
@@ -485,6 +466,9 @@ var dChart;
             this.ticks = 10;
             this.tickSubdivide = false;
             this.visible = true;
+            this.gridStyle.stroke = "black";
+            this.gridStyle.strokeWidth = 1;
+            this.gridStyle.strokeOpacity = 0.25;
         }
         Axis.prototype.addScaleFn = function (fn, args) {
             if (this.scale[fn] && typeof this.scale[fn] === "function") {
@@ -544,8 +528,8 @@ var dChart;
 
             var axis = d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks);
 
-            if (this.grid) {
-                axis.tickSize(-this.height, 0, 0);
+            if (this.showGrid) {
+                axis.tickSize(-this.height, 0, 3);
             }
 
             return axis;
@@ -570,11 +554,24 @@ var dChart;
         Axis.prototype.redraw = function (min, max) {
             if (typeof min === "undefined") { min = 0; }
             if (typeof max === "undefined") { max = 1; }
+            var _this = this;
             if (this.autorange === true) {
                 this.setDomain([min, max]);
             }
 
             this.svg.call(this.getAxis());
+
+            this.svg.selectAll(".tick line").style("fill", "none").style("stroke", function (d, i) {
+                return i > 0 ? _this.gridStyle.stroke : "black";
+            }).style("stroke-width", function (d, i) {
+                return i > 0 ? _this.gridStyle.strokeWidth : 1;
+            }).style("stroke-opacity", function (d, i) {
+                return i > 0 ? _this.gridStyle.strokeOpacity : 1;
+            }).style("stroke-linecap", function (d, i) {
+                return i > 0 ? _this.gridStyle.strokeLinecap : "butt";
+            }).style("stroke-dasharray", function (d, i) {
+                return i > 0 ? _this.gridStyle.strokeDasharray : "0";
+            });
 
             this.svgLabel.text(this.label);
         };
@@ -601,7 +598,15 @@ var dChart;
             }
 
             if (value.hasOwnProperty("grid")) {
-                this.grid = value.grid;
+                this.showGrid = value.grid;
+            }
+
+            if (value.hasOwnProperty("gridStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.gridStyle);
+                this.gridStyle = lineStyle;
+
+                this.showGrid = true;
             }
 
             if (value.hasOwnProperty("ticks")) {
@@ -751,7 +756,7 @@ var dChart;
         function DataSet() {
             this.showLine = true;
             this.showArea = false;
-            this.showDots = false;
+            this.showDot = false;
             this.dotRadius = 3;
             this.data = [];
             this.label = "";
@@ -802,7 +807,7 @@ var dChart;
                 areaStyle.normalize(value.dotStyle);
                 this.dotStyle = areaStyle;
 
-                this.showDots = true;
+                this.showDot = true;
             }
 
             if (value.hasOwnProperty("lineStyle")) {
@@ -821,15 +826,15 @@ var dChart;
                 this.showArea = true;
             }
 
-            if (value.hasOwnProperty("showDots")) {
-                this.showDots = value.showDots;
+            if (value.hasOwnProperty("dot")) {
+                this.showDot = value.showDots;
             }
 
-            if (value.hasOwnProperty("showLine")) {
+            if (value.hasOwnProperty("line")) {
                 this.showLine = value.showLine;
             }
 
-            if (value.hasOwnProperty("showArea")) {
+            if (value.hasOwnProperty("area")) {
                 this.showArea = value.showArea;
             }
 
@@ -948,9 +953,7 @@ var dChart;
             this.height = 400;
             this.nettoWidth = 340;
             this.nettoHeight = 310;
-            var css = '.dchart-axis path,' + '.dchart-axis line {' + '         fill: none;' + '         stroke: black;' + '         shape-rendering: crispEdges;' + '     }' + ' .dchart-axis .tick line { ' + '         stroke: lightgrey; ' + '         opacity: 0.9; ' + '     } ' + ' .dchart-axis .tick:first-child line { ' + '         stroke: black; ' + '         opacity: 1; ' + '     } ' + ' .dchart-axis text,' + ' .dchart-container-description text,' + ' .dchart-axis-label text {' + '         font-family: sans-serif;' + '         font-size: 11px;' + '     }' + ' .dchart-container-label text {' + '         font-family: sans-serif;' + '         font-size: 13px;' + '         font-weight: bold;' + '     }';
-
-            dChart.Utils.Doc.css(css);
+            ;
         }
         Chart.prototype.clear = function () {
             if (this.svg) {
@@ -1264,7 +1267,7 @@ var dChart;
                     _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke).style("stroke-width", dataSet.lineStyle.strokeWidth).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("stroke-dasharray", dataSet.lineStyle.strokeDasharray).style("fill", "none");
                 }
 
-                if (dataSet.showDots) {
+                if (dataSet.showDot) {
                     var group = _this.svgLineContainer[key].selectAll("circle").data(dataSet.data, function (d) {
                         return d.x;
                     });
