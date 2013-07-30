@@ -54,8 +54,8 @@ module dChart {
         container:D3.Selection;
         axisContainer:D3.Selection;
         dataContainer:D3.Selection;
-        labelContainer:D3.Selection;
-        descriptionContainer:D3.Selection;
+        svgLabel:D3.Selection;
+        svgDescription:D3.Selection;
 
         elem:Element;
         elemId:string;
@@ -63,12 +63,12 @@ module dChart {
         marginLeft:number = 50;
         marginRight:number = 10;
         marginTop:number = 10;
-        marginBottom:number = 50;
+        marginBottom:number = 80;
 
         width:number = 400;
         height:number = 400;
         nettoWidth:number = 340;
-        nettoHeight:number = 340;
+        nettoHeight:number = 310;
 
         label:string;
         description:string;
@@ -81,11 +81,25 @@ module dChart {
                        '         stroke: black;' +
                        '         shape-rendering: crispEdges;' +
                        '     }' +
+                       ' .dchart-axis .tick line { ' +
+                       '         stroke: lightgrey; ' +
+                       '         opacity: 0.9; ' +
+                       '     } ' +
+                       ' .dchart-axis .tick:first-child line { ' +
+                       '         stroke: black; ' +
+                       '         opacity: 1; ' +
+                       '     } ' +
                        ' .dchart-axis text,' +
+                       ' .dchart-container-description text,' +
                        ' .dchart-axis-label text {' +
                        '         font-family: sans-serif;' +
                        '         font-size: 11px;' +
-                       '     }';
+                       '     }' +
+                       ' .dchart-container-label text {' +
+                       '         font-family: sans-serif;' +
+                       '         font-size: 13px;' +
+                       '         font-weight: bold;' +
+                       '     }' ;
 
             Utils.Doc.css(css);
         }
@@ -105,6 +119,16 @@ module dChart {
             this.container.attr("width", this.nettoWidth)
                           .attr("height", this.nettoHeight)
                           .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
+
+            this.svgDescription.text(this.description)
+                .attr("x", this.width * 0.5)
+                .attr("y", this.height - 20)
+                .attr("text-anchor", "middle");
+
+            this.svgLabel.text(this.label)
+                .attr("x", this.width * 0.5)
+                .attr("y", this.height - 40)
+                .attr("text-anchor", "middle");
 
             this.redrawAxis();
             this.redrawData();
@@ -127,11 +151,13 @@ module dChart {
             this.dataContainer = this.container.append("g")
                 .attr("class","dchart-container-data");
 
-            this.labelContainer = this.container.append("g")
-                .attr("class","dchart-container-label");
+            this.svgLabel = this.container.append("g")
+                .attr("class","dchart-container-label")
+                .append("text");
 
-            this.descriptionContainer = this.container.append("g")
-                .attr("class","dchart-container-description");
+            this.svgDescription = this.container.append("g")
+                .attr("class","dchart-container-description")
+                .append("text");
 
 
             this.drawAxis();

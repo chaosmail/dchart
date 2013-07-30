@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Tue Jul 30 2013 01:41:19
+/** dchart - v0.0.4 - Tue Jul 30 2013 02:25:41
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -479,6 +479,7 @@ var dChart;
             this.range = [0, 1];
             this.domain = [0, 1];
             this.autorange = true;
+            this.grid = false;
             this.scale = "linear";
             this.length = 1;
             this.height = 1;
@@ -487,11 +488,6 @@ var dChart;
             this.labelAlign = "end";
             this.ticks = 10;
             this.tickSubdivide = false;
-            this.tickSize = {
-                major: 1,
-                minor: 0,
-                end: 0
-            };
             this.visible = true;
             if (orientation) {
                 this.setOrientation(orientation);
@@ -557,7 +553,13 @@ var dChart;
                 orient = this.align === "end" ? "right" : "left";
             }
 
-            return d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks);
+            var axis = d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks);
+
+            if (this.grid) {
+                axis.tickSize(-this.height, 0, 0);
+            }
+
+            return axis;
         };
 
         Axis.prototype.clear = function () {
@@ -590,7 +592,7 @@ var dChart;
 
                 this.svg.attr("transform", "translate(0," + pos + ")");
 
-                this.svgLabel.attr("x", labelPos).attr("y", this.length + this.labelOffset);
+                this.svgLabel.attr("x", labelPos).attr("y", this.height + this.labelOffset);
 
                 this.setRange([0, this.length]);
             } else if (this.orientation === "y") {
@@ -629,6 +631,10 @@ var dChart;
 
             if (value.hasOwnProperty("autorange")) {
                 this.autorange = value.autorange;
+            }
+
+            if (value.hasOwnProperty("grid")) {
+                this.grid = value.grid;
             }
 
             if (value.hasOwnProperty("ticks")) {
@@ -908,12 +914,12 @@ var dChart;
             this.marginLeft = 50;
             this.marginRight = 10;
             this.marginTop = 10;
-            this.marginBottom = 50;
+            this.marginBottom = 80;
             this.width = 400;
             this.height = 400;
             this.nettoWidth = 340;
-            this.nettoHeight = 340;
-            var css = '.dchart-axis path,' + '.dchart-axis line {' + '         fill: none;' + '         stroke: black;' + '         shape-rendering: crispEdges;' + '     }' + ' .dchart-axis text,' + ' .dchart-axis-label text {' + '         font-family: sans-serif;' + '         font-size: 11px;' + '     }';
+            this.nettoHeight = 310;
+            var css = '.dchart-axis path,' + '.dchart-axis line {' + '         fill: none;' + '         stroke: black;' + '         shape-rendering: crispEdges;' + '     }' + ' .dchart-axis .tick line { ' + '         stroke: lightgrey; ' + '         opacity: 0.9; ' + '     } ' + ' .dchart-axis .tick:first-child line { ' + '         stroke: black; ' + '         opacity: 1; ' + '     } ' + ' .dchart-axis text,' + ' .dchart-container-description text,' + ' .dchart-axis-label text {' + '         font-family: sans-serif;' + '         font-size: 11px;' + '     }' + ' .dchart-container-label text {' + '         font-family: sans-serif;' + '         font-size: 13px;' + '         font-weight: bold;' + '     }';
 
             dChart.Utils.Doc.css(css);
         }
@@ -927,6 +933,10 @@ var dChart;
             this.svg.attr("width", this.width).attr("height", this.height);
 
             this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
+
+            this.svgDescription.text(this.description).attr("x", this.width * 0.5).attr("y", this.height - 20).attr("text-anchor", "middle");
+
+            this.svgLabel.text(this.label).attr("x", this.width * 0.5).attr("y", this.height - 40).attr("text-anchor", "middle");
 
             this.redrawAxis();
             this.redrawData();
@@ -943,9 +953,9 @@ var dChart;
 
             this.dataContainer = this.container.append("g").attr("class", "dchart-container-data");
 
-            this.labelContainer = this.container.append("g").attr("class", "dchart-container-label");
+            this.svgLabel = this.container.append("g").attr("class", "dchart-container-label").append("text");
 
-            this.descriptionContainer = this.container.append("g").attr("class", "dchart-container-description");
+            this.svgDescription = this.container.append("g").attr("class", "dchart-container-description").append("text");
 
             this.drawAxis();
             this.drawData();

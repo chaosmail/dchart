@@ -17,13 +17,6 @@ module dChart {
         domain:number[];
     }
 
-    export interface ITickSize {
-
-        major:number;
-        minor:number;
-        end:number;
-    }
-
     export class Axis {
 
         svg:D3.Selection;
@@ -38,6 +31,8 @@ module dChart {
         domain:number[] = [0, 1];
 
         autorange:bool = true;
+
+        grid:bool = false;
 
         scale:string = "linear";
 
@@ -76,9 +71,7 @@ module dChart {
 
         tickSubdivide:bool = false;
 
-        tickSize:ITickSize = {
-            major:1,minor:0,end:0
-        };
+        tickSize:number[];
 
         tickPadding:number;
 
@@ -232,10 +225,17 @@ module dChart {
                 orient = this.align === "end" ? "right" : "left";
             }
 
-            return d3.svg.axis()
+            var axis = d3.svg.axis()
                          .scale(this.getScale())
                          .orient(orient)
                          .ticks(this.ticks);
+
+            if (this.grid) {
+
+                axis.tickSize(-this.height, 0, 0);
+            }
+
+            return axis;
         }
 
         clear() {
@@ -278,7 +278,7 @@ module dChart {
                 this.svg.attr("transform", "translate(0," + pos + ")");
 
                 this.svgLabel.attr("x", labelPos)
-                             .attr("y", this.length + this.labelOffset);
+                             .attr("y", this.height + this.labelOffset);
 
                 this.setRange([0,this.length]);
             }
@@ -331,7 +331,12 @@ module dChart {
 
             if (value.hasOwnProperty("autorange")){
 
-                this.autorange = value.autorange
+                this.autorange = value.autorange;
+            }
+
+            if (value.hasOwnProperty("grid")){
+
+                this.grid = value.grid;
             }
 
             if (value.hasOwnProperty("ticks")){

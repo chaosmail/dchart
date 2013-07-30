@@ -2,7 +2,7 @@ Declarative Chart Library
 =========================
 
 [![Build Status](https://travis-ci.org/chaosmail/dchart.png?branch=master)](https://travis-ci.org/chaosmail/dchart)
-**Warning! This is not useable yet!**
+**Warning! This is under development and not finished yet!**
 
 This library is a extensible declarative vanillajs Chart Library written in typescript.
 It also can be used with jQuery (see ...) or AngularJS ([see this Repo](https://github.com/chaosmail/angular-dchart))
@@ -21,13 +21,16 @@ var lineChart1 = new dChart.LineChart({
         x: {
             label: "x-Axis",
             align: "bottom",
-            labelAlign: "right"
+            labelAlign: "right",
+            grid: true
         },
         y: {
             label: "y-Axis",
             align: "left",
+            scale: "sqrt",
             labelAlign: "center",
-            range: [0,1]
+            range: [0,1],
+            grid:true
         }
     },
     dataSets:[

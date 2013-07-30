@@ -141,11 +141,6 @@ declare module dChart {
         range: number[];
         domain: number[];
     }
-    interface ITickSize {
-        major: number;
-        minor: number;
-        end: number;
-    }
     class Axis {
         public svg: D3.Selection;
         public svgLabel: D3.Selection;
@@ -154,6 +149,7 @@ declare module dChart {
         public range: number[];
         public domain: number[];
         public autorange: boolean;
+        public grid: boolean;
         public scale: string;
         public length: number;
         public height: number;
@@ -164,7 +160,7 @@ declare module dChart {
         public ticksFormat: string[];
         public tickValues: number[];
         public tickSubdivide: boolean;
-        public tickSize: ITickSize;
+        public tickSize: number[];
         public tickPadding: number;
         public visible: boolean;
         constructor(orientation?: string, length?: number);
@@ -309,8 +305,8 @@ declare module dChart {
         public container: D3.Selection;
         public axisContainer: D3.Selection;
         public dataContainer: D3.Selection;
-        public labelContainer: D3.Selection;
-        public descriptionContainer: D3.Selection;
+        public svgLabel: D3.Selection;
+        public svgDescription: D3.Selection;
         public elem: Element;
         public elemId: string;
         public marginLeft: number;
