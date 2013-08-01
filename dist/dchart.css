@@ -1,17 +1,10 @@
-/** dchart - v0.0.4 - Tue Jul 30 2013 09:20:07
+/** dchart - v0.0.4 - Thu Aug 01 2013 19:25:48
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
-.dchart-axis path,
-.dchart-axis line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
- }
-
 .dchart-axis text {
     font-family: sans-serif;
-    font-size: 11px;;
+    font-size: 11px;
 }
 
 .dchart-container-label text {

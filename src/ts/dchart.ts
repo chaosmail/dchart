@@ -3,8 +3,8 @@
 /// <reference path="point.ts" />
 /// <reference path="axis.ts" />
 /// <reference path="dataset.ts" />
-/// <reference path="Utils/utils.ts" />
-/// <reference path="Solver/solver.ts" />
+/// <reference path="Utils/style.ts" />
+/// <reference path="Utils/solver.ts" />
 "use strict";
 
 module dChart {

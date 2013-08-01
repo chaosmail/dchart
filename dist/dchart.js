@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Tue Jul 30 2013 09:20:07
+/** dchart - v0.0.4 - Thu Aug 01 2013 19:25:48
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -376,24 +376,6 @@ var dChart;
 var dChart;
 (function (dChart) {
     (function (Utils) {
-        var Elem = (function () {
-            function Elem() {
-            }
-            Elem.getFloat = function (value) {
-                return parseFloat(value.nodeValue);
-            };
-
-            Elem.getColor = function (value) {
-                return value.nodeValue;
-            };
-
-            Elem.getDate = function (value) {
-                return new Date(value.nodeValue);
-            };
-            return Elem;
-        })();
-        Utils.Elem = Elem;
-
         var LineStyle = (function () {
             function LineStyle() {
                 this.stroke = "red";
@@ -448,6 +430,33 @@ var dChart;
             return AreaStyle;
         })(LineStyle);
         Utils.AreaStyle = AreaStyle;
+
+        var FontStyle = (function (_super) {
+            __extends(FontStyle, _super);
+            function FontStyle() {
+                _super.apply(this, arguments);
+                this.fontFamily = "sans-serif";
+                this.fontSize = 11;
+                this.fontWeight = "normal";
+            }
+            FontStyle.prototype.normalize = function (value) {
+                _super.prototype.normalize.call(this, value);
+
+                if (value.hasOwnProperty("fontFamily")) {
+                    this.fontFamily = value.fontFamily;
+                }
+
+                if (value.hasOwnProperty("fontWeight")) {
+                    this.fontWeight = value.fontWeight;
+                }
+
+                if (value.hasOwnProperty("fontSize")) {
+                    this.fontSize = parseFloat(value.fontSize);
+                }
+            };
+            return FontStyle;
+        })(AreaStyle);
+        Utils.FontStyle = FontStyle;
     })(dChart.Utils || (dChart.Utils = {}));
     var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
@@ -578,6 +587,9 @@ var dChart;
             });
 
             this.svgLabel.text(this.label);
+
+            this.svg.selectAll("path").style("stroke", "black").style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("stroke", "black").style("shape-rendering", "crispEdges").style("fill", "none");
         };
 
         Axis.prototype.normalize = function (value) {
@@ -694,24 +706,73 @@ var dChart;
 })(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
-    (function (Solver) {
-        var Solver2D = (function () {
-            function Solver2D() {
+    (function (Utils) {
+        var Elem = (function () {
+            function Elem() {
+            }
+            Elem.getFloat = function (value) {
+                return parseFloat(value.nodeValue);
+            };
+
+            Elem.getColor = function (value) {
+                return value.nodeValue;
+            };
+
+            Elem.getDate = function (value) {
+                return new Date(value.nodeValue);
+            };
+            return Elem;
+        })();
+        Utils.Elem = Elem;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Solver = (function () {
+            function Solver() {
                 this.min = 0;
                 this.max = 10;
                 this.step = 1;
             }
-            Solver2D.prototype.fn = function (x) {
-                return x;
-            };
+            Solver.prototype.normalize = function (value) {
+                if (value.hasOwnProperty("min")) {
+                    this.min = parseFloat(value.min);
+                }
 
+                if (value.hasOwnProperty("max")) {
+                    this.max = parseFloat(value.max);
+                }
+
+                if (value.hasOwnProperty("min")) {
+                    this.step = parseFloat(value.step);
+                }
+
+                if (value.hasOwnProperty("fn") && (typeof value.fn === "function")) {
+                    this.fn = value.fn;
+                }
+            };
+            return Solver;
+        })();
+        Utils.Solver = Solver;
+
+        var Solver2D = (function (_super) {
+            __extends(Solver2D, _super);
+            function Solver2D() {
+                _super.apply(this, arguments);
+            }
             Solver2D.prototype.solve = function (min, max, step) {
-                min = min || this.min;
-                max = max || this.max;
-                step = step || this.step;
+                this.min = min || this.min;
+                this.max = max || this.max;
+                this.step = step || this.step;
 
                 var x;
                 var data = [];
+
+                if (typeof this.fn !== "function") {
+                    return data;
+                }
 
                 for (x = min; x <= max; x += step) {
                     data.push(new dChart.Point2D(x, this.fn(x)));
@@ -720,27 +781,26 @@ var dChart;
                 return data;
             };
             return Solver2D;
-        })();
-        Solver.Solver2D = Solver2D;
+        })(Solver);
+        Utils.Solver2D = Solver2D;
 
-        var Solver3D = (function () {
+        var Solver3D = (function (_super) {
+            __extends(Solver3D, _super);
             function Solver3D() {
-                this.min = 0;
-                this.max = 10;
-                this.step = 1;
+                _super.apply(this, arguments);
             }
-            Solver3D.prototype.fn = function (x, y) {
-                return x;
-            };
-
             Solver3D.prototype.solve = function (min, max, step) {
-                min = min || this.min;
-                max = max || this.max;
-                step = step || this.step;
+                this.min = min || this.min;
+                this.max = max || this.max;
+                this.step = step || this.step;
 
                 var x;
                 var y;
                 var data = [];
+
+                if (typeof this.fn !== "function") {
+                    return data;
+                }
 
                 for (x = min; x <= max; x += step) {
                     data.push(new dChart.Point3D(x, y, this.fn(x, y)));
@@ -749,10 +809,10 @@ var dChart;
                 return data;
             };
             return Solver3D;
-        })();
-        Solver.Solver3D = Solver3D;
-    })(dChart.Solver || (dChart.Solver = {}));
-    var Solver = dChart.Solver;
+        })(Solver);
+        Utils.Solver3D = Solver3D;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
@@ -863,7 +923,7 @@ var dChart;
         function DataSet2D() {
             _super.apply(this, arguments);
             this.data = [];
-            this.solver = new dChart.Solver.Solver2D();
+            this.solver = new dChart.Utils.Solver2D();
         }
         DataSet2D.prototype.recalculate = function () {
             this.data = this.solver.solve();
@@ -895,6 +955,9 @@ var dChart;
 
             if (value.hasOwnProperty("dataFn")) {
             }
+
+            if (value.hasOwnProperty("dataSrc")) {
+            }
         };
         return DataSet2D;
     })(DataSet);
@@ -905,7 +968,7 @@ var dChart;
         function DataSet3D() {
             _super.apply(this, arguments);
             this.data = [];
-            this.solver = new dChart.Solver.Solver3D();
+            this.solver = new dChart.Utils.Solver3D();
         }
         DataSet3D.prototype.recalculate = function () {
             this.data = this.solver.solve();

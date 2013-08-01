@@ -107,11 +107,6 @@ declare module dChart {
     }
 }
 declare module dChart.Utils {
-    class Elem {
-        static getFloat(value: Element): number;
-        static getColor(value: Element): string;
-        static getDate(value: Element): Date;
-    }
     class LineStyle {
         public stroke: string;
         public strokeWidth: number;
@@ -123,6 +118,12 @@ declare module dChart.Utils {
     class AreaStyle extends LineStyle {
         public fill: string;
         public fillOpacity: number;
+        public normalize(value: any): void;
+    }
+    class FontStyle extends AreaStyle {
+        public fontFamily: string;
+        public fontSize: number;
+        public fontWeight: string;
         public normalize(value: any): void;
     }
 }
@@ -188,37 +189,43 @@ declare module dChart {
         public orientation: string;
     }
 }
-declare module dChart.Solver {
+declare module dChart.Utils {
+    class Elem {
+        static getFloat(value: Element): number;
+        static getColor(value: Element): string;
+        static getDate(value: Element): Date;
+    }
+}
+declare module dChart.Utils {
     interface ISolver {
         min: number;
         max: number;
         step: number;
+        fn: any;
     }
     interface ISolver2D extends ISolver {
-        fn: (x: number) => number;
         solve: (min?: number, max?: number, step?: number) => dChart.Point2D[];
     }
     interface ISolver3D extends ISolver {
-        fn: (x: number, y: number) => number;
         solve: (min?: number, max?: number, step?: number) => dChart.Point3D[];
     }
-    class Solver2D implements ISolver2D {
+    class Solver {
         public min: number;
         public max: number;
         public step: number;
-        public fn(x: number): number;
+        public fn: any;
+        constructor();
+        public normalize(value: any): void;
+    }
+    class Solver2D extends Solver implements ISolver2D {
         public solve(min?: number, max?: number, step?: number): dChart.Point2D[];
     }
-    class Solver3D implements ISolver3D {
-        public min: number;
-        public max: number;
-        public step: number;
-        public fn(x: number, y: number): number;
+    class Solver3D extends Solver implements ISolver3D {
         public solve(min?: number, max?: number, step?: number): dChart.Point3D[];
     }
 }
 declare module dChart {
-    interface IDataSetFn extends dChart.Solver.ISolver {
+    interface IDataSetFn extends dChart.Utils.ISolver {
         fn: string;
     }
     interface IDataSet {
@@ -253,7 +260,7 @@ declare module dChart {
         public dotRadius: number;
         public data: dChart.Point[];
         public label: string;
-        public solver: dChart.Solver.ISolver;
+        public solver: dChart.Utils.ISolver;
         public interpolate: string;
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
@@ -268,7 +275,7 @@ declare module dChart {
     }
     class DataSet2D extends DataSet {
         public data: dChart.Point2D[];
-        public solver: dChart.Solver.ISolver2D;
+        public solver: dChart.Utils.Solver2D;
         public recalculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
@@ -276,7 +283,7 @@ declare module dChart {
     }
     class DataSet3D extends DataSet {
         public data: dChart.Point3D[];
-        public solver: dChart.Solver.ISolver3D;
+        public solver: dChart.Utils.Solver3D;
         public recalculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;

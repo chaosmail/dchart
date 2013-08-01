@@ -1,13 +1,6 @@
-.dchart-axis path,
-.dchart-axis line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
- }
-
 .dchart-axis text {
     font-family: sans-serif;
-    font-size: 11px;;
+    font-size: 11px;
 }
 
 .dchart-container-label text {

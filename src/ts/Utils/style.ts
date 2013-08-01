@@ -2,21 +2,6 @@
 
 module dChart.Utils {
 
-    export class Elem {
-
-        static getFloat(value:Element) {
-            return parseFloat(value.nodeValue);
-        }
-
-        static  getColor(value:Element) {
-            return value.nodeValue;
-        }
-
-        static  getDate(value:Element) {
-            return new Date(value.nodeValue);
-        }
-    }
-
     /**
      * Styles for strokes
      * @see http://www.w3schools.com/svg/svg_stroking.asp
@@ -73,4 +58,31 @@ module dChart.Utils {
             }
         }
     }
+
+    /**
+     * Styles for fonts
+     */
+    export class FontStyle extends AreaStyle {
+
+        fontFamily:string = "sans-serif";
+        fontSize:number = 11;
+        fontWeight:string = "normal";
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("fontFamily")) {
+                this.fontFamily = value.fontFamily;
+            }
+
+            if (value.hasOwnProperty("fontWeight")) {
+                this.fontWeight = value.fontWeight;
+            }
+
+            if (value.hasOwnProperty("fontSize")) {
+                this.fontSize = parseFloat(value.fontSize);
+            }
+        }
+    }
+
 }

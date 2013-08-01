@@ -1,12 +1,13 @@
 /// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
 /// <reference path="point.ts" />
-/// <reference path="Utils/utils.ts" />
-/// <reference path="Solver/solver.ts" />
+/// <reference path="Utils/style.ts" />
+/// <reference path="Utils/elem.ts" />
+/// <reference path="Utils/solver.ts" />
 
 module dChart {
 
-    export interface IDataSetFn extends Solver.ISolver {
+    export interface IDataSetFn extends Utils.ISolver {
 
         fn:string;
     }
@@ -62,7 +63,7 @@ module dChart {
          */
         label:string = "";
 
-        solver:Solver.ISolver;
+        solver:Utils.ISolver;
 
         /**
          * Interpolation between the points in the DataSet
@@ -210,7 +211,7 @@ module dChart {
     export class DataSet2D extends DataSet {
 
         data:Point2D[] = [];
-        solver:Solver.ISolver2D = new Solver.Solver2D();
+        solver:Utils.Solver2D = new Utils.Solver2D();
 
         public recalculate() {
             this.data = this.solver.solve();
@@ -244,13 +245,19 @@ module dChart {
 
 
             }
+
+            if (value.hasOwnProperty("dataSrc")) {
+
+
+
+            }
         }
     }
 
     export class DataSet3D extends DataSet {
 
         data:Point3D[] = [];
-        solver:Solver.ISolver3D = new Solver.Solver3D();
+        solver:Utils.Solver3D = new Utils.Solver3D();
 
         public recalculate() {
             this.data = this.solver.solve();

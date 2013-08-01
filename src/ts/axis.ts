@@ -1,6 +1,6 @@
 /// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
-/// <reference path="Utils/utils.ts" />
+/// <reference path="Utils/style.ts" />
 
 module dChart {
 
@@ -277,6 +277,8 @@ module dChart {
 
             this.svgLabel.text(this.label);
 
+            this.svg.selectAll("path").style("stroke","black").style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("stroke","black").style("shape-rendering", "crispEdges").style("fill", "none");
         }
 
         normalize(value:any) {
