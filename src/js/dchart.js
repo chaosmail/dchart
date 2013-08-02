@@ -1388,12 +1388,13 @@ var dChart;
                 var xTickElems = _this.xAxis.svg.selectAll('.tick');
                 var xTicks = xTickElems[0].length;
 
-                var width = _this.nettoWidth / (xTicks + 1);
+                var start = (_this.nettoWidth / (xTicks + 1)) * 0.5;
+                var width = _this.nettoWidth / (xTicks + 1) / _this.dataSets.length;
 
                 group.exit().remove();
 
                 group.enter().append("rect").style("stroke", dataSet.areaStyle.stroke).style("stroke-width", dataSet.areaStyle.strokeWidth).style("stroke-opacity", dataSet.areaStyle.strokeOpacity).style("stroke-linecap", dataSet.areaStyle.strokeLinecap).style("stroke-dasharray", dataSet.areaStyle.strokeDasharray).style("fill", dataSet.areaStyle.fill).style("fill-opacity", dataSet.areaStyle.fillOpacity).attr("x", function (d) {
-                    return xScale(d.x) - width * 0.5;
+                    return xScale(d.x) - start + key * width;
                 }).attr("y", function (d) {
                     return _this.nettoHeight - yScale(d.y);
                 }).attr("width", function (d) {

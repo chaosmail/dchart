@@ -534,7 +534,8 @@ module dChart {
                 var xTickElems = this.xAxis.svg.selectAll('.tick');
                 var xTicks = xTickElems[0].length;
 
-                var width = this.nettoWidth / (xTicks + 1);
+                var start = (this.nettoWidth / (xTicks + 1))*0.5;
+                var width = this.nettoWidth / (xTicks + 1) / this.dataSets.length;
 
                 group.exit()
                     .remove();
@@ -548,7 +549,7 @@ module dChart {
                     .style("stroke-dasharray", dataSet.areaStyle.strokeDasharray)
                     .style("fill", dataSet.areaStyle.fill)
                     .style("fill-opacity", dataSet.areaStyle.fillOpacity)
-                    .attr("x", (d:Point2D) => xScale(d.x) - width*0.5)
+                    .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
                     .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
                     .attr("width", (d:Point2D) => width)
                     .attr("height", (d:Point2D) => yScale(d.y));
