@@ -490,4 +490,70 @@ module dChart {
             });
         }
     }
+
+    export class HistoChart extends Chart2D {
+
+        svgRectContainer:D3.Selection[] = [];
+
+        constructor(config?:IChart2D) {
+            super();
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+
+            console.log(this);
+        }
+
+        drawData() {
+
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+
+                this.svgRectContainer[key] = this.dataContainer
+                    .append("g")
+                    .attr("class", "dchart-data-set dchart-data-set-" + key);
+
+            });
+        }
+
+        redrawData() {
+
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+
+                var group = this.svgRectContainer[key].selectAll("rect")
+                    .data(dataSet.data, (d:Point2D) => d.x);
+
+                if (dataSet.data.length === 0) {
+                    return;
+                }
+
+                var xTickElems = this.xAxis.svg.selectAll('.tick');
+                var xTicks = xTickElems[0].length;
+
+                var width = this.nettoWidth / (xTicks + 1);
+
+                group.exit()
+                    .remove();
+
+                group.enter()
+                    .append("rect")
+                    .style("stroke", dataSet.areaStyle.stroke)
+                    .style("stroke-width", dataSet.areaStyle.strokeWidth)
+                    .style("stroke-opacity", dataSet.areaStyle.strokeOpacity)
+                    .style("stroke-linecap", dataSet.areaStyle.strokeLinecap)
+                    .style("stroke-dasharray", dataSet.areaStyle.strokeDasharray)
+                    .style("fill", dataSet.areaStyle.fill)
+                    .style("fill-opacity", dataSet.areaStyle.fillOpacity)
+                    .attr("x", (d:Point2D) => xScale(d.x) - width*0.5)
+                    .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
+                    .attr("width", (d:Point2D) => width)
+                    .attr("height", (d:Point2D) => yScale(d.y));
+
+            });
+        }
+    }
 }

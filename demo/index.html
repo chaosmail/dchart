@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>dChart Demo</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="lib/google-code-prettify/prettify.css"/>
 
@@ -19,9 +20,9 @@
 </head>
 <body>
 
+<a href="https://github.com/chaosmail/dchart"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
     <div class="container row">
-
-
 
     <h1>Extensible declarative chart library using D3.js</h1>
 
@@ -32,6 +33,7 @@
             <li><a href="#data-sets">Datasets</a></li>
             <li><a href="#chart-styling">Styling</a></li>
             <li><a href="#chart-types">Chart Types</a></li>
+            <li><a href="#about">About</a></li>
         </ul>
     </div>
 
@@ -319,6 +321,7 @@
                             strokeWidth: 2,
                             fill: "white"
                         },
+                        dotRadius: 4,
                         data: [
                             {x:0,y:0},
                             {x:1,y:0.5},
@@ -464,6 +467,10 @@
 
     <hr>
 
+    <h2 id="chart-styling">Chart Styling <a href="#chart-styling">#</a></h2>
+
+    <hr>
+
     <h2 id="chart-types">Chart Types <a href="#chart-types">#</a></h2>
 
     <h3 id="chart-types-line-chart">Line Charts <a href="#chart-types-line-chart">#</a></h3>
@@ -601,6 +608,114 @@
         </script>
     </div>
 
+    <h3 id="chart-types-histo-chart">Histogram <a href="#chart-types-histo-chart">#</a></h3>
+
+    <div>
+        <div id="histoChart1"></div>
+        <pre class="prettyprint">
+    var histoChart1 = new dChart.HistoChart({
+        elem: 'histoChart1',
+        width: 700,
+        height: 400,
+        axis: {
+            x: {
+                range: [0,11]
+            },
+            y: {
+                range: [0,10],
+                gridStyle: {
+                    stroke: "lightgrey",
+                    strokeOpacity: 0.5
+                }
+            }
+        },
+        dataSets: [
+            {
+                label: "Random Data",
+                areaStyle: {
+                    stroke: "none",
+                    fill: "mistyrose",
+                    fillOpacity: 0.8
+                },
+                dataFn: {
+                    fn: function() { return Math.random()*10 },
+                    min: 1,
+                    max: 10,
+                    step: 1
+                }
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var histoChart1 = new dChart.HistoChart({
+                elem: 'histoChart1',
+                width: 700,
+                height: 400,
+                axis: {
+                    x: {
+                        range: [0,11]
+                    },
+                    y: {
+                        range: [0,10],
+                        gridStyle: {
+                            stroke: "lightgrey",
+                            strokeOpacity: 0.5
+                        }
+                    }
+                },
+                dataSets: [
+                    {
+                        label: "Random Data",
+                        areaStyle: {
+                            stroke: "none",
+                            fill: "mistyrose",
+                            fillOpacity: 0.8
+                        },
+                        dataFn: {
+                            fn: function() { return Math.random()*10 },
+                            min: 1,
+                            max: 10,
+                            step: 1
+                        }
+                    }
+                ]
+            });
+        </script>
+    </div>
+
+    <hr>
+
+    <h2 id="about">About <a href="#about">#</a></h2>
+
+    <h3 id="about-source">Source <a href="#about-source">#</a></h3>
+
+    <div>
+        Source on Github: <a href="https://github.com/chaosmail/dchart">https://github.com/chaosmail/dchart</a>
+    </div>
+
+    <h3 id="about-license">License (MIT) <a href="#about-license">#</a></h3>
+    <div>
+        Copyright (c) 2013 Christoph Körner
+        <br><br>
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        <br><br>
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+        <br><br>
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+    </div>
 
     </div>
     </div>

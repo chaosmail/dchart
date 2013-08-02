@@ -375,4 +375,10 @@ declare module dChart {
         public drawData(): void;
         public redrawData(): void;
     }
+    class HistoChart extends Chart2D {
+        public svgRectContainer: D3.Selection[];
+        constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
+    }
 }

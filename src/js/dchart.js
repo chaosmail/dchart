@@ -1350,4 +1350,60 @@ var dChart;
         return LineChart;
     })(Chart2D);
     dChart.LineChart = LineChart;
+
+    var HistoChart = (function (_super) {
+        __extends(HistoChart, _super);
+        function HistoChart(config) {
+            _super.call(this);
+            this.svgRectContainer = [];
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+
+            console.log(this);
+        }
+        HistoChart.prototype.drawData = function () {
+            var _this = this;
+            _.map(this.dataSets, function (dataSet, key) {
+                _this.svgRectContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+            });
+        };
+
+        HistoChart.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            _.map(this.dataSets, function (dataSet, key) {
+                var group = _this.svgRectContainer[key].selectAll("rect").data(dataSet.data, function (d) {
+                    return d.x;
+                });
+
+                if (dataSet.data.length === 0) {
+                    return;
+                }
+
+                var xTickElems = _this.xAxis.svg.selectAll('.tick');
+                var xTicks = xTickElems[0].length;
+
+                var width = _this.nettoWidth / (xTicks + 1);
+
+                group.exit().remove();
+
+                group.enter().append("rect").style("stroke", dataSet.areaStyle.stroke).style("stroke-width", dataSet.areaStyle.strokeWidth).style("stroke-opacity", dataSet.areaStyle.strokeOpacity).style("stroke-linecap", dataSet.areaStyle.strokeLinecap).style("stroke-dasharray", dataSet.areaStyle.strokeDasharray).style("fill", dataSet.areaStyle.fill).style("fill-opacity", dataSet.areaStyle.fillOpacity).attr("x", function (d) {
+                    return xScale(d.x) - width * 0.5;
+                }).attr("y", function (d) {
+                    return _this.nettoHeight - yScale(d.y);
+                }).attr("width", function (d) {
+                    return width;
+                }).attr("height", function (d) {
+                    return yScale(d.y);
+                });
+            });
+        };
+        return HistoChart;
+    })(Chart2D);
+    dChart.HistoChart = HistoChart;
 })(dChart || (dChart = {}));
