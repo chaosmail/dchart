@@ -552,7 +552,8 @@ module dChart {
                     .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
                     .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
                     .attr("width", (d:Point2D) => width)
-                    .attr("height", (d:Point2D) => yScale(d.y));
+                    .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
+
 
             });
         }

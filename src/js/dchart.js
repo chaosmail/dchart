@@ -880,6 +880,10 @@ var dChart;
                 this.interpolate = value.interpolate;
             }
 
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
+
             if (value.hasOwnProperty("dotStyle")) {
                 var areaStyle = new dChart.Utils.AreaStyle();
                 areaStyle.normalize(value.dotStyle);
@@ -1400,7 +1404,7 @@ var dChart;
                 }).attr("width", function (d) {
                     return width;
                 }).attr("height", function (d) {
-                    return yScale(d.y);
+                    return Math.abs(yScale(d.y));
                 });
             });
         };

@@ -125,6 +125,10 @@ module dChart {
                 this.interpolate = value.interpolate;
             }
 
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
+
             if (value.hasOwnProperty("dotStyle")) {
 
                 var areaStyle = new Utils.AreaStyle();

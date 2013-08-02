@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Fri Aug 02 2013 15:24:46
+/** dchart - v0.0.4 - Fri Aug 02 2013 16:08:31
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -884,6 +884,10 @@ var dChart;
                 this.interpolate = value.interpolate;
             }
 
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
+
             if (value.hasOwnProperty("dotStyle")) {
                 var areaStyle = new dChart.Utils.AreaStyle();
                 areaStyle.normalize(value.dotStyle);
@@ -1404,7 +1408,7 @@ var dChart;
                 }).attr("width", function (d) {
                     return width;
                 }).attr("height", function (d) {
-                    return yScale(d.y);
+                    return Math.abs(yScale(d.y));
                 });
             });
         };

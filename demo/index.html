@@ -12,6 +12,11 @@
     <script src="../dist/dchart.js"></script>
 
     <style>
+
+        body {
+            margin:10px;
+        }
+
         hr {
             margin-top: 50px;
             margin-bottom: 50px;
@@ -22,19 +27,35 @@
 
 <a href="https://github.com/chaosmail/dchart"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
-    <div class="container row">
+    <div class="row">
 
-    <h1>Extensible declarative chart library using D3.js</h1>
+        <div class="span12">
+            <h1>Extensible declarative chart library using D3.js</h1>
+        </div>
+    </div>
 
-    <div class="span2">
+    <div class="row">
 
-        <ul class="nav nav-tabs nav-stacked affix">
-            <li><a href="#basic-usage">Basic Usage</a></li>
-            <li><a href="#data-sets">Datasets</a></li>
-            <li><a href="#chart-styling">Styling</a></li>
-            <li><a href="#chart-types">Chart Types</a></li>
-            <li><a href="#about">About</a></li>
+    <div class="span3">
+
+        <div class="well affix">
+        <ul class="nav nav-list">
+            <li class="nav-header">Basic Usage</li>
+            <li><a href="#basic-usage-initializing">Initializing</a></li>
+            <li><a href="#basic-usage-chart">Chart Configuration</a></li>
+            <li><a href="#basic-usage-axis">Axis Configuration</a></li>
+            <li class="nav-header">Datasets</li>
+            <li><a href="#data-sets-points">Points</a></li>
+            <li><a href="#data-sets-functions">Functions</a></li>
+            <li class="nav-header">Chart Styling</li>
+            <li class="nav-header">Chart Types</li>
+            <li><a href="#chart-types-line-chart">Line Chart</a></li>
+            <li><a href="#chart-types-histo-chart">Histogram</a></li>
+            <li class="nav-header">About</li>
+            <li><a href="#about-source">Source</a></li>
+            <li><a href="#about-license">License</a></li>
         </ul>
+        </div>
     </div>
 
     <div class="span9">
@@ -710,6 +731,7 @@
                 ]
             });
         </script>
+
     </div>
 
     <hr>
