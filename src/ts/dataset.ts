@@ -4,6 +4,7 @@
 /// <reference path="Utils/style.ts" />
 /// <reference path="Utils/elem.ts" />
 /// <reference path="Utils/solver.ts" />
+/// <reference path="Utils/loader.ts" />
 
 module dChart {
 
@@ -21,30 +22,12 @@ module dChart {
         areaStyle:Utils.AreaStyle;
         dotStyle:Utils.AreaStyle;
         dotRadius:number;
+        dotSymbol:string;
         interpolate:string;
         label:string;
+        dataSrc:Utils.IDataSrc;
         dataFn:IDataSetFn;
         data:IPoint[];
-    }
-
-    export interface IDataSet2D extends IDataSet {
-
-        data:IPoint2D[];
-    }
-
-    export interface IDataSet2DTime extends IDataSet {
-
-        data:IPoint2DTime[];
-    }
-
-    export interface IDataSet3D extends IDataSet {
-
-        data:IPoint3D[];
-    }
-
-    export interface IDataSet3DTime extends IDataSet {
-
-        data:IPoint3DTime[];
     }
 
     export class DataSet {
@@ -55,15 +38,13 @@ module dChart {
 
         dotRadius:number = 3;
 
-        data:Point[] = [];
+        data:any[] = [];
 
         /**
          * DataSet label
          * @type {string}
          */
         label:string = "";
-
-        solver:Utils.ISolver;
 
         /**
          * Interpolation between the points in the DataSet
@@ -95,14 +76,7 @@ module dChart {
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
         dotStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
-        constructor() {
-
-        }
-
-        /**
-         * Recalculate the Points, if DataSet is a function
-         */
-        public recalculate() {
+        constructor(public chart:Chart) {
 
         }
 
@@ -197,44 +171,12 @@ module dChart {
 
                 this.dotRadius = value.dotRadius;
             }
-        }
-
-        min(axis:string) {
-            return 0.0;
-        }
-
-        max(axis:string) {
-            return 0.0;
-        }
-    }
-
-    export class DataSet2D extends DataSet {
-
-        data:Point2D[] = [];
-        solver:Utils.Solver2D = new Utils.Solver2D();
-
-        public recalculate() {
-            this.data = this.solver.solve();
-        }
-
-        min(axis:string) {
-
-            return d3.min(this.data, (d:Point2D) => d[axis]);
-        }
-
-        max(axis:string) {
-
-            return d3.max(this.data, (d:Point2D) => d[axis]);
-        }
-
-        normalize(value:any) {
-            super.normalize(value);
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
 
                 _.map(value.data, (config) => {
 
-                    var p = new Point2D();
+                    var p = this.chart.getPoint();
                     p.normalize(config);
                     this.data.push(p);
                 });
@@ -242,57 +184,46 @@ module dChart {
 
             if (value.hasOwnProperty("dataFn")) {
 
+                var solver = this.chart.getSolver();
+                solver.normalize(value.dataFn);
+                var data = solver.solve();
 
+                _.map(data, (val) => {
 
+                    var p = this.chart.getPoint();
+                    p.normalize(val);
+                    this.data.push(p);
+
+                });
             }
 
             if (value.hasOwnProperty("dataSrc")) {
 
+                var loader = new Utils.Loader();
+                loader.normalize(value.dataSrc);
 
+                loader.getData((data, map)=>{
 
+                    _.map(data, (val) => {
+
+                        var p = this.chart.getPoint();
+                        p.map(val,map);
+                        this.data.push(p);
+                    });
+
+                    this.chart.redraw();
+                });
             }
-        }
-    }
-
-    export class DataSet3D extends DataSet {
-
-        data:Point3D[] = [];
-        solver:Utils.Solver3D = new Utils.Solver3D();
-
-        public recalculate() {
-            this.data = this.solver.solve();
         }
 
         min(axis:string) {
 
-            return d3.min(this.data, (d:Point3D) => d[axis]);
+            return d3.min(this.data, (d:Point) => d[axis]);
         }
 
         max(axis:string) {
 
-            return d3.max(this.data, (d:Point3D) => d[axis]);
-        }
-
-        normalize(value:any) {
-            super.normalize(value);
-
-            if (value.hasOwnProperty("data")) {
-
-                this.data = [];
-
-                _.map(value.data, (config) => {
-
-                    var p = new Point3D();
-                    p.normalize(config);
-                    this.data.push(p);
-                });
-            }
-
-            if (value.hasOwnProperty("dataFn")) {
-
-
-
-            }
+            return d3.max(this.data, (d:Point) => d[axis]);
         }
     }
 }

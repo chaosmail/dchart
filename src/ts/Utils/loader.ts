@@ -2,21 +2,37 @@
 
 module dChart.Utils {
 
+    export interface IDataSrc {
+        url:string;
+        dataType:string;
+        map:any;
+    }
+
     export class Loader {
 
-        file:string = "";
-        filetype:string = "json";
+        url:string = "";
+        dataType:string = "json";
+        map:any = {};
 
-        getData(file?:string) {
+        getData(callback:(data:any, map:any) => void) {
 
-            this.file = file || this.file;
+            d3.json(this.url, (response:any) => {
+                callback(response, this.map);
+            });
         }
 
         normalize(value:any) {
 
-            if (value.hasOwnProperty("file")) {
-                this.file = value.file;
+            if (value.hasOwnProperty("url")) {
+                this.url = value.url;
+            }
 
+            if (value.hasOwnProperty("dataType")) {
+                this.dataType = value.dataType;
+            }
+
+            if (value.hasOwnProperty("map")) {
+                this.map = value.map;
             }
         }
     }

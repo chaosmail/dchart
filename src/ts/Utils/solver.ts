@@ -10,12 +10,12 @@ module dChart.Utils {
 
     export interface ISolver2D extends ISolver {
 
-        solve: (min?:number, max?:number, step?:number) => Point2D[];
+        solve: (min?:number, max?:number, step?:number) => any[];
     }
 
     export interface ISolver3D extends ISolver {
 
-        solve: (min?:number, max?:number, step?:number) => Point3D[];
+        solve: (min?:number, max?:number, step?:number) => any[];
     }
 
     export class Solver {
@@ -28,6 +28,13 @@ module dChart.Utils {
 
         constructor() {
 
+        }
+
+        solve(min?:number, max?:number, step?:number) {
+
+            var data: any[] = [];
+
+            return data;
         }
 
         normalize(value:any) {
@@ -59,38 +66,14 @@ module dChart.Utils {
             this.step = step || this.step;
 
             var x:number;
-            var data: Point2D[] = [];
+            var data:any[] = [];
 
             if (typeof this.fn !== "function") {
                 return data;
             }
 
-            for (x=min;x<=max;x+=step) {
-                data.push(new Point2D(x, this.fn(x)));
-            }
-
-            return data;
-        }
-    }
-
-    export class Solver3D extends Solver implements ISolver3D {
-
-        solve(min?:number, max?:number, step?:number) {
-
-            this.min = min || this.min;
-            this.max = max || this.max;
-            this.step = step || this.step;
-
-            var x:number;
-            var y:number;
-            var data: Point3D[] = [];
-
-            if (typeof this.fn !== "function") {
-                return data;
-            }
-
-            for (x=min;x<=max;x+=step) {
-                data.push(new Point3D(x, y, this.fn(x, y)));
+            for (x=this.min;x<=this.max;x+=this.step) {
+                data.push({x:x, y:this.fn(x)});
             }
 
             return data;

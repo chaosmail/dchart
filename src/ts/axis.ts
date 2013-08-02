@@ -85,6 +85,7 @@ module dChart {
             this.gridStyle.stroke = "black";
             this.gridStyle.strokeWidth = 1;
             this.gridStyle.strokeOpacity = 0.25;
+
         }
 
         addScaleFn(fn:string,args:any) {
@@ -217,7 +218,7 @@ module dChart {
             var orient = "top";
 
             if (this.orientation === "x") {
-                orient = this.align === "end" ? "bottom" : "top";
+                orient = this.align === "start" ? "top" : "bottom";
             }
 
             if (this.orientation === "y") {
@@ -277,8 +278,8 @@ module dChart {
 
             this.svgLabel.text(this.label);
 
-            this.svg.selectAll("path").style("stroke","black").style("shape-rendering", "crispEdges").style("fill", "none");
-            this.svg.selectAll("line").style("stroke","black").style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("path").style("stroke",this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("stroke",this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
         }
 
         normalize(value:any) {
@@ -344,6 +345,13 @@ module dChart {
 
         orientation:string = "x";
 
+        constructor() {
+            super();
+
+            this.setAlign("bottom");
+            this.setLabelAlign("right");
+        }
+
         redraw(min:number = 0, max:number = 1) {
 
             var pos = this.align === "middle" ? this.height * 0.5
@@ -369,6 +377,13 @@ module dChart {
     export class yAxis extends Axis {
 
         orientation:string = "y";
+
+        constructor() {
+            super();
+
+            this.setAlign("left");
+            this.setLabelAlign("top");
+        }
 
         redraw(min:number = 0, max:number = 1) {
 

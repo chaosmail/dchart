@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Thu Aug 01 2013 19:25:48
+/** dchart - v0.0.4 - Fri Aug 02 2013 13:40:42
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -532,7 +532,7 @@ var dChart;
             var orient = "top";
 
             if (this.orientation === "x") {
-                orient = this.align === "end" ? "bottom" : "top";
+                orient = this.align === "start" ? "top" : "bottom";
             }
 
             if (this.orientation === "y") {
@@ -588,8 +588,8 @@ var dChart;
 
             this.svgLabel.text(this.label);
 
-            this.svg.selectAll("path").style("stroke", "black").style("shape-rendering", "crispEdges").style("fill", "none");
-            this.svg.selectAll("line").style("stroke", "black").style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("path").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
         };
 
         Axis.prototype.normalize = function (value) {
@@ -645,8 +645,11 @@ var dChart;
     var xAxis = (function (_super) {
         __extends(xAxis, _super);
         function xAxis() {
-            _super.apply(this, arguments);
+            _super.call(this);
             this.orientation = "x";
+
+            this.setAlign("bottom");
+            this.setLabelAlign("right");
         }
         xAxis.prototype.redraw = function (min, max) {
             if (typeof min === "undefined") { min = 0; }
@@ -670,8 +673,11 @@ var dChart;
     var yAxis = (function (_super) {
         __extends(yAxis, _super);
         function yAxis() {
-            _super.apply(this, arguments);
+            _super.call(this);
             this.orientation = "y";
+
+            this.setAlign("left");
+            this.setLabelAlign("top");
         }
         yAxis.prototype.redraw = function (min, max) {
             if (typeof min === "undefined") { min = 0; }
@@ -736,6 +742,12 @@ var dChart;
                 this.max = 10;
                 this.step = 1;
             }
+            Solver.prototype.solve = function (min, max, step) {
+                var data = [];
+
+                return data;
+            };
+
             Solver.prototype.normalize = function (value) {
                 if (value.hasOwnProperty("min")) {
                     this.min = parseFloat(value.min);
@@ -774,8 +786,8 @@ var dChart;
                     return data;
                 }
 
-                for (x = min; x <= max; x += step) {
-                    data.push(new dChart.Point2D(x, this.fn(x)));
+                for (x = this.min; x <= this.max; x += this.step) {
+                    data.push({ x: x, y: this.fn(x) });
                 }
 
                 return data;
@@ -783,41 +795,49 @@ var dChart;
             return Solver2D;
         })(Solver);
         Utils.Solver2D = Solver2D;
-
-        var Solver3D = (function (_super) {
-            __extends(Solver3D, _super);
-            function Solver3D() {
-                _super.apply(this, arguments);
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Loader = (function () {
+            function Loader() {
+                this.url = "";
+                this.dataType = "json";
+                this.map = {};
             }
-            Solver3D.prototype.solve = function (min, max, step) {
-                this.min = min || this.min;
-                this.max = max || this.max;
-                this.step = step || this.step;
-
-                var x;
-                var y;
-                var data = [];
-
-                if (typeof this.fn !== "function") {
-                    return data;
-                }
-
-                for (x = min; x <= max; x += step) {
-                    data.push(new dChart.Point3D(x, y, this.fn(x, y)));
-                }
-
-                return data;
+            Loader.prototype.getData = function (callback) {
+                var _this = this;
+                d3.json(this.url, function (response) {
+                    callback(response, _this.map);
+                });
             };
-            return Solver3D;
-        })(Solver);
-        Utils.Solver3D = Solver3D;
+
+            Loader.prototype.normalize = function (value) {
+                if (value.hasOwnProperty("url")) {
+                    this.url = value.url;
+                }
+
+                if (value.hasOwnProperty("dataType")) {
+                    this.dataType = value.dataType;
+                }
+
+                if (value.hasOwnProperty("map")) {
+                    this.map = value.map;
+                }
+            };
+            return Loader;
+        })();
+        Utils.Loader = Loader;
     })(dChart.Utils || (dChart.Utils = {}));
     var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
     var DataSet = (function () {
-        function DataSet() {
+        function DataSet(chart) {
+            this.chart = chart;
             this.showLine = true;
             this.showArea = false;
             this.showDot = false;
@@ -830,9 +850,6 @@ var dChart;
             this.areaStyle = new dChart.Utils.AreaStyle();
             this.dotStyle = new dChart.Utils.AreaStyle();
         }
-        DataSet.prototype.recalculate = function () {
-        };
-
         DataSet.prototype.parse = function (elem) {
             var _this = this;
             _.map(elem.attributes, function (value) {
@@ -862,6 +879,7 @@ var dChart;
         };
 
         DataSet.prototype.normalize = function (value) {
+            var _this = this;
             if (value.hasOwnProperty("interpolate")) {
                 this.interpolate = value.interpolate;
             }
@@ -905,107 +923,57 @@ var dChart;
             if (value.hasOwnProperty("dotRadius")) {
                 this.dotRadius = value.dotRadius;
             }
+
+            if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
+                _.map(value.data, function (config) {
+                    var p = _this.chart.getPoint();
+                    p.normalize(config);
+                    _this.data.push(p);
+                });
+            }
+
+            if (value.hasOwnProperty("dataFn")) {
+                var solver = this.chart.getSolver();
+                solver.normalize(value.dataFn);
+                var data = solver.solve();
+
+                _.map(data, function (val) {
+                    var p = _this.chart.getPoint();
+                    p.normalize(val);
+                    _this.data.push(p);
+                });
+            }
+
+            if (value.hasOwnProperty("dataSrc")) {
+                var loader = new dChart.Utils.Loader();
+                loader.normalize(value.dataSrc);
+
+                loader.getData(function (data, map) {
+                    _.map(data, function (val) {
+                        var p = _this.chart.getPoint();
+                        p.map(val, map);
+                        _this.data.push(p);
+                    });
+
+                    _this.chart.redraw();
+                });
+            }
         };
 
         DataSet.prototype.min = function (axis) {
-            return 0.0;
+            return d3.min(this.data, function (d) {
+                return d[axis];
+            });
         };
 
         DataSet.prototype.max = function (axis) {
-            return 0.0;
+            return d3.max(this.data, function (d) {
+                return d[axis];
+            });
         };
         return DataSet;
     })();
     dChart.DataSet = DataSet;
-
-    var DataSet2D = (function (_super) {
-        __extends(DataSet2D, _super);
-        function DataSet2D() {
-            _super.apply(this, arguments);
-            this.data = [];
-            this.solver = new dChart.Utils.Solver2D();
-        }
-        DataSet2D.prototype.recalculate = function () {
-            this.data = this.solver.solve();
-        };
-
-        DataSet2D.prototype.min = function (axis) {
-            return d3.min(this.data, function (d) {
-                return d[axis];
-            });
-        };
-
-        DataSet2D.prototype.max = function (axis) {
-            return d3.max(this.data, function (d) {
-                return d[axis];
-            });
-        };
-
-        DataSet2D.prototype.normalize = function (value) {
-            var _this = this;
-            _super.prototype.normalize.call(this, value);
-
-            if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
-                _.map(value.data, function (config) {
-                    var p = new dChart.Point2D();
-                    p.normalize(config);
-                    _this.data.push(p);
-                });
-            }
-
-            if (value.hasOwnProperty("dataFn")) {
-            }
-
-            if (value.hasOwnProperty("dataSrc")) {
-            }
-        };
-        return DataSet2D;
-    })(DataSet);
-    dChart.DataSet2D = DataSet2D;
-
-    var DataSet3D = (function (_super) {
-        __extends(DataSet3D, _super);
-        function DataSet3D() {
-            _super.apply(this, arguments);
-            this.data = [];
-            this.solver = new dChart.Utils.Solver3D();
-        }
-        DataSet3D.prototype.recalculate = function () {
-            this.data = this.solver.solve();
-        };
-
-        DataSet3D.prototype.min = function (axis) {
-            return d3.min(this.data, function (d) {
-                return d[axis];
-            });
-        };
-
-        DataSet3D.prototype.max = function (axis) {
-            return d3.max(this.data, function (d) {
-                return d[axis];
-            });
-        };
-
-        DataSet3D.prototype.normalize = function (value) {
-            var _this = this;
-            _super.prototype.normalize.call(this, value);
-
-            if (value.hasOwnProperty("data")) {
-                this.data = [];
-
-                _.map(value.data, function (config) {
-                    var p = new dChart.Point3D();
-                    p.normalize(config);
-                    _this.data.push(p);
-                });
-            }
-
-            if (value.hasOwnProperty("dataFn")) {
-            }
-        };
-        return DataSet3D;
-    })(DataSet);
-    dChart.DataSet3D = DataSet3D;
 })(dChart || (dChart = {}));
 "use strict";
 var dChart;
@@ -1020,6 +988,7 @@ var dChart;
             this.height = 400;
             this.nettoWidth = 340;
             this.nettoHeight = 310;
+            this.fontStyle = new dChart.Utils.FontStyle();
             ;
         }
         Chart.prototype.clear = function () {
@@ -1028,17 +997,29 @@ var dChart;
             }
         };
 
+        Chart.prototype.getPoint = function () {
+            return new dChart.Point();
+        };
+
+        Chart.prototype.getSolver = function () {
+            return new dChart.Utils.Solver();
+        };
+
         Chart.prototype.redraw = function () {
             this.svg.attr("width", this.width).attr("height", this.height);
 
             this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
 
-            this.svgDescription.text(this.description).attr("x", this.width * 0.5).attr("y", this.height - 20).attr("text-anchor", "middle");
+            this.svgDescription.text(this.description).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 5).attr("text-anchor", "middle");
 
-            this.svgLabel.text(this.label).attr("x", this.width * 0.5).attr("y", this.height - 40).attr("text-anchor", "middle");
+            this.svgLabel.text(this.label).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 20).attr("text-anchor", "middle");
 
             this.redrawAxis();
             this.redrawData();
+
+            this.container.selectAll('text').style('font-family', this.fontStyle.fontFamily).style('font-size', this.fontStyle.fontSize).style('font-weight', this.fontStyle.fontWeight);
+
+            this.svgLabel.style('font-size', this.fontStyle.fontSize + 2).style('font-weight', "bold");
         };
 
         Chart.prototype.draw = function () {
@@ -1111,6 +1092,13 @@ var dChart;
             if (value.hasOwnProperty("marginRight")) {
                 this.marginRight = parseFloat(value.marginRight);
             }
+
+            if (value.hasOwnProperty("fontStyle")) {
+                var fontStyle = new dChart.Utils.FontStyle();
+                fontStyle.normalize(value.fontStyle);
+
+                this.fontStyle = fontStyle;
+            }
         };
         return Chart;
     })();
@@ -1119,11 +1107,19 @@ var dChart;
     var Chart2D = (function (_super) {
         __extends(Chart2D, _super);
         function Chart2D() {
-            _super.call(this);
+            _super.apply(this, arguments);
             this.dataSets = [];
             this.xAxis = new dChart.xAxis();
             this.yAxis = new dChart.yAxis();
         }
+        Chart2D.prototype.getPoint = function () {
+            return new dChart.Point2D();
+        };
+
+        Chart2D.prototype.getSolver = function () {
+            return new dChart.Utils.Solver2D();
+        };
+
         Chart2D.prototype.redraw = function () {
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
             this.nettoHeight = this.height - this.marginTop - this.marginBottom;
@@ -1180,7 +1176,7 @@ var dChart;
                 this.dataSets = [];
 
                 _.map(value.dataSets, function (config) {
-                    var dataSet = new dChart.DataSet2D();
+                    var dataSet = new dChart.DataSet(_this);
                     dataSet.normalize(config);
                     _this.dataSets.push(dataSet);
                 });
@@ -1205,13 +1201,17 @@ var dChart;
     var Chart3D = (function (_super) {
         __extends(Chart3D, _super);
         function Chart3D() {
-            _super.call(this);
+            _super.apply(this, arguments);
             this.dataSets = [];
             this.depth = 400;
             this.xAxis = new dChart.xAxis();
             this.yAxis = new dChart.yAxis();
             this.zAxis = new dChart.zAxis();
         }
+        Chart3D.prototype.getPoint = function () {
+            return new dChart.Point3D();
+        };
+
         Chart3D.prototype.drawAxis = function () {
             var min = [this.min("x"), this.min("y"), this.min("z")];
             var max = [this.max("x"), this.max("y"), this.min("z")];
@@ -1258,7 +1258,7 @@ var dChart;
                 this.dataSets = [];
 
                 _.map(value.dataSets, function (config) {
-                    var dataSet = new dChart.DataSet3D();
+                    var dataSet = new dChart.DataSet(_this);
                     dataSet.normalize(config);
                     _this.dataSets.push(dataSet);
                 });

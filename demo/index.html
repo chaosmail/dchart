@@ -2,125 +2,599 @@
 <html>
 <head>
     <title>dChart Demo</title>
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="lib/google-code-prettify/prettify.css"/>
+
+    <script src="../components/underscore/underscore.js"></script>
+    <script src="../components/d3/d3.js" charset="utf-8"></script>
+
+
+    <script src="../dist/dchart.js"></script>
 </head>
 <body>
 
-    <div id="lineChart1"></div>
+    <div class="container row">
 
-    <script src="../components/underscore/underscore.js" charset="utf-8"></script>
-    <script src="../components/d3/d3.js" charset="utf-8"></script>
-    <script src="../dist/dchart.js" charset="utf-8"></script>
-    <script>
 
-        var lineChart1 = new dChart.LineChart({
-            elem: 'lineChart1',
-            width: 800,
-            height: 400,
-            label: "My awesome Chart",
-            description: "This awesome chart lib is using D3.js",
-            axis: {
-                x: {
-                    label: "x-Axis",
-                    align: "bottom",
-                    labelAlign: "right"
-                },
-                y: {
-                    label: "y-Axis",
-                    align: "left",
-                    scale: "sqrt",
-                    labelAlign: "top",
-                    gridStyle: {
-                        stroke: "black",
-                        strokeOpacity: 0.25
+
+    <h1>Extensible declarative chart library using D3.js</h1>
+
+    <div class="span2">
+
+        <ul class="nav nav-tabs nav-stacked affix">
+            <li><a href="#basic-usage">Basic Usage</a></li>
+            <li><a href="#data-sets">Datasets</a></li>
+            <li><a href="#chart-styling">Styling</a></li>
+            <li><a href="#chart-types">Chart Types</a></li>
+        </ul>
+    </div>
+
+    <div class="span9">
+
+    <h2 id="basic-usage">Basic Usage <a href="#basic-usage">#</a></h2>
+
+    <h3 id="basic-usage-initializing">Initializing <a href="#basic-usage-initializing">#</a></h3>
+
+    <div>
+        <div id="basicChart1"></div>
+        <b>html</b>
+        <pre class="prettyprint">
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;script src="https://github.com/chaosmail/dchart/raw/master/dist/dchart.min.js"&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id="basicChart1"&gt;&lt;/div&gt;
+        &lt;script&gt;
+            var baseChart1 = new dChart.LineChart({
+                elem: '<abbr title="ID of the HTML-Element">basicChart1</abbr>',
+                ...
+            });
+        &lt;/script&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+        </pre>
+        <script>
+            var basicChart1 = new dChart.LineChart({
+                elem: 'basicChart1',
+                width:700,
+                height:400,
+                label: "Basic Usage",
+                dataSets: [
+                    {
+                        label: "Dataset 1",
+                        interpolate: "cardinal",
+                        lineStyle: {
+                            stroke: "green",
+                            strokeWidth: 2
+                        },
+                        dataFn: {
+                            fn: function() {
+                                return Math.random();
+                            },
+                            min: 0,
+                            max: 5,
+                            step: 1
+                        }
+                    }
+                ]
+            });
+        </script>
+    </div>
+
+    <h3 id="basic-usage-chart">Chart Configuration <a href="#basic-usage-chart">#</a></h3>
+
+    <div>
+        <div id="basicChart2"></div>
+        <b>html</b>
+        <pre class="prettyprint">
+    &lt;div id="basicChart2"&gt;&lt;/div&gt;
+        </pre>
+        <b>javascript</b>
+        <pre class="prettyprint">
+    var baseChart2 = new dChart.LineChart({
+        elem: 'basicChart2',
+        width:<abbr title="Chart Width (number)">700</abbr>,
+        height:<abbr title="Chart Height (number)">400</abbr>,
+        label: "<abbr title="Chart Label">Basic Chart: Chart Configuration</abbr>",
+        description: "<abbr title="Chart Description">The chart can be configured with some attributes</abbr>",
+        ...
+    });
+        </pre>
+        <script>
+            var baseChart2 = new dChart.LineChart({
+                elem: 'basicChart2',
+                width:700,
+                height:400,
+                label: "Basic Chart: Chart Configuration",
+                description: "The chart can be configured with some attributes",
+                dataSets: [
+                    {
+                        label: "Dataset: Points",
+                        interpolate: "cardinal",
+                        lineStyle: {
+                            stroke: "orange",
+                            strokeWidth: 2
+                        },
+                        data: [
+                            {x:0,y:0},
+                            {x:1,y:0.5},
+                            {x:2,y:0.7},
+                            {x:3,y:0.85},
+                            {x:4,y:0.9},
+                            {x:5,y:0.92}
+                        ]
+                    }
+                ]
+            });
+        </script>
+    </div>
+
+    <h3 id="basic-usage-axis">Axis Configuration <a href="#basic-usage-axis">#</a></h3>
+
+    <div>
+        <div id="basicChart3"></div>
+        <pre class="prettyprint">
+    var baseChart3 = new dChart.LineChart({
+        axis: {
+            x: {
+                label: "<abbr title="x Axis Label">x Axis Label [m2]</abbr>",
+                align: "<abbr title="x Axis Position (top|center|bottom)">bottom</abbr>",
+                labelAlign: "<abbr title="x Axis Label (left|center|right)">right</abbr>"
+            },
+            y: {
+                label: "<abbr title="y Axis Label">y Axis Label [s]</abbr>",
+                align: "<abbr title="y Axis Position (left|center|right)">left</abbr>",
+                labelAlign:"<abbr title="x Axis Position (top|center|bottom)">top</abbr>"
+            }
+        },
+        ...
+    });
+        </pre>
+        <script>
+            var baseChart3 = new dChart.LineChart({
+                elem: 'basicChart3',
+                width:700,
+                height:400,
+                label: "Basic Chart: Axis Configuration",
+                axis: {
+                    x: {
+                        label: "x Axis Label [m2]",
+                        align: "bottom",
+                        labelAlign: "right"
                     },
-                    range: [0,1]
+                    y: {
+                        label: "y Axis Label [s]",
+                        align: "left",
+                        labelAlign:"top"
+                    }
+                },
+                dataSets: [
+                    {
+                        label: "Dataset 1",
+                        interpolate: "cardinal",
+                        lineStyle: {
+                            stroke: "darkturquoise",
+                            strokeWidth: 2
+                        },
+                        dataFn: {
+                            fn: function() {
+                                return Math.random();
+                            },
+                            min: 0,
+                            max: 5,
+                            step: 1
+                        }
+                    }
+                ]
+            });
+        </script>
+
+        <div id="basicChart4"></div>
+        <pre class="prettyprint">
+    var baseChart4 = new dChart.LineChart({
+        axis: {
+            marginTop: 40,
+            marginRight: 40,
+            x: {
+                label: "x axis",
+                align: "top",
+                labelAlign: "left",
+                gridStyle: {
+                    stroke: "black",
+                    strokeOpacity: 0.7
                 }
             },
-            dataSets:[
-                {
-                    label: "Dataset 1: Points",
-                    lineStyle: {
-                        stroke: "mediumslateblue",
-                        strokeWidth: 2,
-                        strokeDasharray: "5,5"
-                    },
-                    dotStyle: {
-                        stroke: "mediumslateblue",
-                        strokeWidth: 2,
-                        fill: "#fff"
-                    },
-                    interpolate: "linear",
-                    data: [
-                        {x:0,y:0},
-                        {x:1,y:0.5},
-                        {x:2,y:0.7},
-                        {x:3,y:0.85},
-                        {x:4,y:0.9},
-                        {x:5,y:0.92}
-                    ]
+            y: {
+                label: "y axis",
+                align: "right",
+                labelAlign:"center",
+                gridStyle: {
+                    stroke: "blueviolet",
+                    strokeOpacity: 0.2
                 },
-                {
-                    label: "Dataset 2: Points",
-                    lineStyle: {
-                        stroke: "orange",
-                        strokeWidth: 2
+                range:[0,1]
+            }
+        },
+        ...
+    });
+        </pre>
+        <script>
+            var baseChart4 = new dChart.LineChart({
+                elem: 'basicChart4',
+                width:700,
+                height:400,
+                marginTop: 40,
+                marginRight: 40,
+                label: "Basic Chart: Axis Configuration",
+                axis: {
+                    x: {
+                        label: "x axis",
+                        align: "top",
+                        labelAlign: "left",
+                        gridStyle: {
+                            stroke: "black",
+                            strokeOpacity: 0.7
+                        }
                     },
-                    interpolate: "cardinal",
-                    data: [
-                        {x:0,y:0.92},
-                        {x:1,y:0.9},
-                        {x:2,y:0.85},
-                        {x:3,y:0.7},
-                        {x:4,y:0.5},
-                        {x:5,y:0}
-                    ]
-                },
-                {
-                    label: "Dataset 3: Points",
-                    lineStyle: {
-                        stroke: "green",
-                        strokeWidth: 2
-                    },
-                    dotStyle: {
-                        stroke: "none",
-                        fill: "green"
-                    },
-                    dotRadius: 3,
-                    data: [
-                        {x:0,y:0.4},
-                        {x:1,y:0.6},
-                        {x:2,y:0.75},
-                        {x:3,y:0.8},
-                        {x:4,y:0.85},
-                        {x:5,y:0.87}
-                    ]
-                },
-                {
-                    label: "Dataset 4: Function",
-                    lineStyle: {
-                        stroke: "red",
-                        strokeWidth: 2
-                    },
-                    dataFn: {
-                        fn: Math.cos,
-                        min: 0,
-                        max: 5,
-                        step: 1
+                    y: {
+                        label: "y axis",
+                        align: "right",
+                        labelAlign:"center",
+                        gridStyle: {
+                            stroke: "blueviolet",
+                            strokeOpacity: 0.2
+                        },
+                        range:[0,1]
                     }
                 },
-                {
-                    label: "Dataset 5: Source",
-                    lineStyle: {
-                        stroke: "brown",
-                        strokeWidth: 2
-                    },
-                    dataSrc: {
-                        file: "data/dataset.json"
+                dataSets: [
+                    {
+                        label: "Dataset 1",
+                        interpolate: "cardinal",
+                        lineStyle: {
+                            stroke: "blueviolet",
+                            strokeWidth: 2
+                        },
+                        dataFn: {
+                            fn: function() {
+                                return Math.random();
+                            },
+                            min: 0,
+                            max: 5,
+                            step: 1
+                        }
                     }
-                }
-            ]
-        });
+                ]
+            });
+        </script>
+    </div>
 
-    </script>
+    <h2 id="data-sets">Datasets <a href="#data-sets">#</a></h2>
+
+    <h3 id="data-sets-points">Points <a href="#data-sets-points">#</a></h3>
+    <div>
+        <div id="pointsChart1"></div>
+        <pre class="prettyprint">
+    var pointsChart1 = new dChart.LineChart({
+        ...
+        dataSets: [
+            {
+                label: "Dataset: Points",
+                data: [
+                    {x:0,y:0},
+                    {x:1,y:0.5},
+                    {x:2,y:0.7},
+                    {x:3,y:0.85},
+                    {x:4,y:0.9},
+                    {x:5,y:0.92}
+                ]
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var pointsChart1 = new dChart.LineChart({
+                elem: 'pointsChart1',
+                width:700,
+                height:400,
+                label: "Dataset: Points Example",
+                dataSets: [
+                    {
+                        label: "Dataset: Points",
+                        lineStyle: {
+                            stroke: "lightsalmon",
+                            strokeWidth: 2
+                        },
+                        dotStyle: {
+                            stroke: "lightsalmon",
+                            strokeWidth: 2,
+                            fill: "white"
+                        },
+                        data: [
+                            {x:0,y:0},
+                            {x:1,y:0.5},
+                            {x:2,y:0.7},
+                            {x:3,y:0.85},
+                            {x:4,y:0.9},
+                            {x:5,y:0.92}
+                        ]
+                    }
+                ]
+            });
+        </script>
+    </div>
+
+    <h3 id="data-sets-functions">Functions <a href="#data-sets-functions">#</a></h3>
+    <div>
+        <div id="functionChart1"></div>
+        <pre class="prettyprint">
+    var functionChart1 = new dChart.LineChart({
+        ...
+        dataSets: [
+            {
+                label: "Dataset: Function 'sin'",
+                dataFn: {
+                    fn: Math.sin,
+                    min: 0,
+                    max: 2*Math.PI,
+                    step: Math.PI/360
+                }
+            },
+            {
+                label: "Dataset: Function 'cos'",
+                dataFn: {
+                    fn: Math.cos,
+                    min: 0,
+                    max: 2*Math.PI,
+                    step: Math.PI/360
+                }
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var functionChart1 = new dChart.LineChart({
+                elem: 'functionChart1',
+                width:700,
+                height:400,
+                label: "Dataset: Function Example",
+                axis: {
+                    x: {
+                        label: "x axis",
+                        align: "center"
+                    },
+                    y: {
+                        label: "y axis"
+                    }
+                },
+                dataSets: [
+                    {
+                        label: "Dataset: Function 'sin'",
+                        lineStyle: {
+                            stroke: "red",
+                            strokeWidth: 2
+                        },
+                        dataFn: {
+                            fn: Math.sin,
+                            min: 0,
+                            max: 2*Math.PI,
+                            step: Math.PI/360
+                        }
+                    },
+                    {
+                        label: "Dataset: Function 'cos'",
+                        lineStyle: {
+                            stroke: "blue",
+                            strokeWidth: 2
+                        },
+                        dataFn: {
+                            fn: Math.cos,
+                            min: 0,
+                            max: 2*Math.PI,
+                            step: Math.PI/360
+                        }
+                    }
+                ]
+            });
+        </script>
+
+        <div id="functionChart2"></div>
+        <script>
+            var functionChart2 = new dChart.LineChart({
+                elem: 'functionChart2',
+                width:700,
+                height:400,
+                label: "Dataset: Function Example",
+                axis: {
+                    x: {
+                        label: "x axis"
+                    },
+                    y: {
+                        label: "y axis"
+                    }
+                },
+                dataSets: [
+                    {
+                        label: "Dataset: Function 'random'",
+                        interpolate: "cardinal",
+                        lineStyle: {
+                            stroke: "mediumslateblue",
+                            strokeWidth: 2
+                        },
+                        dataFn: {
+                            fn: function() {
+                                return Math.random();
+                            },
+                            min: 0,
+                            max: 30,
+                            step: 1
+                        }
+                    }
+                ]
+            });
+        </script>
+        <pre class="prettyprint">
+    var functionChart2 = new dChart.LineChart({
+        ...
+        dataSets: [
+            {
+                label: "Dataset: Function 'random'",
+                dataFn: {
+                    fn: function() {
+                        return Math.random();
+                    },
+                    min: 0,
+                    max: 30,
+                    step: 1
+                }
+            }
+        ]
+    });
+        </pre>
+    </div>
+
+    <h2 id="chart-types">Chart Types <a href="#chart-types">#</a></h2>
+
+    <h3 id="chart-types-line-chart">Line Charts <a href="#chart-types-line-chart">#</a></h3>
+    <div>
+        <div id="lineChart1"></div>
+        <pre class="prettyprint">
+    var lineChart1 = new dChart.LineChart({
+        elem: 'lineChart1',
+        width: 700,
+        height: 400,
+        label: "My awesome Chart",
+        description: "This awesome chart lib is using D3.js",
+        axis: {
+            x: {
+                label: "x-Axis",
+                align: "bottom",
+                labelAlign: "right"
+            },
+            y: {
+                label: "y-Axis",
+                align: "left",
+                scale: "sqrt",
+                labelAlign: "top",
+                gridStyle: {
+                    stroke: "black",
+                    strokeOpacity: 0.25
+                }
+            }
+        },
+        dataSets:[
+            {
+                label: "Dataset 1",
+                lineStyle: {
+                    stroke: "mediumslateblue",
+                    strokeWidth: 2,
+                    strokeDasharray: "5,5"
+                },
+                dotStyle: {
+                    stroke: "mediumslateblue",
+                    strokeWidth: 2,
+                    fill: "#fff"
+                },
+                interpolate: "linear",
+                data: [
+                    {x:0,y:0},
+                    {x:1,y:0.5},
+                    {x:2,y:0.7},
+                    {x:3,y:0.85},
+                    {x:4,y:0.9},
+                    {x:5,y:0.92}
+                ]
+            },
+            {
+                label: "Dataset 2: Function",
+                lineStyle: {
+                    stroke: "red",
+                    strokeWidth: 2
+                },
+                interpolate:'cardinal',
+                dataFn: {
+                    fn: function() { return Math.random() },
+                    min: 0,
+                    max: 5,
+                    step: 0.25
+                }
+            }
+        ]
+    });
+        </pre>
+        <script>
+
+            var lineChart1 = new dChart.LineChart({
+                elem: 'lineChart1',
+                width: 700,
+                height: 400,
+                label: "My awesome Chart",
+                description: "This awesome chart lib is using D3.js",
+                axis: {
+                    x: {
+                        label: "x-Axis",
+                        align: "bottom",
+                        labelAlign: "right"
+                    },
+                    y: {
+                        label: "y-Axis",
+                        align: "left",
+                        scale: "sqrt",
+                        labelAlign: "top",
+                        gridStyle: {
+                            stroke: "black",
+                            strokeOpacity: 0.25
+                        }
+                    }
+                },
+                dataSets:[
+                    {
+                        label: "Dataset 1",
+                        lineStyle: {
+                            stroke: "mediumslateblue",
+                            strokeWidth: 2,
+                            strokeDasharray: "5,5"
+                        },
+                        dotStyle: {
+                            stroke: "mediumslateblue",
+                            strokeWidth: 2,
+                            fill: "#fff"
+                        },
+                        interpolate: "linear",
+                        data: [
+                            {x:0,y:0},
+                            {x:1,y:0.5},
+                            {x:2,y:0.7},
+                            {x:3,y:0.85},
+                            {x:4,y:0.9},
+                            {x:5,y:0.92}
+                        ]
+                    },
+                    {
+                        label: "Dataset 2: Function",
+                        lineStyle: {
+                            stroke: "red",
+                            strokeWidth: 2
+                        },
+                        interpolate:'cardinal',
+                        dataFn: {
+                            fn: function() { return Math.random() },
+                            min: 0,
+                            max: 5,
+                            step: 0.25
+                        }
+                    }
+                ]
+            });
+
+        </script>
+    </div>
+
+
+    </div>
+    </div>
+
+    <script src="lib/google-code-prettify/run_prettify.js"></script>
 </body>
 </html>

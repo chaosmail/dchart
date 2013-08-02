@@ -179,10 +179,12 @@ declare module dChart {
     }
     class xAxis extends Axis {
         public orientation: string;
+        constructor();
         public redraw(min?: number, max?: number): void;
     }
     class yAxis extends Axis {
         public orientation: string;
+        constructor();
         public redraw(min?: number, max?: number): void;
     }
     class zAxis extends Axis {
@@ -204,10 +206,10 @@ declare module dChart.Utils {
         fn: any;
     }
     interface ISolver2D extends ISolver {
-        solve: (min?: number, max?: number, step?: number) => dChart.Point2D[];
+        solve: (min?: number, max?: number, step?: number) => any[];
     }
     interface ISolver3D extends ISolver {
-        solve: (min?: number, max?: number, step?: number) => dChart.Point3D[];
+        solve: (min?: number, max?: number, step?: number) => any[];
     }
     class Solver {
         public min: number;
@@ -215,13 +217,25 @@ declare module dChart.Utils {
         public step: number;
         public fn: any;
         constructor();
+        public solve(min?: number, max?: number, step?: number): any[];
         public normalize(value: any): void;
     }
     class Solver2D extends Solver implements ISolver2D {
-        public solve(min?: number, max?: number, step?: number): dChart.Point2D[];
+        public solve(min?: number, max?: number, step?: number): any[];
     }
-    class Solver3D extends Solver implements ISolver3D {
-        public solve(min?: number, max?: number, step?: number): dChart.Point3D[];
+}
+declare module dChart.Utils {
+    interface IDataSrc {
+        url: string;
+        dataType: string;
+        map: any;
+    }
+    class Loader {
+        public url: string;
+        public dataType: string;
+        public map: any;
+        public getData(callback: (data: any, map: any) => void): void;
+        public normalize(value: any): void;
     }
 }
 declare module dChart {
@@ -236,58 +250,31 @@ declare module dChart {
         areaStyle: dChart.Utils.AreaStyle;
         dotStyle: dChart.Utils.AreaStyle;
         dotRadius: number;
+        dotSymbol: string;
         interpolate: string;
         label: string;
+        dataSrc: dChart.Utils.IDataSrc;
         dataFn: IDataSetFn;
         data: dChart.IPoint[];
     }
-    interface IDataSet2D extends IDataSet {
-        data: dChart.IPoint2D[];
-    }
-    interface IDataSet2DTime extends IDataSet {
-        data: dChart.IPoint2DTime[];
-    }
-    interface IDataSet3D extends IDataSet {
-        data: dChart.IPoint3D[];
-    }
-    interface IDataSet3DTime extends IDataSet {
-        data: dChart.IPoint3DTime[];
-    }
     class DataSet {
+        public chart: dChart.Chart;
         public showLine: boolean;
         public showArea: boolean;
         public showDot: boolean;
         public dotRadius: number;
-        public data: dChart.Point[];
+        public data: any[];
         public label: string;
-        public solver: dChart.Utils.ISolver;
         public interpolate: string;
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
         public dotStyle: dChart.Utils.AreaStyle;
-        constructor();
-        public recalculate(): void;
+        constructor(chart: dChart.Chart);
         public parse(elem: Element): void;
         public normalize(value: any): void;
         public min(axis: string): number;
         public max(axis: string): number;
-    }
-    class DataSet2D extends DataSet {
-        public data: dChart.Point2D[];
-        public solver: dChart.Utils.Solver2D;
-        public recalculate(): void;
-        public min(axis: string): number;
-        public max(axis: string): number;
-        public normalize(value: any): void;
-    }
-    class DataSet3D extends DataSet {
-        public data: dChart.Point3D[];
-        public solver: dChart.Utils.Solver3D;
-        public recalculate(): void;
-        public min(axis: string): number;
-        public max(axis: string): number;
-        public normalize(value: any): void;
     }
 }
 declare module dChart {
@@ -295,6 +282,7 @@ declare module dChart {
         elem: string;
         label: string;
         description: string;
+        fontStyle: dChart.Utils.FontStyle;
         width: number;
         height: number;
         marginTop: number;
@@ -309,7 +297,6 @@ declare module dChart {
     }
     interface IChart2D extends IChart {
         axis: IChart2DAxis;
-        dataSets: dChart.IDataSet2D[];
     }
     interface IChart3DAxis {
         x: dChart.IAxis;
@@ -318,7 +305,6 @@ declare module dChart {
     }
     interface IChart3D extends IChart {
         axis: IChart3DAxis;
-        dataSets: dChart.IDataSet3D[];
     }
     class Chart {
         public svg: D3.Selection;
@@ -339,8 +325,11 @@ declare module dChart {
         public nettoHeight: number;
         public label: string;
         public description: string;
+        public fontStyle: dChart.Utils.FontStyle;
         constructor();
         public clear(): void;
+        public getPoint(): dChart.Point;
+        public getSolver(): dChart.Utils.Solver;
         public redraw(): void;
         public draw(): void;
         public drawAxis(): void;
@@ -350,10 +339,11 @@ declare module dChart {
         public normalize(value: any): void;
     }
     class Chart2D extends Chart {
-        public dataSets: dChart.DataSet2D[];
+        public dataSets: dChart.DataSet[];
         public xAxis: dChart.xAxis;
         public yAxis: dChart.yAxis;
-        constructor();
+        public getPoint(): dChart.Point2D;
+        public getSolver(): dChart.Utils.Solver2D;
         public redraw(): void;
         public drawAxis(): void;
         public redrawAxis(): void;
@@ -364,12 +354,12 @@ declare module dChart {
         public normalize(value: any): void;
     }
     class Chart3D extends Chart {
-        public dataSets: dChart.DataSet3D[];
+        public dataSets: dChart.DataSet[];
         public depth: number;
         public xAxis: dChart.xAxis;
         public yAxis: dChart.yAxis;
         public zAxis: dChart.zAxis;
-        constructor();
+        public getPoint(): dChart.Point3D;
         public drawAxis(): void;
         public redrawAxis(): void;
         public drawData(): void;

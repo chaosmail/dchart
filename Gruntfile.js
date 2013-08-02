@@ -60,5 +60,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-typescript');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean:dist', 'typescript', 'concat', 'cssmin', 'uglify']);
+  grunt.registerTask('default', ['clean:dist', 'typescript', 'concat', 'uglify']);
 };

@@ -14,6 +14,7 @@ module dChart {
         elem:string;
         label:string;
         description:string;
+        fontStyle:Utils.FontStyle;
         width:number;
         height:number;
         marginTop:number;
@@ -32,7 +33,6 @@ module dChart {
     export interface IChart2D extends IChart {
 
         axis:IChart2DAxis;
-        dataSets:IDataSet2D[];
     }
 
     export interface IChart3DAxis {
@@ -45,7 +45,6 @@ module dChart {
     export interface IChart3D extends IChart {
 
         axis: IChart3DAxis;
-        dataSets:IDataSet3D[];
     }
 
     export class Chart {
@@ -72,6 +71,7 @@ module dChart {
 
         label:string;
         description:string;
+        fontStyle:Utils.FontStyle = new Utils.FontStyle();
 
         constructor() {
 ;
@@ -84,27 +84,49 @@ module dChart {
             }
         }
 
+        getPoint() {
+            return new Point();
+        }
+
+        getSolver() {
+            return new Utils.Solver();
+        }
+
         redraw() {
 
-            this.svg.attr("width", this.width)
-                    .attr("height", this.height);
+            this.svg
+                .attr("width", this.width)
+                .attr("height", this.height);
 
-            this.container.attr("width", this.nettoWidth)
-                          .attr("height", this.nettoHeight)
-                          .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
+            this.container
+                .attr("width", this.nettoWidth)
+                .attr("height", this.nettoHeight)
+                .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
 
-            this.svgDescription.text(this.description)
-                .attr("x", this.width * 0.5)
-                .attr("y", this.height - 20)
+            this.svgDescription
+                .text(this.description)
+                .attr("x", this.nettoWidth * 0.5)
+                .attr("y", this.nettoHeight + this.marginBottom - 5)
                 .attr("text-anchor", "middle");
 
-            this.svgLabel.text(this.label)
-                .attr("x", this.width * 0.5)
-                .attr("y", this.height - 40)
+            this.svgLabel
+                .text(this.label)
+                .attr("x", this.nettoWidth * 0.5)
+                .attr("y", this.nettoHeight + this.marginBottom - 20)
                 .attr("text-anchor", "middle");
 
             this.redrawAxis();
             this.redrawData();
+
+            this.container
+                .selectAll('text')
+                .style('font-family', this.fontStyle.fontFamily)
+                .style('font-size', this.fontStyle.fontSize)
+                .style('font-weight', this.fontStyle.fontWeight);
+
+            this.svgLabel
+                .style('font-size', this.fontStyle.fontSize + 2)
+                .style('font-weight', "bold");
         }
 
         draw() {
@@ -193,18 +215,29 @@ module dChart {
             if (value.hasOwnProperty("marginRight")) {
                 this.marginRight = parseFloat(value.marginRight);
             }
+
+            if (value.hasOwnProperty("fontStyle")) {
+
+                var fontStyle = new Utils.FontStyle();
+                fontStyle.normalize(value.fontStyle);
+
+                this.fontStyle = fontStyle;
+            }
         }
     }
 
     export class Chart2D extends Chart {
 
-        dataSets:DataSet2D[] = [];
+        dataSets:DataSet[] = [];
         xAxis:xAxis = new xAxis();
         yAxis:yAxis = new yAxis();
 
-        constructor() {
-            super();
+        getPoint() {
+            return new Point2D();
+        }
 
+        getSolver() {
+            return new Utils.Solver2D();
         }
 
         redraw() {
@@ -246,11 +279,11 @@ module dChart {
         }
 
         min(axis:string = "x") {
-            return d3.min(this.dataSets, (dataSet:DataSet2D) => dataSet.min(axis));
+            return d3.min(this.dataSets, (dataSet:DataSet) => dataSet.min(axis));
         }
 
         max(axis:string = "x") {
-            return d3.max(this.dataSets, (dataSet:DataSet2D) => dataSet.max(axis));
+            return d3.max(this.dataSets, (dataSet:DataSet) => dataSet.max(axis));
         }
 
         normalize(value:any) {
@@ -262,7 +295,7 @@ module dChart {
 
                 _.map(value.dataSets, (config) => {
 
-                    var dataSet = new DataSet2D();
+                    var dataSet = new DataSet(this);
                     dataSet.normalize(config);
                     this.dataSets.push(dataSet);
                 });
@@ -282,14 +315,12 @@ module dChart {
                     this.yAxis.normalize(axis.y)
                 }
             }
-
-
         }
     }
 
     export class Chart3D extends Chart {
 
-        public dataSets:DataSet3D[] = [];
+        public dataSets:DataSet[] = [];
 
         depth:number = 400;
 
@@ -297,9 +328,8 @@ module dChart {
         yAxis:yAxis = new yAxis();
         zAxis:zAxis = new zAxis();
 
-        constructor() {
-            super();
-
+        getPoint() {
+            return new Point3D();
         }
 
         drawAxis() {
@@ -329,11 +359,11 @@ module dChart {
         }
 
         min(axis:string = "x") {
-            return d3.min(this.dataSets, (dataSet:DataSet3D) => dataSet.min(axis));
+            return d3.min(this.dataSets, (dataSet:DataSet) => dataSet.min(axis));
         }
 
         max(axis:string = "x") {
-            return d3.max(this.dataSets, (dataSet:DataSet3D) => dataSet.max(axis));
+            return d3.max(this.dataSets, (dataSet:DataSet) => dataSet.max(axis));
         }
 
         normalize(value:any) {
@@ -345,7 +375,7 @@ module dChart {
 
                 _.map(value.dataSets, (config) => {
 
-                    var dataSet = new DataSet3D();
+                    var dataSet = new DataSet(this);
                     dataSet.normalize(config);
                     this.dataSets.push(dataSet);
                 });
@@ -401,7 +431,7 @@ module dChart {
 
         drawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet2D,key:number) => {
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
 
                 this.svgLineContainer[key] = this.dataContainer
                     .append("g")
@@ -418,7 +448,7 @@ module dChart {
             var yScale = this.yAxis.getScale();
             var lineFn = [];
 
-            _.map(this.dataSets, (dataSet:DataSet2D,key:number) => {
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
 
                 if (dataSet.showLine) {
 
