@@ -2,9 +2,8 @@ Declarative Chart Library
 =========================
 
 [![Build Status](https://travis-ci.org/chaosmail/dchart.png?branch=master)](https://travis-ci.org/chaosmail/dchart)
-**Warning! This is under development and not finished yet!**
 
-This library is a extensible declarative vanillajs Chart Library written in typescript.
+This library is an extensible declarative vanillajs Chart Library written in typescript.
 It also can be used with jQuery (see ...) or AngularJS ([see this Repo](https://github.com/chaosmail/angular-dchart))
 
 Example-Usage
