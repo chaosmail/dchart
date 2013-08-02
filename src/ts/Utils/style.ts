@@ -60,6 +60,36 @@ module dChart.Utils {
     }
 
     /**
+     * Styles for symbols
+     */
+    export class SymbolStyle extends AreaStyle {
+
+        /**
+         * circle           a circle.
+         * cross            a Greek cross or plus sign.
+         * diamond          a rhombus.
+         * square           an axis-aligned square.
+         * triangle-down    a downward-pointing equilateral triangle.
+         * triangle-up      an upward-pointing equilateral triangle.
+         * @type {string}
+         */
+        type:string = "circle";
+        size:number = 1;
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("type")) {
+                this.type = value.type;
+            }
+
+            if (value.hasOwnProperty("size")) {
+                this.size = parseFloat(value.size);
+            }
+        }
+    }
+
+    /**
      * Styles for fonts
      */
     export class FontStyle extends AreaStyle {

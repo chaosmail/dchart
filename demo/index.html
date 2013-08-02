@@ -50,7 +50,8 @@
             <li class="nav-header">Chart Styling</li>
             <li class="nav-header">Chart Types</li>
             <li><a href="#chart-types-line-chart">Line Chart</a></li>
-            <li><a href="#chart-types-histo-chart">Histogram</a></li>
+            <li><a href="#chart-types-bar-chart">Bar Chart</a></li>
+            <li><a href="#chart-types-scatter-chart">Scatter Chart</a></li>
             <li class="nav-header">About</li>
             <li><a href="#about-source">Source</a></li>
             <li><a href="#about-license">License</a></li>
@@ -320,6 +321,17 @@
                     {x:4,y:0.9},
                     {x:5,y:0.92}
                 ]
+            },
+            {
+                label: "Dataset: Points",
+                data: [
+                    {x:5,y:0},
+                    {x:4,y:0.5},
+                    {x:3,y:0.7},
+                    {x:2,y:0.85},
+                    {x:1,y:0.9},
+                    {x:0,y:0.92}
+                ]
             }
         ]
     });
@@ -337,12 +349,11 @@
                             stroke: "lightsalmon",
                             strokeWidth: 2
                         },
-                        dotStyle: {
+                        symbolStyle: {
                             stroke: "lightsalmon",
                             strokeWidth: 2,
                             fill: "white"
                         },
-                        dotRadius: 4,
                         data: [
                             {x:0,y:0},
                             {x:1,y:0.5},
@@ -350,6 +361,26 @@
                             {x:3,y:0.85},
                             {x:4,y:0.9},
                             {x:5,y:0.92}
+                        ]
+                    },
+                    {
+                        label: "Dataset: Points",
+                        lineStyle: {
+                            stroke: "springgreen",
+                            strokeWidth: 2
+                        },
+                        symbolStyle: {
+                            stroke: "none",
+                            fill: "springgreen",
+                            type:"cross"
+                        },
+                        data: [
+                            {x:5,y:0},
+                            {x:4,y:0.5},
+                            {x:3,y:0.7},
+                            {x:2,y:0.85},
+                            {x:1,y:0.9},
+                            {x:0,y:0.92}
                         ]
                     }
                 ]
@@ -513,7 +544,6 @@
             y: {
                 label: "y-Axis",
                 align: "left",
-                scale: "sqrt",
                 labelAlign: "top",
                 gridStyle: {
                     stroke: "black",
@@ -529,10 +559,11 @@
                     strokeWidth: 2,
                     strokeDasharray: "5,5"
                 },
-                dotStyle: {
+                symbolStyle: {
                     stroke: "mediumslateblue",
                     strokeWidth: 2,
-                    fill: "#fff"
+                    fill: "#fff",
+                    size: 1.2
                 },
                 interpolate: "linear",
                 data: [
@@ -578,7 +609,6 @@
                     y: {
                         label: "y-Axis",
                         align: "left",
-                        scale: "sqrt",
                         labelAlign: "top",
                         gridStyle: {
                             stroke: "black",
@@ -594,10 +624,11 @@
                             strokeWidth: 2,
                             strokeDasharray: "5,5"
                         },
-                        dotStyle: {
+                        symbolStyle: {
                             stroke: "mediumslateblue",
                             strokeWidth: 2,
-                            fill: "#fff"
+                            fill: "#fff",
+                            size: 1.2
                         },
                         interpolate: "linear",
                         data: [
@@ -629,13 +660,13 @@
         </script>
     </div>
 
-    <h3 id="chart-types-histo-chart">Histogram <a href="#chart-types-histo-chart">#</a></h3>
+    <h3 id="chart-types-bar-chart">Bar Chart <a href="#chart-types-bar-chart">#</a></h3>
 
     <div>
-        <div id="histoChart1"></div>
+        <div id="barChart1"></div>
         <pre class="prettyprint">
-    var histoChart1 = new dChart.HistoChart({
-        elem: 'histoChart1',
+    var barChart1 = new dChart.BarChart({
+        elem: 'barChart1',
         width: 700,
         height: 400,
         axis: {
@@ -683,8 +714,8 @@
     });
         </pre>
         <script>
-            var histoChart1 = new dChart.HistoChart({
-                elem: 'histoChart1',
+            var barChart1 = new dChart.BarChart({
+                elem: 'barChart1',
                 width: 700,
                 height: 400,
                 axis: {
@@ -734,6 +765,140 @@
 
     </div>
 
+    <h3 id="chart-types-scatter-chart">Scatter Chart <a href="#chart-types-bar-chart">#</a></h3>
+
+    <div>
+        <div id="scatterChart1"></div>
+        <pre class="prettyprint">
+    var scatterChart1 = new dChart.ScatterChart({
+        elem: 'scatterChart1',
+        width: 700,
+        height: 400,
+        axis: {
+            x: {
+                range: [0,11]
+            },
+            y: {
+                range: [0,10],
+                gridStyle: {
+                    stroke: "lightgrey",
+                    strokeOpacity: 0.5
+                }
+            }
+        },
+        dataSets: [
+            {
+                label: "Random Data",
+                symbolStyle: {
+                    stroke: "olivedrab",
+                    fill: "olivedrab",
+                    fillOpacity: 0.7
+                },
+                data: scatterData1
+            },
+            {
+                label: "Random Data",
+                symbolStyle: {
+                    stroke: "navy",
+                    fill: "navy",
+                    fillOpacity: 0.7,
+                    size: 1.5
+                },
+                data: scatterData2
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var scatterData1 = [],
+                scatterData2 = []
+                scatterData3 = [];
+            var i = 0;
+            for (i=0;i<=100;i++) {
+                scatterData1.push({x:Math.random()*10,y:Math.random()*10});
+                scatterData2.push({x:Math.random()*10,y:Math.random()*10});
+                scatterData3.push({x:Math.random()*10,y:Math.random()*10});
+            }
+
+            var scatterChart1 = new dChart.ScatterChart({
+                elem: 'scatterChart1',
+                width: 700,
+                height: 400,
+                axis: {
+                    x: {
+                        range: [0,11]
+                    },
+                    y: {
+                        range: [0,10],
+                        gridStyle: {
+                            stroke: "lightgrey",
+                            strokeOpacity: 0.5
+                        }
+                    }
+                },
+                dataSets: [
+                    {
+                        label: "Random Data",
+                        symbolStyle: {
+                            stroke: "olivedrab",
+                            fill: "olivedrab",
+                            fillOpacity: 0.7
+                        },
+                        data: scatterData1
+                    },
+                    {
+                        label: "Random Data",
+                        symbolStyle: {
+                            stroke: "navy",
+                            fill: "navy",
+                            fillOpacity: 0.7,
+                            size: 1.5
+                        },
+                        data: scatterData2
+                    }
+                ]
+            });
+        </script>
+
+        <div id="scatterChart2"></div>
+        <pre class="prettyprint">
+    var scatterChart2 = new dChart.ScatterChart({
+        elem: 'scatterChart2',
+        width: 700,
+        height: 400,
+        dataSets: [
+            {
+                label: "Random Data",
+                symbolStyle: {
+                    stroke: "tomato",
+                    fill: "white",
+                    type: "triangle-up"
+                },
+                data: scatterData3
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var scatterChart2 = new dChart.ScatterChart({
+                elem: 'scatterChart2',
+                width: 700,
+                height: 400,
+                dataSets: [
+                    {
+                        label: "Random Data",
+                        symbolStyle: {
+                            stroke: "tomato",
+                            fill: "white",
+                            type: "triangle-up"
+                        },
+                        data: scatterData3
+                    }
+                ]
+            });
+        </script>
+    </div>
+    
     <hr>
 
     <h2 id="about">About <a href="#about">#</a></h2>

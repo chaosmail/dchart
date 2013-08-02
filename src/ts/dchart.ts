@@ -416,6 +416,7 @@ module dChart {
     export class LineChart extends Chart2D {
 
         svgLineContainer:D3.Selection[] = [];
+        svgSymbolContainer:D3.Selection[] = [];
         svgLine:D3.Selection[] = [];
 
         constructor(config?:IChart2D) {
@@ -438,6 +439,9 @@ module dChart {
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 this.svgLine[key] = this.svgLineContainer[key].append("path");
+
+                this.svgSymbolContainer[key] = this.dataContainer
+                    .append("g");
 
             });
         }
@@ -466,32 +470,35 @@ module dChart {
 
                 }
 
-                if (dataSet.showDot) {
+                if (dataSet.showSymbol) {
 
-                    var group = this.svgLineContainer[key].selectAll("circle")
+                    var group = this.svgSymbolContainer[key].selectAll("path")
                         .data(dataSet.data, (d:Point2D) => d.x);
 
+                    var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
+
                     group.exit()
-                         .remove();
+                        .remove();
 
                     group.enter()
-                        .append("circle")
-                        .style("stroke", dataSet.dotStyle.stroke)
-                        .style("stroke-width", dataSet.dotStyle.strokeWidth)
-                        .style("stroke-opacity", dataSet.dotStyle.strokeOpacity)
-                        .style("stroke-linecap", dataSet.dotStyle.strokeLinecap)
-                        .style("stroke-dasharray", dataSet.dotStyle.strokeDasharray)
-                        .style("fill", dataSet.dotStyle.fill)
-                        .style("fill-opacity", dataSet.dotStyle.fillOpacity)
-                        .attr("cx", (d:Point2D) => xScale(d.x))
-                        .attr("cy", (d:Point2D) => yScale(d.y))
-                        .attr("r", (d:Point2D) => dataSet.dotRadius);
+                        .append("path")
+                        .style("stroke", dataSet.symbolStyle.stroke)
+                        .style("stroke-width", dataSet.symbolStyle.strokeWidth)
+                        .style("stroke-opacity", dataSet.symbolStyle.strokeOpacity)
+                        .style("stroke-linecap", dataSet.symbolStyle.strokeLinecap)
+                        .style("stroke-dasharray", dataSet.symbolStyle.strokeDasharray)
+                        .style("fill", dataSet.symbolStyle.fill)
+                        .style("fill-opacity", dataSet.symbolStyle.fillOpacity)
+                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
+                        .attr("d", symbol);
+
+
                 }
             });
         }
     }
 
-    export class HistoChart extends Chart2D {
+    export class BarChart extends Chart2D {
 
         svgRectContainer:D3.Selection[] = [];
 
@@ -554,6 +561,62 @@ module dChart {
                     .attr("width", (d:Point2D) => width)
                     .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
 
+            });
+        }
+    }
+
+    export class ScatterChart extends Chart2D {
+
+        svgScatterContainer:D3.Selection[] = [];
+
+        constructor(config?:IChart2D) {
+            super();
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+
+            console.log(this);
+        }
+
+        drawData() {
+
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+
+                this.svgScatterContainer[key] = this.dataContainer
+                    .append("g")
+                    .attr("class", "dchart-data-set dchart-data-set-" + key);
+
+            });
+        }
+
+        redrawData() {
+
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+
+                var group = this.svgScatterContainer[key].selectAll("path")
+                    .data(dataSet.data, (d:Point2D) => d.x);
+
+                var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
+
+                group.exit()
+                    .remove();
+
+                group.enter()
+                    .append("path")
+                    .style("stroke", dataSet.symbolStyle.stroke)
+                    .style("stroke-width", dataSet.symbolStyle.strokeWidth)
+                    .style("stroke-opacity", dataSet.symbolStyle.strokeOpacity)
+                    .style("stroke-linecap", dataSet.symbolStyle.strokeLinecap)
+                    .style("stroke-dasharray", dataSet.symbolStyle.strokeDasharray)
+                    .style("fill", dataSet.symbolStyle.fill)
+                    .style("fill-opacity", dataSet.symbolStyle.fillOpacity)
+                    .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
+                    .attr("d", symbol);
 
             });
         }

@@ -20,9 +20,7 @@ module dChart {
         area:bool;
         lineStyle:Utils.LineStyle;
         areaStyle:Utils.AreaStyle;
-        dotStyle:Utils.AreaStyle;
-        dotRadius:number;
-        dotSymbol:string;
+        symbolStyle:Utils.SymbolStyle;
         interpolate:string;
         label:string;
         dataSrc:Utils.IDataSrc;
@@ -34,9 +32,7 @@ module dChart {
 
         showLine:bool = true;
         showArea:bool = false;
-        showDot:bool = false;
-
-        dotRadius:number = 3;
+        showSymbol:bool = false;
 
         data:any[] = [];
 
@@ -74,7 +70,7 @@ module dChart {
 
         lineStyle:Utils.LineStyle = new Utils.LineStyle();
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
-        dotStyle:Utils.AreaStyle = new Utils.AreaStyle();
+        symbolStyle:Utils.SymbolStyle = new Utils.SymbolStyle();
 
         constructor(public chart:Chart) {
 
@@ -129,13 +125,13 @@ module dChart {
                 this.label = value.label;
             }
 
-            if (value.hasOwnProperty("dotStyle")) {
+            if (value.hasOwnProperty("symbolStyle")) {
 
-                var areaStyle = new Utils.AreaStyle();
-                areaStyle.normalize(value.dotStyle);
-                this.dotStyle = areaStyle;
+                var symbolStyle = new Utils.SymbolStyle();
+                symbolStyle.normalize(value.symbolStyle);
+                this.symbolStyle = symbolStyle;
 
-                this.showDot = true;
+                this.showSymbol = true;
             }
 
             if (value.hasOwnProperty("lineStyle")) {
@@ -156,9 +152,9 @@ module dChart {
                 this.showArea = true;
             }
 
-            if (value.hasOwnProperty("dot")) {
+            if (value.hasOwnProperty("symbol")) {
 
-                this.showDot = value.showDots;
+                this.showSymbol = value.showSymbols;
             }
 
             if (value.hasOwnProperty("line")) {
@@ -169,11 +165,6 @@ module dChart {
             if (value.hasOwnProperty("area")) {
 
                 this.showArea = value.showArea;
-            }
-
-            if (value.hasOwnProperty("dotRadius")) {
-
-                this.dotRadius = value.dotRadius;
             }
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {

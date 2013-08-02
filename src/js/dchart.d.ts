@@ -120,6 +120,11 @@ declare module dChart.Utils {
         public fillOpacity: number;
         public normalize(value: any): void;
     }
+    class SymbolStyle extends AreaStyle {
+        public type: string;
+        public size: number;
+        public normalize(value: any): void;
+    }
     class FontStyle extends AreaStyle {
         public fontFamily: string;
         public fontSize: number;
@@ -248,9 +253,7 @@ declare module dChart {
         area: boolean;
         lineStyle: dChart.Utils.LineStyle;
         areaStyle: dChart.Utils.AreaStyle;
-        dotStyle: dChart.Utils.AreaStyle;
-        dotRadius: number;
-        dotSymbol: string;
+        symbolStyle: dChart.Utils.SymbolStyle;
         interpolate: string;
         label: string;
         dataSrc: dChart.Utils.IDataSrc;
@@ -261,15 +264,14 @@ declare module dChart {
         public chart: dChart.Chart;
         public showLine: boolean;
         public showArea: boolean;
-        public showDot: boolean;
-        public dotRadius: number;
+        public showSymbol: boolean;
         public data: any[];
         public label: string;
         public interpolate: string;
         public visible: boolean;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
-        public dotStyle: dChart.Utils.AreaStyle;
+        public symbolStyle: dChart.Utils.SymbolStyle;
         constructor(chart: dChart.Chart);
         public parse(elem: Element): void;
         public normalize(value: any): void;
@@ -370,13 +372,20 @@ declare module dChart {
     }
     class LineChart extends Chart2D {
         public svgLineContainer: D3.Selection[];
+        public svgSymbolContainer: D3.Selection[];
         public svgLine: D3.Selection[];
         constructor(config?: IChart2D);
         public drawData(): void;
         public redrawData(): void;
     }
-    class HistoChart extends Chart2D {
+    class BarChart extends Chart2D {
         public svgRectContainer: D3.Selection[];
+        constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
+    }
+    class ScatterChart extends Chart2D {
+        public svgScatterContainer: D3.Selection[];
         constructor(config?: IChart2D);
         public drawData(): void;
         public redrawData(): void;
