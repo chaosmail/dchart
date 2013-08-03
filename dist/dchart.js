@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Sat Aug 03 2013 18:56:49
+/** dchart - v0.0.4 - Sat Aug 03 2013 22:55:29
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1004,6 +1004,11 @@ var dChart;
             this.fontStyle = new dChart.Utils.FontStyle();
             this.dataSets = [];
             ;
+            this.fontStyle.fontFamily = "sans-serif";
+            this.fontStyle.fontSize = 11;
+            this.fontStyle.fontWeight = "normal";
+            this.fontStyle.stroke = "none";
+            this.fontStyle.fill = "black";
         }
         Chart.prototype.clear = function () {
             if (this.svg) {
@@ -1034,9 +1039,9 @@ var dChart;
             this.redrawAxis();
             this.redrawData();
 
-            this.container.selectAll('text').style('font-family', this.fontStyle.fontFamily).style('font-size', this.fontStyle.fontSize).style('font-weight', this.fontStyle.fontWeight);
+            this.container.selectAll('text').fontStyle(this.fontStyle);
 
-            this.svgLabel.style('font-size', this.fontStyle.fontSize + 2).style('font-weight', "bold");
+            this.svgLabel.fontStyle(this.fontStyle).style('font-size', this.fontStyle.fontSize + 2).style('font-weight', "bold");
         };
 
         Chart.prototype.draw = function () {
@@ -1342,7 +1347,7 @@ var dChart;
                         return yScale(d.y);
                     });
 
-                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).style("stroke", dataSet.lineStyle.stroke).style("stroke-width", dataSet.lineStyle.strokeWidth).style("stroke-opacity", dataSet.lineStyle.strokeOpacity).style("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("stroke-dasharray", dataSet.lineStyle.strokeDasharray).style("fill", "none");
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).lineStyle(dataSet.lineStyle).style("fill", "none");
                 }
 
                 if (dataSet.showSymbol) {
@@ -1354,7 +1359,7 @@ var dChart;
 
                     group.exit().remove();
 
-                    group.enter().append("path").style("stroke", dataSet.symbolStyle.stroke).style("stroke-width", dataSet.symbolStyle.strokeWidth).style("stroke-opacity", dataSet.symbolStyle.strokeOpacity).style("stroke-linecap", dataSet.symbolStyle.strokeLinecap).style("stroke-dasharray", dataSet.symbolStyle.strokeDasharray).style("fill", dataSet.symbolStyle.fill).style("fill-opacity", dataSet.symbolStyle.fillOpacity).attr("transform", function (d) {
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
                     }).attr("d", symbol);
                 }
@@ -1363,6 +1368,66 @@ var dChart;
         return LineChart;
     })(Chart2D);
     dChart.LineChart = LineChart;
+
+    var AreaChart = (function (_super) {
+        __extends(AreaChart, _super);
+        function AreaChart(config) {
+            _super.call(this);
+            this.svgAreaContainer = [];
+            this.svgSymbolContainer = [];
+            this.svgArea = [];
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+
+            console.log(this);
+        }
+        AreaChart.prototype.drawData = function () {
+            var _this = this;
+            _.map(this.dataSets, function (dataSet, key) {
+                _this.svgAreaContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+
+                _this.svgArea[key] = _this.svgAreaContainer[key].append("path");
+
+                _this.svgSymbolContainer[key] = _this.dataContainer.append("g");
+            });
+        };
+
+        AreaChart.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+            var areaFn = [];
+
+            _.map(this.dataSets, function (dataSet, key) {
+                areaFn[key] = d3.svg.area().interpolate(dataSet.interpolate).x(function (d) {
+                    return xScale(d.x);
+                }).y0(_this.nettoHeight).y1(function (d) {
+                    return yScale(d.y);
+                });
+
+                _this.svgArea[key].attr("d", areaFn[key](dataSet.data)).areaStyle(dataSet.areaStyle);
+
+                if (dataSet.showSymbol) {
+                    var group = _this.svgSymbolContainer[key].selectAll("path").data(dataSet.data, function (d) {
+                        return d.x;
+                    });
+
+                    var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
+
+                    group.exit().remove();
+
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
+                    }).attr("d", symbol);
+                }
+            });
+        };
+        return AreaChart;
+    })(Chart2D);
+    dChart.AreaChart = AreaChart;
 
     var BarChart = (function (_super) {
         __extends(BarChart, _super);
@@ -1406,7 +1471,7 @@ var dChart;
 
                 group.exit().remove();
 
-                group.enter().append("rect").style("stroke", dataSet.areaStyle.stroke).style("stroke-width", dataSet.areaStyle.strokeWidth).style("stroke-opacity", dataSet.areaStyle.strokeOpacity).style("stroke-linecap", dataSet.areaStyle.strokeLinecap).style("stroke-dasharray", dataSet.areaStyle.strokeDasharray).style("fill", dataSet.areaStyle.fill).style("fill-opacity", dataSet.areaStyle.fillOpacity).attr("x", function (d) {
+                group.enter().append("rect").areaStyle(dataSet.areaStyle).attr("x", function (d) {
                     return xScale(d.x) - start + key * width;
                 }).attr("y", function (d) {
                     return _this.nettoHeight - yScale(d.y);
@@ -1455,7 +1520,7 @@ var dChart;
 
                 group.exit().remove();
 
-                group.enter().append("path").style("stroke", dataSet.symbolStyle.stroke).style("stroke-width", dataSet.symbolStyle.strokeWidth).style("stroke-opacity", dataSet.symbolStyle.strokeOpacity).style("stroke-linecap", dataSet.symbolStyle.strokeLinecap).style("stroke-dasharray", dataSet.symbolStyle.strokeDasharray).style("fill", dataSet.symbolStyle.fill).style("fill-opacity", dataSet.symbolStyle.fillOpacity).attr("transform", function (d) {
+                group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
                     return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
                 }).attr("d", symbol);
             });
@@ -1514,20 +1579,8 @@ var dChart;
                 var innerRadius = key * radius / _this.dataSets.length;
                 var arc = d3.svg.arc().outerRadius(outerRadius).innerRadius(innerRadius);
 
-                _this.svgPieContainer[key].selectAll("path").data(pie(dataSet.data)).enter().append("path").attr("d", arc).style("stroke", function (d) {
-                    return d.data.areaStyle.stroke;
-                }).style("stroke-width", function (d) {
-                    return d.data.areaStyle.strokeWidth;
-                }).style("stroke-opacity", function (d) {
-                    return d.data.areaStyle.strokeOpacity;
-                }).style("stroke-linecap", function (d) {
-                    return d.data.areaStyle.strokeLinecap;
-                }).style("stroke-dasharray", function (d) {
-                    return d.data.areaStyle.strokeDasharray;
-                }).style("fill", function (d) {
-                    return d.data.areaStyle.fill;
-                }).style("fill-opacity", function (d) {
-                    return d.data.areaStyle.fillOpacity;
+                _this.svgPieContainer[key].selectAll("path").data(pie(dataSet.data)).enter().append("path").attr("d", arc).areaStyle(function (d) {
+                    return d.data.areaStyle;
                 });
             });
         };

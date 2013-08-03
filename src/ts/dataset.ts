@@ -72,7 +72,7 @@ module dChart {
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
         symbolStyle:Utils.SymbolStyle = new Utils.SymbolStyle();
 
-        constructor(public chart:Chart) {
+        constructor(public chart:any) {
 
         }
 

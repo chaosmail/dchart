@@ -261,7 +261,7 @@ declare module dChart {
         data: dChart.IPoint[];
     }
     class DataSet {
-        public chart: dChart.Chart;
+        public chart: any;
         public showLine: boolean;
         public showArea: boolean;
         public showSymbol: boolean;
@@ -272,7 +272,7 @@ declare module dChart {
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
         public symbolStyle: dChart.Utils.SymbolStyle;
-        constructor(chart: dChart.Chart);
+        constructor(chart: any);
         public parse(elem: Element): void;
         public normalize(value: any): void;
         public min(axis: string): number;
@@ -374,6 +374,14 @@ declare module dChart {
         public svgLineContainer: D3.Selection[];
         public svgSymbolContainer: D3.Selection[];
         public svgLine: D3.Selection[];
+        constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
+    }
+    class AreaChart extends Chart2D {
+        public svgAreaContainer: D3.Selection[];
+        public svgSymbolContainer: D3.Selection[];
+        public svgArea: D3.Selection[];
         constructor(config?: IChart2D);
         public drawData(): void;
         public redrawData(): void;

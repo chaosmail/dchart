@@ -8,6 +8,7 @@
 
     <script src="lib/underscore.min.js"></script>
     <script src="lib/d3.min.js" charset="utf-8"></script>
+    <script src="lib/d3-styles.min.js" charset="utf-8"></script>
 
     <script src="js/dchart.js"></script>
 
@@ -50,6 +51,7 @@
             <li class="nav-header">Chart Styling</li>
             <li class="nav-header">Chart Types</li>
             <li><a href="#chart-types-line-chart">Line Chart</a></li>
+            <li><a href="#chart-types-area-chart">Area Chart</a></li>
             <li><a href="#chart-types-bar-chart">Bar Chart</a></li>
             <li><a href="#chart-types-scatter-chart">Scatter Chart</a></li>
             <li><a href="#chart-types-pie-chart">Pie Chart</a></li>
@@ -526,7 +528,7 @@
 
     <h2 id="chart-types">Chart Types <a href="#chart-types">#</a></h2>
 
-    <h3 id="chart-types-line-chart">Line Charts <a href="#chart-types-line-chart">#</a></h3>
+    <h3 id="chart-types-line-chart">Line Chart <a href="#chart-types-line-chart">#</a></h3>
     <div>
         <div id="lineChart1"></div>
         <pre class="prettyprint">
@@ -658,6 +660,216 @@
                 ]
             });
 
+        </script>
+    </div>
+
+    <h3 id="chart-types-area-chart">Area Chart <a href="#chart-types-area-chart">#</a></h3>
+    <div>
+        <div id="areaChart1"></div>
+        <pre class="prettyprint">
+    var areaChart1 = new dChart.AreaChart({
+        elem: 'areaChart1',
+        width: 700,
+        height: 400,
+        label: "Area Chart",
+        axis: {
+            x: {
+                label: "x-Axis"
+            },
+            y: {
+                label: "y-Axis",
+                range:[0,1.5],
+                gridStyle: {
+                    stroke: "black",
+                    strokeOpacity: 0.25
+                }
+            }
+        },
+        dataSets:[
+            {
+                label: "Dataset: Function",
+                areaStyle: {
+                    stroke: "steelblue",
+                    strokeWidth: 2,
+                    fill: "steelblue",
+                    fillOpacity: 0.4
+                },
+                interpolate:'cardinal',
+                dataFn: {
+                    fn: function() { return Math.random() },
+                    min: 0,
+                    max: 5,
+                    step: 0.25
+                }
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var areaChart1 = new dChart.AreaChart({
+                elem: 'areaChart1',
+                width: 700,
+                height: 400,
+                label: "Area Chart",
+                axis: {
+                    x: {
+                        label: "x-Axis"
+                    },
+                    y: {
+                        label: "y-Axis",
+                        range:[0,1.5],
+                        gridStyle: {
+                            stroke: "black",
+                            strokeOpacity: 0.25
+                        }
+                    }
+                },
+                dataSets:[
+                    {
+                        label: "Dataset: Function",
+                        areaStyle: {
+                            stroke: "steelblue",
+                            strokeWidth: 2,
+                            fill: "steelblue",
+                            fillOpacity: 0.4
+                        },
+                        interpolate:'cardinal',
+                        dataFn: {
+                            fn: function() { return Math.random() },
+                            min: 0,
+                            max: 5,
+                            step: 0.25
+                        }
+                    }
+                ]
+            });
+        </script>
+        <div id="areaChart2"></div>
+        <pre class="prettyprint">
+    var areaChart2 = new dChart.AreaChart({
+        elem: 'areaChart2',
+        width: 700,
+        height: 400,
+        label: "Area Chart",
+        axis: {
+            x: {
+                label: "x-Axis"
+            },
+            y: {
+                label: "y-Axis",
+                range:[-1,1],
+                gridStyle: {
+                    stroke: "black",
+                    strokeOpacity: 0.25
+                }
+            }
+        },
+        dataSets: [
+            {
+                label: "Dataset: Function 'sin'",
+                areaStyle: {
+                    stroke: "red",
+                    strokeWidth: 1,
+                    fill: "red",
+                    fillOpacity:0.4
+                },
+                symbolStyle: {
+                    stroke: "none",
+                    fill: "red",
+                    size: 0.5
+                },
+                dataFn: {
+                    fn: Math.sin,
+                    min: 0,
+                    max: 2*Math.PI,
+                    step: Math.PI/18
+                }
+            },
+            {
+                label: "Dataset: Function 'cos'",
+                areaStyle: {
+                    stroke: "blue",
+                    strokeWidth: 1,
+                    fill: "blue",
+                    fillOpacity:0.4
+                },
+                symbolStyle: {
+                    stroke: "none",
+                    fill: "blue",
+                    size: 0.5
+                },
+                dataFn: {
+                    fn: Math.cos,
+                    min: 0,
+                    max: 2*Math.PI,
+                    step: Math.PI/18
+                }
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var areaChart2 = new dChart.AreaChart({
+                elem: 'areaChart2',
+                width: 700,
+                height: 400,
+                label: "Area Chart",
+                axis: {
+                    x: {
+                        label: "x-Axis"
+                    },
+                    y: {
+                        label: "y-Axis",
+                        range:[-1,1],
+                        gridStyle: {
+                            stroke: "black",
+                            strokeOpacity: 0.25
+                        }
+                    }
+                },
+                dataSets: [
+                    {
+                        label: "Dataset: Function 'sin'",
+                        areaStyle: {
+                            stroke: "red",
+                            strokeWidth: 1,
+                            fill: "red",
+                            fillOpacity:0.4
+                        },
+                        symbolStyle: {
+                            stroke: "none",
+                            fill: "red",
+                            size: 0.5
+                        },
+                        dataFn: {
+                            fn: Math.sin,
+                            min: 0,
+                            max: 2*Math.PI,
+                            step: Math.PI/18
+                        }
+                    },
+                    {
+                        label: "Dataset: Function 'cos'",
+                        areaStyle: {
+                            stroke: "blue",
+                            strokeWidth: 1,
+                            fill: "blue",
+                            fillOpacity:0.4
+                        },
+                        symbolStyle: {
+                            stroke: "none",
+                            fill: "blue",
+                            size: 0.5
+                        },
+                        dataFn: {
+                            fn: Math.cos,
+                            min: 0,
+                            max: 2*Math.PI,
+                            step: Math.PI/18
+                        }
+                    }
+                ]
+            });
         </script>
     </div>
 

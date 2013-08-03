@@ -10,5 +10,8 @@
     "**/.*",
     "node_modules",
     "components"
-  ]
+  ],
+  "devDependencies": {
+    "d3-styles": "latest"
+  }
 }
