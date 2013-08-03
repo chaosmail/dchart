@@ -52,6 +52,7 @@
             <li><a href="#chart-types-line-chart">Line Chart</a></li>
             <li><a href="#chart-types-bar-chart">Bar Chart</a></li>
             <li><a href="#chart-types-scatter-chart">Scatter Chart</a></li>
+            <li><a href="#chart-types-pie-chart">Pie Chart</a></li>
             <li class="nav-header">About</li>
             <li><a href="#about-source">Source</a></li>
             <li><a href="#about-license">License</a></li>
@@ -765,7 +766,7 @@
 
     </div>
 
-    <h3 id="chart-types-scatter-chart">Scatter Chart <a href="#chart-types-bar-chart">#</a></h3>
+    <h3 id="chart-types-scatter-chart">Scatter Chart <a href="#chart-types-scatter-chart">#</a></h3>
 
     <div>
         <div id="scatterChart1"></div>
@@ -898,7 +899,141 @@
             });
         </script>
     </div>
-    
+
+    <h3 id="chart-types-pie-chart">Pie Chart <a href="#chart-types-pie-chart">#</a></h3>
+
+    <div>
+        <div id="pieChart1"></div>
+        <pre class="prettyprint">
+    var pieChart1 = new dChart.PieChart({
+        elem: 'pieChart1',
+        width: 700,
+        height: 400,
+        label: "Pie Chart Example",
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 40,
+        dataSets: [
+            {
+                label: "Dataset Pie Chart",
+                data: [
+                    {x:5,areaStyle:{
+                        fill:"mediumvioletred",
+                        stroke:"none"
+                    }},
+                    {x:10, areaStyle:{
+                        fill:"royalblue",
+                        stroke:"none"
+                    }},
+                    {x:15, areaStyle:{
+                        fill:"palevioletred",
+                        stroke:"none"
+                    }}
+                ]
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var pieChart1 = new dChart.PieChart({
+                elem: 'pieChart1',
+                width: 700,
+                height: 400,
+                label: "Pie Chart Example",
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 40,
+                dataSets: [
+                    {
+                        label: "Dataset Pie Chart",
+                        data: [
+                            {x:5,areaStyle:{
+                                fill:"mediumvioletred",
+                                stroke:"none"
+                            }},
+                            {x:10, areaStyle:{
+                                fill:"royalblue",
+                                stroke:"none"
+                            }},
+                            {x:15, areaStyle:{
+                                fill:"palevioletred",
+                                stroke:"none"
+                            }}
+                        ]
+                    }
+                ]
+            });
+        </script>
+
+        <div id="pieChart2"></div>
+        <pre class="prettyprint">
+    var pieChart2 = new dChart.PieChart({
+        elem: 'pieChart2',
+        width: 700,
+        height: 400,
+        label: "Another Pie Chart Example",
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 40,
+        dataSets: [
+            {
+                label: "Random Dataset Pie Chart",
+                dataFn: {
+                    fn: function() { return Math.random()*100 },
+                    min: 0,
+                    max: 3,
+                    step: 1
+                }
+            },
+            {
+                label: "Another random Dataset Pie Chart",
+                dataFn: {
+                    fn: function() { return Math.random()*100 },
+                    min: 0,
+                    max: 6,
+                    step: 1
+                }
+            }
+        ]
+    });
+        </pre>
+        <script>
+            var pieChart2 = new dChart.PieChart({
+                elem: 'pieChart2',
+                width: 700,
+                height: 400,
+                label: "Another Pie Chart Example",
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 40,
+                dataSets: [
+                    {
+                        label: "Random Dataset Pie Chart",
+                        dataFn: {
+                            fn: function() { return Math.random()*100 },
+                            min: 0,
+                            max: 3,
+                            step: 1
+                        }
+                    },
+                    {
+                        label: "Another random Dataset Pie Chart",
+                        dataFn: {
+                            fn: function() { return Math.random()*100 },
+                            min: 0,
+                            max: 6,
+                            step: 1
+                        }
+                    }
+                ]
+            });
+        </script>
+    </div>
+
     <hr>
 
     <h2 id="about">About <a href="#about">#</a></h2>

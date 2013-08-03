@@ -12,38 +12,30 @@ var dChart;
             this.areaStyle = new dChart.Utils.AreaStyle();
         }
         Point.prototype.normalize = function (value) {
-            if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = value.stroke;
+            if (value.hasOwnProperty("lineStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
             }
 
-            if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
-            }
-
-            if (value.hasOwnProperty("strokeOpacity")) {
-                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
-            }
-
-            if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = value.fill;
-            }
-
-            if (value.hasOwnProperty("fillOpacity")) {
-                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+            if (value.hasOwnProperty("areaStyle")) {
+                var areaStyle = new dChart.Utils.AreaStyle();
+                areaStyle.normalize(value.areaStyle);
+                this.areaStyle = areaStyle;
             }
         };
 
         Point.prototype.map = function (value, map) {
             if (value.hasOwnProperty(map.stroke)) {
-                this.lineStyle.stroke = value[map.stroke];
+                this.areaStyle.stroke = value[map.stroke];
             }
 
             if (value.hasOwnProperty(map.strokeWidth)) {
-                this.lineStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
+                this.areaStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
             }
 
             if (value.hasOwnProperty(map.strokeOpacity)) {
-                this.lineStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
+                this.areaStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
             }
 
             if (value.hasOwnProperty(map.fill)) {
@@ -59,13 +51,13 @@ var dChart;
             var _this = this;
             _.map(elem.attributes, function (value) {
                 if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
+                    _this.areaStyle.stroke = dChart.Utils.Elem.getColor(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = dChart.Utils.Elem.getFloat(value);
+                    _this.areaStyle.strokeWidth = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    _this.lineStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
+                    _this.areaStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
                     return;
                 } else if (value.nodeName.match(/^fill$/i)) {
                     _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
@@ -1006,6 +998,7 @@ var dChart;
             this.nettoWidth = 340;
             this.nettoHeight = 310;
             this.fontStyle = new dChart.Utils.FontStyle();
+            this.dataSets = [];
             ;
         }
         Chart.prototype.clear = function () {
@@ -1023,6 +1016,9 @@ var dChart;
         };
 
         Chart.prototype.redraw = function () {
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
+
             this.svg.attr("width", this.width).attr("height", this.height);
 
             this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
@@ -1040,6 +1036,9 @@ var dChart;
         };
 
         Chart.prototype.draw = function () {
+            this.nettoWidth = this.width - this.marginLeft - this.marginRight;
+            this.nettoHeight = this.height - this.marginTop - this.marginBottom;
+
             this.clear();
 
             this.svg = d3.select(this.elem).append("svg").attr("id", "dchart-" + this.elemId);
@@ -1073,6 +1072,7 @@ var dChart;
         };
 
         Chart.prototype.normalize = function (value) {
+            var _this = this;
             if (value.hasOwnProperty("elem")) {
                 this.elemId = value.elem;
                 this.elem = document.getElementById(value.elem);
@@ -1116,6 +1116,16 @@ var dChart;
 
                 this.fontStyle = fontStyle;
             }
+
+            if (value.hasOwnProperty("dataSets")) {
+                this.dataSets = [];
+
+                _.map(value.dataSets, function (config) {
+                    var dataSet = new dChart.DataSet(_this);
+                    dataSet.normalize(config);
+                    _this.dataSets.push(dataSet);
+                });
+            }
         };
         return Chart;
     })();
@@ -1125,7 +1135,6 @@ var dChart;
         __extends(Chart2D, _super);
         function Chart2D() {
             _super.apply(this, arguments);
-            this.dataSets = [];
             this.xAxis = new dChart.xAxis();
             this.yAxis = new dChart.yAxis();
         }
@@ -1186,18 +1195,7 @@ var dChart;
         };
 
         Chart2D.prototype.normalize = function (value) {
-            var _this = this;
             _super.prototype.normalize.call(this, value);
-
-            if (value.hasOwnProperty("dataSets")) {
-                this.dataSets = [];
-
-                _.map(value.dataSets, function (config) {
-                    var dataSet = new dChart.DataSet(_this);
-                    dataSet.normalize(config);
-                    _this.dataSets.push(dataSet);
-                });
-            }
 
             if (value.hasOwnProperty("axis")) {
                 var axis = value.axis;
@@ -1268,18 +1266,7 @@ var dChart;
         };
 
         Chart3D.prototype.normalize = function (value) {
-            var _this = this;
             _super.prototype.normalize.call(this, value);
-
-            if (value.hasOwnProperty("dataSets")) {
-                this.dataSets = [];
-
-                _.map(value.dataSets, function (config) {
-                    var dataSet = new dChart.DataSet(_this);
-                    dataSet.normalize(config);
-                    _this.dataSets.push(dataSet);
-                });
-            }
 
             if (value.hasOwnProperty("axis")) {
                 var axis = value.axis;
@@ -1472,4 +1459,75 @@ var dChart;
         return ScatterChart;
     })(Chart2D);
     dChart.ScatterChart = ScatterChart;
+
+    var PieChart = (function (_super) {
+        __extends(PieChart, _super);
+        function PieChart(config) {
+            _super.call(this);
+            this.svgPieContainer = [];
+            this.numPoints = 0;
+            this.colorScale = d3.scale.category20c();
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+
+            console.log(this);
+        }
+        PieChart.prototype.getPoint = function () {
+            var p = new dChart.Point1D();
+
+            p.areaStyle.stroke = "none";
+            p.areaStyle.fill = this.colorScale(this.numPoints);
+
+            this.numPoints += 1;
+
+            return p;
+        };
+
+        PieChart.prototype.getSolver = function () {
+            return new dChart.Utils.Solver2D();
+        };
+
+        PieChart.prototype.drawData = function () {
+            var _this = this;
+            _.map(this.dataSets, function (dataSet, key) {
+                _this.svgPieContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key).attr("transform", "translate(" + (_this.nettoWidth * 0.5) + "," + (_this.nettoHeight * 0.5) + ")");
+            });
+        };
+
+        PieChart.prototype.redrawData = function () {
+            var _this = this;
+            _.map(this.dataSets, function (dataSet, key) {
+                var pie = d3.layout.pie().sort(null).value(function (d) {
+                    return d.x;
+                });
+
+                var radius = _this.nettoHeight > _this.nettoWidth ? _this.nettoWidth * 0.5 : _this.nettoHeight * 0.5;
+
+                var outerRadius = (key + 1) * radius / _this.dataSets.length;
+                var innerRadius = key * radius / _this.dataSets.length;
+                var arc = d3.svg.arc().outerRadius(outerRadius).innerRadius(innerRadius);
+
+                _this.svgPieContainer[key].selectAll("path").data(pie(dataSet.data)).enter().append("path").attr("d", arc).style("stroke", function (d) {
+                    return d.data.areaStyle.stroke;
+                }).style("stroke-width", function (d) {
+                    return d.data.areaStyle.strokeWidth;
+                }).style("stroke-opacity", function (d) {
+                    return d.data.areaStyle.strokeOpacity;
+                }).style("stroke-linecap", function (d) {
+                    return d.data.areaStyle.strokeLinecap;
+                }).style("stroke-dasharray", function (d) {
+                    return d.data.areaStyle.strokeDasharray;
+                }).style("fill", function (d) {
+                    return d.data.areaStyle.fill;
+                }).style("fill-opacity", function (d) {
+                    return d.data.areaStyle.fillOpacity;
+                });
+            });
+        };
+        return PieChart;
+    })(Chart);
+    dChart.PieChart = PieChart;
 })(dChart || (dChart = {}));

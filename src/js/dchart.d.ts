@@ -328,6 +328,7 @@ declare module dChart {
         public label: string;
         public description: string;
         public fontStyle: dChart.Utils.FontStyle;
+        public dataSets: dChart.DataSet[];
         constructor();
         public clear(): void;
         public getPoint(): dChart.Point;
@@ -341,7 +342,6 @@ declare module dChart {
         public normalize(value: any): void;
     }
     class Chart2D extends Chart {
-        public dataSets: dChart.DataSet[];
         public xAxis: dChart.xAxis;
         public yAxis: dChart.yAxis;
         public getPoint(): dChart.Point2D;
@@ -387,6 +387,16 @@ declare module dChart {
     class ScatterChart extends Chart2D {
         public svgScatterContainer: D3.Selection[];
         constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
+    }
+    class PieChart extends Chart {
+        public svgPieContainer: D3.Selection[];
+        public numPoints: number;
+        public colorScale: any;
+        constructor(config?: IChart);
+        public getPoint(): dChart.Point1D;
+        public getSolver(): dChart.Utils.Solver2D;
         public drawData(): void;
         public redrawData(): void;
     }

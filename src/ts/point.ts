@@ -99,39 +99,33 @@ module dChart {
 
         normalize(value:any) {
 
-            if (value.hasOwnProperty("stroke")) {
-                this.lineStyle.stroke = value.stroke;
+            if (value.hasOwnProperty("lineStyle")) {
+
+                var lineStyle = new Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
             }
 
-            if (value.hasOwnProperty("strokeWidth")) {
-                this.lineStyle.strokeWidth = parseFloat(value.strokeWidth);
-            }
+            if (value.hasOwnProperty("areaStyle")) {
 
-            if (value.hasOwnProperty("strokeOpacity")) {
-                this.lineStyle.strokeOpacity = parseFloat(value.strokeOpacity);
-            }
-
-            if (value.hasOwnProperty("fill")) {
-                this.areaStyle.fill = value.fill;
-            }
-
-            if (value.hasOwnProperty("fillOpacity")) {
-                this.areaStyle.fillOpacity = parseFloat(value.fillOpacity);
+                var areaStyle = new Utils.AreaStyle();
+                areaStyle.normalize(value.areaStyle);
+                this.areaStyle = areaStyle;
             }
         }
 
         map(value:any, map:IPointMap) {
 
             if (value.hasOwnProperty(map.stroke)) {
-                this.lineStyle.stroke = value[map.stroke];
+                this.areaStyle.stroke = value[map.stroke];
             }
 
             if (value.hasOwnProperty(map.strokeWidth)) {
-                this.lineStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
+                this.areaStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
             }
 
             if (value.hasOwnProperty(map.strokeOpacity)) {
-                this.lineStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
+                this.areaStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
             }
 
             if (value.hasOwnProperty(map.fill)) {
@@ -148,15 +142,15 @@ module dChart {
             _.map(elem.attributes, (value) => {
 
                 if (value.nodeName.match(/^stroke$/i)) {
-                    this.lineStyle.stroke = Utils.Elem.getColor(value);
+                    this.areaStyle.stroke = Utils.Elem.getColor(value);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-width$/i)) {
-                    this.lineStyle.strokeWidth = Utils.Elem.getFloat(value);
+                    this.areaStyle.strokeWidth = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    this.lineStyle.strokeOpacity = Utils.Elem.getFloat(value);
+                    this.areaStyle.strokeOpacity = Utils.Elem.getFloat(value);
                     return;
                 }
                 else if (value.nodeName.match(/^fill$/i)) {
