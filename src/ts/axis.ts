@@ -9,7 +9,6 @@ module dChart {
         label:string;
         labelAlign:string;
         labelOffset:number;
-        grid:bool;
         gridStyle:Utils.LineStyle;
         scale:string;
         autorange:bool;
@@ -309,9 +308,9 @@ module dChart {
                 this.autorange = value.autorange;
             }
 
-            if (value.hasOwnProperty("grid")){
+            if (value.hasOwnProperty("showGrid")){
 
-                this.showGrid = value.grid;
+                this.showGrid = value.showGrid;
             }
 
             if (value.hasOwnProperty("gridStyle")){

@@ -1,0 +1,17 @@
+{
+  "name": "dchart-demo",
+  "version": "0.0.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.0-rc1",
+    "d3": "~3.2.8",
+    "d3-styles": "*",
+    "underscore": "~1.5.1",
+    "google-code-prettify": "~1.0.0",
+    "google-code-prettify-lite": "*"
+  }
+}

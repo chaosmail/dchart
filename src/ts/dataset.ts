@@ -15,12 +15,10 @@ module dChart {
 
     export interface IDataSet {
 
-        dot:bool;
-        line:bool;
-        area:bool;
         lineStyle:Utils.LineStyle;
         areaStyle:Utils.AreaStyle;
         symbolStyle:Utils.SymbolStyle;
+        fontStyle:Utils.FontStyle;
         interpolate:string;
         label:string;
         dataSrc:Utils.IDataSrc;
@@ -33,6 +31,7 @@ module dChart {
         showLine:bool = true;
         showArea:bool = false;
         showSymbol:bool = false;
+        showValues:bool = false;
 
         data:any[] = [];
 
@@ -71,6 +70,7 @@ module dChart {
         lineStyle:Utils.LineStyle = new Utils.LineStyle();
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
         symbolStyle:Utils.SymbolStyle = new Utils.SymbolStyle();
+        fontStyle:Utils.FontStyle = new Utils.FontStyle();
 
         constructor(public chart:any) {
 
@@ -152,19 +152,13 @@ module dChart {
                 this.showArea = true;
             }
 
-            if (value.hasOwnProperty("symbol")) {
+            if (value.hasOwnProperty("fontStyle")) {
 
-                this.showSymbol = value.showSymbols;
-            }
+                var fontStyle = new Utils.FontStyle();
+                fontStyle.normalize(value.fontStyle);
+                this.fontStyle = fontStyle;
 
-            if (value.hasOwnProperty("line")) {
-
-                this.showLine = value.showLine;
-            }
-
-            if (value.hasOwnProperty("area")) {
-
-                this.showArea = value.showArea;
+                this.showValues = true;
             }
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {

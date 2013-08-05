@@ -137,7 +137,6 @@ declare module dChart {
         label: string;
         labelAlign: string;
         labelOffset: number;
-        grid: boolean;
         gridStyle: dChart.Utils.LineStyle;
         scale: string;
         autorange: boolean;
@@ -210,6 +209,9 @@ declare module dChart.Utils {
         step: number;
         fn: any;
     }
+    interface ISolver1D extends ISolver {
+        solve: (min?: number, max?: number, step?: number) => any[];
+    }
     interface ISolver2D extends ISolver {
         solve: (min?: number, max?: number, step?: number) => any[];
     }
@@ -224,6 +226,9 @@ declare module dChart.Utils {
         constructor();
         public solve(min?: number, max?: number, step?: number): any[];
         public normalize(value: any): void;
+    }
+    class Solver1D extends Solver implements ISolver1D {
+        public solve(min?: number, max?: number, step?: number): any[];
     }
     class Solver2D extends Solver implements ISolver2D {
         public solve(min?: number, max?: number, step?: number): any[];
@@ -248,12 +253,10 @@ declare module dChart {
         fn: string;
     }
     interface IDataSet {
-        dot: boolean;
-        line: boolean;
-        area: boolean;
         lineStyle: dChart.Utils.LineStyle;
         areaStyle: dChart.Utils.AreaStyle;
         symbolStyle: dChart.Utils.SymbolStyle;
+        fontStyle: dChart.Utils.FontStyle;
         interpolate: string;
         label: string;
         dataSrc: dChart.Utils.IDataSrc;
@@ -265,6 +268,7 @@ declare module dChart {
         public showLine: boolean;
         public showArea: boolean;
         public showSymbol: boolean;
+        public showValues: boolean;
         public data: any[];
         public label: string;
         public interpolate: string;
@@ -272,11 +276,20 @@ declare module dChart {
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
         public symbolStyle: dChart.Utils.SymbolStyle;
+        public fontStyle: dChart.Utils.FontStyle;
         constructor(chart: any);
         public parse(elem: Element): void;
         public normalize(value: any): void;
         public min(axis: string): number;
         public max(axis: string): number;
+    }
+}
+declare module dChart.Utils {
+    class Transition {
+        public duration: number;
+        public delay: number;
+        public ease: string;
+        public normalize(value: any): void;
     }
 }
 declare module dChart {
@@ -291,6 +304,7 @@ declare module dChart {
         marginLeft: number;
         marginBottom: number;
         marginRight: number;
+        transition: dChart.Utils.Transition;
         dataSets: dChart.IDataSet[];
     }
     interface IChart2DAxis {
@@ -313,8 +327,7 @@ declare module dChart {
         public container: D3.Selection;
         public axisContainer: D3.Selection;
         public dataContainer: D3.Selection;
-        public svgLabel: D3.Selection;
-        public svgDescription: D3.Selection;
+        public labelContainer: D3.Selection;
         public elem: Element;
         public elemId: string;
         public marginLeft: number;
@@ -325,10 +338,15 @@ declare module dChart {
         public height: number;
         public nettoWidth: number;
         public nettoHeight: number;
+        public showTransition: boolean;
+        public transition: dChart.Utils.Transition;
+        public svgLabel: D3.Selection;
         public label: string;
+        public svgDescription: D3.Selection;
         public description: string;
         public fontStyle: dChart.Utils.FontStyle;
         public dataSets: dChart.DataSet[];
+        public format: any;
         constructor();
         public clear(): void;
         public getPoint(): dChart.Point;
@@ -404,7 +422,7 @@ declare module dChart {
         public colorScale: any;
         constructor(config?: IChart);
         public getPoint(): dChart.Point1D;
-        public getSolver(): dChart.Utils.Solver2D;
+        public getSolver(): dChart.Utils.Solver1D;
         public drawData(): void;
         public redrawData(): void;
     }

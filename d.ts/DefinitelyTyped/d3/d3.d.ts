@@ -1037,12 +1037,12 @@ declare module D3 {
         startAngle: {
             (): number;
             (angle: number): Arc;
-            (angle: () => number): Arc;
+            (angle: (d: any, index: number) => number): Arc;
         };
         endAngle: {
             (): number;
             (angle: number): Arc;
-            (angle: () => number): Arc;
+            (angle: (d: any, index: number) => number): Arc;
         };
     }
 
@@ -1148,12 +1148,12 @@ declare module D3 {
         startAngle: {
             (): number;
             (angle: number): Arc;
-            (angle: () => number): Arc;
+            (angle: (d: any, index?: number) => number): Arc;
         };
         endAngle: {
             (): number;
             (angle: number): Arc;
-            (angle: () => number): Arc;
+            (angle: (d: any, index?: number) => number): Arc;
         };
         centroid(options?: ArcOptions): number[];
     }

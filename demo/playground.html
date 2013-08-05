@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>dChart | Extensible declarative chart library using D3.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="lib/bootstrap/assets/css/docs.css"/>
+    <link rel="stylesheet" href="lib/google-code-prettify-lite/prettify.css"/>
+
+    <style>
+
+        .bs-sidebar .nav > .active > a, .bs-sidebar .nav > .active:hover > a, .bs-sidebar .nav > .active:focus > a {
+            color: #ffa500;
+            border-right: 1px solid #ffa500;
+        }
+
+
+    </style>
+
+
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+
+<div class="navbar navbar-fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">dChart</a>
+        <ul class="nav navbar-nav">
+            <li><a href="index.html">Docs</a></li>
+            <li class="active"><a href="playground.html">Playground</a></li>
+        </ul>
+    </div>
+    <a href="https://github.com/chaosmail/dchart">
+        <img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="bs-sidebar affix">
+                <ul class="nav bs-sidenav">
+                    <li><a href="#chart-types">Chart Types</a>
+                        <ul class="nav">
+                            <li><a href="#chart-types-line-chart">Line Chart</a></li>
+                            <li><a href="#chart-types-area-chart">Area Chart</a></li>
+                            <li><a href="#chart-types-bar-chart">Bar Chart</a></li>
+                            <li><a href="#chart-types-scatter-chart">Scatter Chart</a></li>
+                            <li><a href="#chart-types-pie-chart">Pie Chart</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="bs-docs-section">
+                <div class="page-header">
+                    <h1 id="chart-types">Chart Types</h1>
+                </div>
+                <h2 id="chart-types-line-chart">Line Chart</h2>
+                <iframe width="100%" height="500" src="http://jsfiddle.net/chaosmail/29JeR/1/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+                <h2 id="chart-types-area-chart">Area Chart</h2>
+                <iframe width="100%" height="500" src="http://jsfiddle.net/chaosmail/zXz3L/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+                <h2 id="chart-types-bar-chart">Bar Chart</h2>
+                <iframe width="100%" height="500" src="http://jsfiddle.net/chaosmail/ZSaeF/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+                <h2 id="chart-types-scatter-chart">Scatter Chart</h2>
+                <iframe width="100%" height="500" src="http://jsfiddle.net/chaosmail/wR2XD/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+                <h2 id="chart-types-pie-chart">Pie Chart</h2>
+                <iframe width="100%" height="500" src="http://jsfiddle.net/chaosmail/gNhQG/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var $window = $(window);
+    var $body   = $(document.body);
+    var navHeight = $('.navbar').outerHeight(true) + 10;
+
+    $body.scrollspy({
+        target: '.bs-sidebar',
+        offset: navHeight
+    });
+
+    $body.on('click', '.bs-sidenav [href^=#]', function (e) {
+        var $target = $(this.getAttribute('href'));
+
+        e.preventDefault(); // prevent browser scroll
+
+        $window.scrollTop($target.offset().top - navHeight + 5);
+    });
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /// <reference path="../../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
-/// <reference path="../../../components/d3-styles/dist/d3-styles.d.ts" />
+/// <reference path="../../../lib/d3-styles/dist/d3-styles.d.ts" />
 
 module dChart.Utils {
 

@@ -1,10 +1,11 @@
 /// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
-/// <reference path="../../components/d3-styles/dist/d3-styles.d.ts" />
+/// <reference path="../../lib/d3-styles/dist/d3-styles.d.ts" />
 /// <reference path="point.ts" />
 /// <reference path="axis.ts" />
 /// <reference path="dataset.ts" />
 /// <reference path="Utils/style.ts" />
+/// <reference path="Utils/transition.ts" />
 /// <reference path="Utils/solver.ts" />
 "use strict";
 
@@ -22,6 +23,7 @@ module dChart {
         marginLeft:number;
         marginBottom:number;
         marginRight:number;
+        transition:Utils.Transition;
         dataSets:IDataSet[];
     }
 
@@ -54,8 +56,7 @@ module dChart {
         container:D3.Selection;
         axisContainer:D3.Selection;
         dataContainer:D3.Selection;
-        svgLabel:D3.Selection;
-        svgDescription:D3.Selection;
+        labelContainer:D3.Selection;
 
         elem:Element;
         elemId:string;
@@ -70,11 +71,19 @@ module dChart {
         nettoWidth:number = 340;
         nettoHeight:number = 310;
 
+        showTransition:bool = false;
+        transition:Utils.Transition = new Utils.Transition();
+
+        svgLabel:D3.Selection;
         label:string;
+
+        svgDescription:D3.Selection;
         description:string;
+
         fontStyle:Utils.FontStyle = new Utils.FontStyle();
 
         dataSets:DataSet[] = [];
+        format:any = d3.format("0.2f");
 
         constructor() {
 ;
@@ -158,13 +167,12 @@ module dChart {
             this.dataContainer = this.container.append("g")
                 .attr("class","dchart-container-data");
 
-            this.svgLabel = this.container.append("g")
-                .attr("class","dchart-container-label")
-                .append("text");
+            this.labelContainer = this.container.append("g")
+                .attr("class","dchart-container-label");
 
-            this.svgDescription = this.container.append("g")
-                .attr("class","dchart-container-description")
-                .append("text");
+            this.svgLabel = this.labelContainer.append("text");
+
+            this.svgDescription = this.labelContainer.append("text");
 
 
             this.drawAxis();
@@ -226,6 +234,19 @@ module dChart {
 
             if (value.hasOwnProperty("marginRight")) {
                 this.marginRight = parseFloat(value.marginRight);
+            }
+
+            if (value.hasOwnProperty("showTransition")) {
+                this.showTransition = true;
+            }
+
+            if (value.hasOwnProperty("transition")) {
+
+                var transition = new Utils.Transition();
+                transition.normalize(value.transition);
+                this.transition = transition;
+
+                this.showTransition = true;
             }
 
             if (value.hasOwnProperty("fontStyle")) {
@@ -580,6 +601,8 @@ module dChart {
 
             _.map(this.dataSets, (dataSet:DataSet,key:number) => {
 
+                dataSet.showValues = true;
+
                 this.svgRectContainer[key] = this.dataContainer
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
@@ -607,16 +630,37 @@ module dChart {
                 var start = (this.nettoWidth / (xTicks + 1))*0.5;
                 var width = this.nettoWidth / (xTicks + 1) / this.dataSets.length;
 
-                group.exit()
-                    .remove();
+                if (!this.showTransition) {
 
-                group.enter()
-                    .append("rect")
-                    .areaStyle(dataSet.areaStyle)
-                    .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
-                    .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
-                    .attr("width", (d:Point2D) => width)
-                    .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("rect")
+                        .areaStyle(dataSet.areaStyle)
+                        .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
+                        .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
+                        .attr("width", (d:Point2D) => width)
+                        .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
+                }
+                else {
+
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("rect")
+                        .areaStyle(dataSet.areaStyle)
+                        .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
+                        .attr("y", this.nettoHeight)
+                        .attr("width", (d:Point2D) => width)
+                        .attr("height", 0)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => i*this.transition.delay)
+                        .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
+                        .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
+                }
 
             });
         }
@@ -660,14 +704,32 @@ module dChart {
 
                 var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
 
-                group.exit()
-                    .remove();
+                if (!this.showTransition) {
 
-                group.enter()
-                    .append("path")
-                    .areaStyle(dataSet.symbolStyle)
-                    .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
-                    .attr("d", symbol);
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("path")
+                        .areaStyle(dataSet.symbolStyle)
+                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
+                        .attr("d", symbol);
+                }
+                else {
+
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("path")
+                        .areaStyle(dataSet.symbolStyle)
+                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale(0)")
+                        .attr("d", symbol)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => i*this.transition.delay)
+                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")");
+                }
 
             });
         }
@@ -702,12 +764,14 @@ module dChart {
         }
 
         getSolver() {
-            return new Utils.Solver2D();
+            return new Utils.Solver1D();
         }
 
         drawData() {
 
             _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+
+                dataSet.showValues = true;
 
                 this.svgPieContainer[key] = this.dataContainer
                     .append("g")
@@ -729,17 +793,41 @@ module dChart {
 
                 var outerRadius = (key + 1) * radius/this.dataSets.length;
                 var innerRadius = key * radius/this.dataSets.length;
+
                 var arc = d3.svg.arc()
                     .outerRadius(outerRadius)
                     .innerRadius(innerRadius);
 
-                this.svgPieContainer[key]
+                var pieces = this.svgPieContainer[key]
                     .selectAll("path")
                     .data(pie(dataSet.data))
-                    .enter()
-                    .append("path")
-                    .attr("d", arc)
-                    .areaStyle((d:D3.ArcDescriptor) => d.data.areaStyle);
+                    .enter();
+
+                if (!this.showTransition) {
+                    pieces.append("path").attr("d", arc)
+                        .areaStyle((d:D3.ArcDescriptor) => d.data.areaStyle);
+                    pieces.append("text")
+                        .text((d:D3.ArcDescriptor) => this.format(d.value))
+                        .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+")")
+                        .fontStyle(dataSet.fontStyle)
+                        .style("text-anchor", "middle");
+                }
+                else {
+                    pieces.append("path").attr("d", arc.outerRadius(innerRadius))
+                        .areaStyle((d:D3.ArcDescriptor) => d.data.areaStyle)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => i*this.transition.delay)
+                        .attr("d", arc.outerRadius(outerRadius));
+                    pieces.append("text")
+                        .text((d:D3.ArcDescriptor) => this.format(d.value))
+                        .style("text-anchor", "middle")
+                        .fontStyle(dataSet.fontStyle)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => i*this.transition.delay)
+                        .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+")");
+                }
             });
         }
     }
