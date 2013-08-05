@@ -51,16 +51,6 @@ module.exports = function(grunt) {
               'demo/js/<%= pkg.name %>.js': 'dist/<%= pkg.name %>.js',
               'demo/js/<%= pkg.name %>.min.js': 'dist/<%= pkg.name %>.min.js'
           }
-      },
-      libs: {
-        files: {
-            'demo/lib/d3.js': 'components/d3/d3.js',
-            'demo/lib/d3.min.js': 'components/d3/d3.min.js',
-            'demo/lib/d3-styles.js': 'components/d3-styles/dist/d3-styles.js',
-            'demo/lib/d3-styles.min.js': 'components/d3-styles/dist/d3-styles.min.js',
-            'demo/lib/underscore.js': 'components/underscore/underscore.js',
-            'demo/lib/underscore.min.js': 'components/underscore/underscore-min.js'
-        }
       }
     },
     watch: {
