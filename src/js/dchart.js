@@ -623,6 +623,10 @@ var dChart;
                 this.autorange = value.autorange;
             }
 
+            if (value.hasOwnProperty("showGrid")) {
+                this.showGrid = value.showGrid;
+            }
+
             if (value.hasOwnProperty("gridStyle")) {
                 var lineStyle = new dChart.Utils.LineStyle();
                 lineStyle.normalize(value.gridStyle);

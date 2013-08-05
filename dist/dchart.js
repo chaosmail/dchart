@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Mon Aug 05 2013 16:01:27
+/** dchart - v0.0.4 - Tue Aug 06 2013 00:37:43
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -625,6 +625,10 @@ var dChart;
 
             if (value.hasOwnProperty("autorange")) {
                 this.autorange = value.autorange;
+            }
+
+            if (value.hasOwnProperty("showGrid")) {
+                this.showGrid = value.showGrid;
             }
 
             if (value.hasOwnProperty("gridStyle")) {
