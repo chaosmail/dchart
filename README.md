@@ -3,108 +3,55 @@ Declarative Chart Library
 
 [![Build Status](https://travis-ci.org/chaosmail/dchart.png?branch=master)](https://travis-ci.org/chaosmail/dchart)
 
-This library is an extensible declarative vanillajs Chart Library written in typescript.
+This library is an extensible declarative Chart Library written in typescript. The goal was to build a chart library, which lets you easily declare the chart pieces whithout having to hack the same d3.js functions all the time.
 
-A Demo can be found here: http://chaosmail.at/2013/dchart/
+Demos and Docs can be found here: http://chaosmail.at/2013/dchart/
 
-It also can be used with jQuery (see ...) or AngularJS ([see this Repo](https://github.com/chaosmail/angular-dchart))
+I will integrate dChart to be used with jQuery (see ...) and AngularJS ([see this Repo](https://github.com/chaosmail/angular-dchart)) when this lib is stable.
 
 Example-Usage
 -------------
 ```javascript
 
-var lineChart1 = new dChart.LineChart({
-    elem: 'lineChart1',
-    width: 800,
-    height: 400,
-    label: "My awesome Chart",
-    description: "This awesome chart lib is using D3.js",
+var functionChart1 = new dChart.LineChart({
+    elem: 'functionChart1',
+    width:700,
+    height:400,
+    label: "Dataset: Function Example",
     axis: {
         x: {
-            label: "x-Axis",
-            align: "bottom",
-            labelAlign: "right",
-            grid: true
+            label: "x axis",
+            align: "center"
         },
         y: {
-            label: "y-Axis",
-            align: "left",
-            scale: "sqrt",
-            labelAlign: "center",
-            range: [0,1],
-            grid:true
+            label: "y axis"
         }
     },
-    dataSets:[
+    dataSets: [
         {
-            label: "Dataset 1: Points",
-            lineStyle: {
-                stroke: "mediumslateblue",
-                strokeWidth: 2,
-                strokeDasharray: "5,5"
-            },
-            dotStyle: {
-                stroke: "mediumslateblue",
-                strokeWidth: 2,
-                fill: "#fff"
-            },
-            interpolate: "linear",
-            data: [
-                {x:0,y:0},
-                {x:1,y:0.5},
-                {x:2,y:0.7},
-                {x:3,y:0.85},
-                {x:4,y:0.9},
-                {x:5,y:0.92}
-            ]
-        },
-        {
-            label: "Dataset 2: Points",
-            lineStyle: {
-                stroke: "orange",
-                strokeWidth: 2
-            },
-            interpolate: "cardinal",
-            data: [
-                {x:0,y:0.92},
-                {x:1,y:0.9},
-                {x:2,y:0.85},
-                {x:3,y:0.7},
-                {x:4,y:0.5},
-                {x:5,y:0}
-            ]
-        },
-        {
-            label: "Dataset 2: Points",
-            lineStyle: {
-                stroke: "green",
-                strokeWidth: 2
-            },
-            dotStyle: {
-                stroke: "none",
-                fill: "green"
-            },
-            dotRadius: 3,
-            data: [
-                {x:0,y:0.4},
-                {x:1,y:0.6},
-                {x:2,y:0.75},
-                {x:3,y:0.8},
-                {x:4,y:0.85},
-                {x:5,y:0.87}
-            ]
-        },
-        {
-            label: "Dataset 3: Function",
+            label: "Dataset: Function 'sin'",
             lineStyle: {
                 stroke: "red",
                 strokeWidth: 2
             },
             dataFn: {
+                fn: Math.sin,
+                min: 0,
+                max: 2*Math.PI,
+                step: Math.PI/360
+            }
+        },
+        {
+            label: "Dataset: Function 'cos'",
+            lineStyle: {
+                stroke: "blue",
+                strokeWidth: 2
+            },
+            dataFn: {
                 fn: Math.cos,
                 min: 0,
-                max: 5,
-                step: 1
+                max: 2*Math.PI,
+                step: Math.PI/360
             }
         }
     ]
