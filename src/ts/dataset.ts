@@ -127,6 +127,16 @@ module dChart {
                 this.label = value.label;
             }
 
+            if (value.hasOwnProperty("showSymbol")) {
+
+                this.showSymbol = value.showSymbol;
+            }
+
+            if (value.hasOwnProperty("showLine")) {
+
+                this.showLine = value.showLine;
+            }
+
             if (value.hasOwnProperty("symbolStyle")) {
 
                 var symbolStyle = new Utils.SymbolStyle();

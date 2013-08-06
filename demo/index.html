@@ -724,7 +724,9 @@
             </script>
         </div>
 
-        <h3>Point 1D Options</h3>
+        <h3 id="datasets-points-point">Point Options</h3>
+
+        <h4>Point 1D</h4>
 
         <div class="bs-table-scrollable">
             <table class="table table-bordered table-striped bs-table">
@@ -755,7 +757,7 @@
             </table>
         </div>
 
-        <h3>Point 2D Options</h3>
+        <h4>Point 2D</h4>
 
         <div class="bs-table-scrollable">
             <table class="table table-bordered table-striped bs-table">
@@ -789,6 +791,53 @@
                     <td>number</td>
                     <td>0</td>
                     <td>Value on the y-axis</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>Point 3D</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>x</code>
+                    </td>
+                    <td>number</td>
+                    <td>0</td>
+                    <td>Value on the x-axis</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>y</code>
+                    </td>
+                    <td>number</td>
+                    <td>0</td>
+                    <td>Value on the y-axis</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>z</code>
+                    </td>
+                    <td>number</td>
+                    <td>0</td>
+                    <td>Value on the z-axis</td>
                 </tr>
                 </tbody>
             </table>
@@ -983,7 +1032,176 @@
 
         <h2 id="datasets-files">Files</h2>
 
+            <span class="label label-danger">not implemented</span>
+
+        <h3 id="datasets-files-datasrc">DataSrc Options</h3>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>url</code>
+                    </td>
+                    <td>string</td>
+                    <td>''</td>
+                    <td>Url to the file, which contains the data points</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>dataType</code>
+                    </td>
+                    <td>string</td>
+                    <td>'json'</td>
+                    <td>Datatype of the file, that is parsed</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>map</code>
+                    </td>
+                    <td><a href="#datasets-files-map">PointMap</a></td>
+                    <td>{}</td>
+                    <td>Map, that maps the parsed object to a <a href="#datasets-points-point">Point</a>-object</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 id="datasets-files-map">PointMap Options</h3>
+
+        <h4>Point 1D</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>x</code>
+                    </td>
+                    <td>string</td>
+                    <td>'x'</td>
+                    <td>Name of the value</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>Point 2D</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>x</code>
+                    </td>
+                    <td>string</td>
+                    <td>'x'</td>
+                    <td>Name of the x-value</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>y</code>
+                    </td>
+                    <td>string</td>
+                    <td>'y'</td>
+                    <td>Name of the y-value</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>Point 3D</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>x</code>
+                    </td>
+                    <td>string</td>
+                    <td>'x'</td>
+                    <td>Name of the x-value</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>y</code>
+                    </td>
+                    <td>string</td>
+                    <td>'y'</td>
+                    <td>Name of the y-value</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>z</code>
+                    </td>
+                    <td>string</td>
+                    <td>'z'</td>
+                    <td>Name of the z-value</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+
 
     <div class="bs-docs-section">
         <div class="page-header">
@@ -1410,7 +1628,9 @@
             </script>
         </div>
 
-        <h3>Dataset Options</h3>
+        <h3>LineChart Options</h3>
+
+        <h4>Dataset</h4>
 
         <div class="bs-table-scrollable">
             <table class="table table-bordered table-striped bs-table">
@@ -1429,6 +1649,38 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td>
+                        <code>showLine</code>
+                    </td>
+                    <td>boolean</td>
+                    <td>true</td>
+                    <td>Show line for the chart</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>lineStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-line">LineStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the line. Setting the 'lineStyle' option autosets 'showLine' to 'true'.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>showSymbol</code>
+                    </td>
+                    <td>boolean</td>
+                    <td>false</td>
+                    <td>Show data points for the chart</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>symbolStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-symbol">SymbolStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the points. Setting the 'symbolStyle' option autosets 'showSymbol' to 'true'.</td>
+                </tr>
                 <tr>
                     <td>
                         <code>interpolate</code>
@@ -1657,6 +1909,63 @@
             </script>
         </div>
 
+        <h3>AreaChart Options</h3>
+
+        <h4>Dataset</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>areaStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-area">AreaStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the area</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>showSymbol</code>
+                    </td>
+                    <td>boolean</td>
+                    <td>false</td>
+                    <td>Show data points for the chart</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>symbolStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-symbol">SymbolStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the points. Setting the 'symbolStyle' option autosets 'showSymbol' to 'true'.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>interpolate</code>
+                    </td>
+                    <td>string</td>
+                    <td>'linear'</td>
+                    <td>Interpolation of 2 data points. Use <a target="_new" href="https://github.com/mbostock/d3/wiki/SVG-Shapes#wiki-line_interpolate">D3.js Line Interpolate</a> for this option.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
         <h2 id="chart-types-bar-chart">Bar Chart</h2>
 
         <div>
@@ -1768,6 +2077,39 @@
                 });
             </script>
 
+        </div>
+
+        <h3>BarChart Options</h3>
+
+        <h4>Dataset</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>areaStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-area">AreaStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the area</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
         <h2 id="chart-types-scatter-chart">Scatter Chart</h2>
@@ -1919,6 +2261,39 @@
             </script>
         </div>
 
+        <h3>ScatterChart Options</h3>
+
+        <h4>Dataset</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>symbolStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-symbol">SymbolStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the data points</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
         <h2 id="chart-types-pie-chart">Pie Chart</h2>
 
         <div>
@@ -2066,6 +2441,40 @@
                 });
             </script>
         </div>
+
+        <h3>PieChart Options</h3>
+
+        <h4>Data</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>areaStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-area">AreaStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the pie-areas</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
     </div>
     </div>
