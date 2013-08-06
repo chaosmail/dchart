@@ -49,7 +49,7 @@ var dChart;
 
         Point.prototype.parse = function (elem) {
             var _this = this;
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^stroke$/i)) {
                     _this.areaStyle.stroke = dChart.Utils.Elem.getColor(value);
                     return;
@@ -105,7 +105,7 @@ var dChart;
             var _this = this;
             _super.prototype.parse.call(this, elem);
 
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^x$/i)) {
                     _this.x = dChart.Utils.Elem.getFloat(value);
                     return;
@@ -159,7 +159,7 @@ var dChart;
             var _this = this;
             _super.prototype.parse.call(this, elem);
 
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^x$/i)) {
                     _this.x = parseFloat(value.nodeValue);
                     return;
@@ -219,7 +219,7 @@ var dChart;
             var _this = this;
             _super.prototype.parse.call(this, elem);
 
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^x|t|time|date$/i)) {
                     _this.t = dChart.Utils.Elem.getDate(value);
                     return;
@@ -277,7 +277,7 @@ var dChart;
             var _this = this;
             _super.prototype.parse.call(this, elem);
 
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^x$/i)) {
                     _this.x = parseFloat(value.nodeValue);
                     return;
@@ -344,7 +344,7 @@ var dChart;
             var _this = this;
             _super.prototype.parse.call(this, elem);
 
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^x|t|time|date$/i)) {
                     _this.t = new Date(value.nodeValue);
                     return;
@@ -890,7 +890,7 @@ var dChart;
         }
         DataSet.prototype.parse = function (elem) {
             var _this = this;
-            _.map(elem.attributes, function (value) {
+            elem.attributes.forEach(function (value) {
                 if (value.nodeName.match(/^label$/i)) {
                     _this.label = value.nodeValue;
                     return;
@@ -926,6 +926,14 @@ var dChart;
                 this.label = value.label;
             }
 
+            if (value.hasOwnProperty("showSymbol")) {
+                this.showSymbol = value.showSymbol;
+            }
+
+            if (value.hasOwnProperty("showLine")) {
+                this.showLine = value.showLine;
+            }
+
             if (value.hasOwnProperty("symbolStyle")) {
                 var symbolStyle = new dChart.Utils.SymbolStyle();
                 symbolStyle.normalize(value.symbolStyle);
@@ -959,7 +967,7 @@ var dChart;
             }
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
-                _.map(value.data, function (config) {
+                value.data.forEach(function (config) {
                     var p = _this.chart.getPoint();
                     p.normalize(config);
                     _this.data.push(p);
@@ -979,7 +987,7 @@ var dChart;
                 loader.normalize(value.dataSrc);
 
                 loader.getData(function (data, map) {
-                    _.map(data, function (val) {
+                    data.forEach(function (val) {
                         var p = _this.chart.getPoint();
                         p.map(val, map);
                         _this.data.push(p);
@@ -1001,7 +1009,7 @@ var dChart;
 
                 var data = this.solver.solve();
 
-                _.map(data, function (val) {
+                data.forEach(function (val) {
                     var p = _this.chart.getPoint();
                     p.normalize(val);
                     _this.data.push(p);
@@ -1052,6 +1060,27 @@ var dChart;
     })(dChart.Utils || (dChart.Utils = {}));
     var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Animation = (function () {
+            function Animation() {
+            }
+            Animation.animateAlongPath = function (path) {
+                var p = path.node(), len = p.getTotalLength();
+
+                return function (t) {
+                    var pos = p.getPointAtLength(Math.floor(len * t));
+
+                    return "translate(" + pos.x + "," + pos.y + ")";
+                };
+            };
+            return Animation;
+        })();
+        Utils.Animation = Animation;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
 "use strict";
 var dChart;
 (function (dChart) {
@@ -1095,7 +1124,7 @@ var dChart;
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
             this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
-            this.svg.attr("width", this.width).attr("height", this.height);
+            this.svg.attr("width", this.width).attr("height", this.height).attr("xmlns", "http://www.w3.org/2000/svg");
 
             this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
 
@@ -1210,7 +1239,7 @@ var dChart;
             if (value.hasOwnProperty("dataSets")) {
                 this.dataSets = [];
 
-                _.map(value.dataSets, function (config) {
+                value.dataSets.forEach(function (config) {
                     var dataSet = new dChart.DataSet(_this);
                     dataSet.normalize(config);
                     _this.dataSets.push(dataSet);
@@ -1219,7 +1248,7 @@ var dChart;
         };
 
         Chart.prototype.recalculate = function () {
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet) {
                 dataSet.calculate();
             });
         };
@@ -1394,30 +1423,92 @@ var dChart;
     })(Chart);
     dChart.Chart3D = Chart3D;
 
+    var PointChart = (function (_super) {
+        __extends(PointChart, _super);
+        function PointChart(config) {
+            _super.call(this);
+            this.svgSymbolContainer = [];
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+        }
+        PointChart.prototype.drawData = function () {
+            var _this = this;
+            this.dataSets.forEach(function (dataSet, key) {
+                _this.svgSymbolContainer[key] = _this.dataContainer.append("g");
+            });
+        };
+
+        PointChart.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            this.dataSets.forEach(function (dataSet, key) {
+                if (!dataSet.showSymbol) {
+                    return;
+                }
+
+                var group = _this.svgSymbolContainer[key].selectAll("path").data(dataSet.data, function (d) {
+                    return d.x;
+                });
+
+                var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
+
+                if (!_this.showTransition) {
+                    group.exit().remove();
+
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
+                    }).attr("d", symbol);
+                } else {
+                    var lineFn = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
+                        return xScale(d.x);
+                    }).y(function (d) {
+                        return yScale(d.y);
+                    });
+
+                    group.exit().remove();
+
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
+                        return "translate(" + xScale(0) + "," + yScale(0) + ") scale(1)";
+                    }).attr("d", symbol).transition().duration(function (d, i) {
+                        return _this.transition.duration * (key + 1);
+                    }).ease(_this.transition.ease).attrTween("transform", function (d, i) {
+                        return dChart.Utils.Animation.animateAlongPath(_this.svgSymbolContainer[key].append("path").attr("class", "animationLine").attr("stroke", "none").attr("fill", "none").attr("d", lineFn(dataSet.data.slice(0, i + 1))));
+                    });
+
+                    _this.svgSymbolContainer[key].selectAll('.animationLine').remove();
+                }
+            });
+        };
+        return PointChart;
+    })(Chart2D);
+    dChart.PointChart = PointChart;
+
     var LineChart = (function (_super) {
         __extends(LineChart, _super);
         function LineChart(config) {
             _super.call(this);
             this.svgLineContainer = [];
-            this.svgSymbolContainer = [];
             this.svgLine = [];
 
             if (config) {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
         LineChart.prototype.drawData = function () {
             var _this = this;
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 _this.svgLineContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 _this.svgLine[key] = _this.svgLineContainer[key].append("path");
-
-                _this.svgSymbolContainer[key] = _this.dataContainer.append("g");
             });
+
+            _super.prototype.drawData.call(this);
         };
 
         LineChart.prototype.redrawData = function () {
@@ -1426,34 +1517,37 @@ var dChart;
             var yScale = this.yAxis.getScale();
             var lineFn = [];
 
-            _.map(this.dataSets, function (dataSet, key) {
-                if (dataSet.showLine) {
-                    lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
-                        return xScale(d.x);
-                    }).y(function (d) {
-                        return yScale(d.y);
-                    });
-
-                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).lineStyle(dataSet.lineStyle).style("fill", "none");
+            this.dataSets.forEach(function (dataSet, key) {
+                if (!dataSet.showLine) {
+                    return;
                 }
 
-                if (dataSet.showSymbol) {
-                    var group = _this.svgSymbolContainer[key].selectAll("path").data(dataSet.data, function (d) {
-                        return d.x;
+                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
+                    return xScale(d.x);
+                }).y(function (d) {
+                    return yScale(d.y);
+                });
+
+                if (!_this.showTransition) {
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).lineStyle(dataSet.lineStyle).style("fill", "none");
+                } else {
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).attr("stroke", dataSet.lineStyle.stroke).attr("stroke-width", dataSet.lineStyle.strokeWidth).attr("stroke-opacity", dataSet.lineStyle.strokeOpacity).attr("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("fill", "none");
+
+                    var path = _this.svgLine[key];
+                    var totalLength = path.node().getTotalLength();
+
+                    _this.svgLine[key].attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(_this.transition.duration).delay(function (d, i) {
+                        return key * _this.transition.delay;
+                    }).attr("stroke-dashoffset", 0).each("end", function () {
+                        d3.select(this).attr("stroke-dasharray", dataSet.lineStyle.strokeDasharray);
                     });
-
-                    var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
-
-                    group.exit().remove();
-
-                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
-                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
-                    }).attr("d", symbol);
                 }
             });
+
+            _super.prototype.redrawData.call(this);
         };
         return LineChart;
-    })(Chart2D);
+    })(PointChart);
     dChart.LineChart = LineChart;
 
     var AreaChart = (function (_super) {
@@ -1461,25 +1555,22 @@ var dChart;
         function AreaChart(config) {
             _super.call(this);
             this.svgAreaContainer = [];
-            this.svgSymbolContainer = [];
             this.svgArea = [];
 
             if (config) {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
         AreaChart.prototype.drawData = function () {
             var _this = this;
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 _this.svgAreaContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 _this.svgArea[key] = _this.svgAreaContainer[key].append("path");
-
-                _this.svgSymbolContainer[key] = _this.dataContainer.append("g");
             });
+
+            _super.prototype.drawData.call(this);
         };
 
         AreaChart.prototype.redrawData = function () {
@@ -1488,32 +1579,26 @@ var dChart;
             var yScale = this.yAxis.getScale();
             var areaFn = [];
 
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 areaFn[key] = d3.svg.area().interpolate(dataSet.interpolate).x(function (d) {
                     return xScale(d.x);
                 }).y0(_this.nettoHeight).y1(function (d) {
                     return yScale(d.y);
                 });
 
-                _this.svgArea[key].attr("d", areaFn[key](dataSet.data)).areaStyle(dataSet.areaStyle);
-
-                if (dataSet.showSymbol) {
-                    var group = _this.svgSymbolContainer[key].selectAll("path").data(dataSet.data, function (d) {
-                        return d.x;
-                    });
-
-                    var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
-
-                    group.exit().remove();
-
-                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
-                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
-                    }).attr("d", symbol);
+                if (!_this.showTransition) {
+                    _this.svgArea[key].attr("d", areaFn[key](dataSet.data)).areaStyle(dataSet.areaStyle);
+                } else {
+                    _this.svgArea[key].areaStyle(dataSet.areaStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
+                        return i * _this.transition.delay;
+                    }).ease(_this.transition.ease).attr("d", areaFn[key](dataSet.data));
                 }
             });
+
+            _super.prototype.redrawData.call(this);
         };
         return AreaChart;
-    })(Chart2D);
+    })(PointChart);
     dChart.AreaChart = AreaChart;
 
     var BarChart = (function (_super) {
@@ -1526,12 +1611,10 @@ var dChart;
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
         BarChart.prototype.drawData = function () {
             var _this = this;
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 dataSet.showValues = true;
 
                 _this.svgRectContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
@@ -1543,7 +1626,7 @@ var dChart;
             var xScale = this.xAxis.getScale();
             var yScale = this.yAxis.getScale();
 
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 var group = _this.svgRectContainer[key].selectAll("rect").data(dataSet.data, function (d) {
                     return d.x;
                 });
@@ -1579,7 +1662,7 @@ var dChart;
                         return width;
                     }).attr("height", 0).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return i * _this.transition.delay;
-                    }).attr("y", function (d) {
+                    }).ease(_this.transition.ease).attr("y", function (d) {
                         return _this.nettoHeight - yScale(d.y);
                     }).attr("height", function (d) {
                         return Math.abs(yScale(d.y));
@@ -1601,12 +1684,10 @@ var dChart;
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
         ScatterChart.prototype.drawData = function () {
             var _this = this;
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 _this.svgScatterContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
             });
         };
@@ -1616,7 +1697,7 @@ var dChart;
             var xScale = this.xAxis.getScale();
             var yScale = this.yAxis.getScale();
 
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 var group = _this.svgScatterContainer[key].selectAll("path").data(dataSet.data, function (d) {
                     return d.x;
                 });
@@ -1636,7 +1717,7 @@ var dChart;
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(0)";
                     }).attr("d", symbol).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return i * _this.transition.delay;
-                    }).attr("transform", function (d) {
+                    }).ease(_this.transition.ease).attr("transform", function (d) {
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + dataSet.symbolStyle.size + ")";
                     });
                 }
@@ -1658,8 +1739,6 @@ var dChart;
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
         PieChart.prototype.getPoint = function () {
             var p = new dChart.Point1D();
@@ -1678,7 +1757,7 @@ var dChart;
 
         PieChart.prototype.drawData = function () {
             var _this = this;
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 dataSet.showValues = true;
 
                 _this.svgPieContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key).attr("transform", "translate(" + (_this.nettoWidth * 0.5) + "," + (_this.nettoHeight * 0.5) + ")");
@@ -1687,7 +1766,7 @@ var dChart;
 
         PieChart.prototype.redrawData = function () {
             var _this = this;
-            _.map(this.dataSets, function (dataSet, key) {
+            this.dataSets.forEach(function (dataSet, key) {
                 var pie = d3.layout.pie().sort(null).value(function (d) {
                     return d.x;
                 });
@@ -1720,7 +1799,7 @@ var dChart;
                         return _this.format(d.value);
                     }).style("text-anchor", "middle").fontStyle(dataSet.fontStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return i * _this.transition.delay;
-                    }).attr("transform", function (d) {
+                    }).ease(_this.transition.ease).attr("transform", function (d) {
                         return "translate(" + arc.centroid(d) + ")";
                     });
                 }

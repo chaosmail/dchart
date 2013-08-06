@@ -4,7 +4,7 @@
   "main": "dist/dchart.js",
   "dependencies": {
     "d3": "~3.2.8",
-    "underscore": "~1.5.1"
+    "d3-styles": "latest"
   },
   "ignore": [
     "**/.*",
@@ -12,6 +12,6 @@
     "components"
   ],
   "devDependencies": {
-    "d3-styles": "latest"
+
   }
 }

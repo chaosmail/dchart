@@ -139,7 +139,7 @@ module dChart {
 
         parse(elem:Element) {
 
-            _.map(elem.attributes, (value) => {
+            elem.attributes.forEach((value:any) => {
 
                 if (value.nodeName.match(/^stroke$/i)) {
                     this.areaStyle.stroke = Utils.Elem.getColor(value);
@@ -199,7 +199,7 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, (value) => {
+            elem.attributes.forEach((value:any) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = Utils.Elem.getFloat(value);
@@ -252,7 +252,7 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, (value) => {
+           elem.attributes.forEach((value:any) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
@@ -314,7 +314,7 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, (value) => {
+            elem.attributes.forEach((value:any) => {
 
                 if (value.nodeName.match(/^x|t|time|date$/i)) {
                     this.t = Utils.Elem.getDate(value);
@@ -369,7 +369,7 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, (value) => {
+            elem.attributes.forEach((value) => {
 
                 if (value.nodeName.match(/^x$/i)) {
                     this.x = parseFloat(value.nodeValue);
@@ -437,7 +437,7 @@ module dChart {
         parse(elem:Element) {
             super.parse(elem);
 
-            _.map(elem.attributes, (value) => {
+            elem.attributes.forEach((value) => {
 
                 if (value.nodeName.match(/^x|t|time|date$/i)) {
                     this.t = new Date(value.nodeValue);

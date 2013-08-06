@@ -819,6 +819,13 @@ declare module D3 {
             (delay: number): Transition;
             (delay: (data: any, index: number) => any): Transition;
         };
+
+        attrTween: {
+            (name: string): string;
+            (name: string, value: any): Transition;
+            (name: string, valueFunction: (data: any, index: number) => any): Transition;
+        };
+
         attr: {
             (name: string): string;
             (name: string, value: any): Transition;

@@ -295,6 +295,11 @@ declare module dChart.Utils {
         public normalize(value: any): void;
     }
 }
+declare module dChart.Utils {
+    class Animation {
+        static animateAlongPath(path: any): (t: any) => string;
+    }
+}
 declare module dChart {
     interface IChart {
         elem: string;
@@ -392,17 +397,21 @@ declare module dChart {
         public max(axis?: string): number;
         public normalize(value: any): void;
     }
-    class LineChart extends Chart2D {
-        public svgLineContainer: D3.Selection[];
+    class PointChart extends Chart2D {
         public svgSymbolContainer: D3.Selection[];
+        constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
+    }
+    class LineChart extends PointChart {
+        public svgLineContainer: D3.Selection[];
         public svgLine: D3.Selection[];
         constructor(config?: IChart2D);
         public drawData(): void;
         public redrawData(): void;
     }
-    class AreaChart extends Chart2D {
+    class AreaChart extends PointChart {
         public svgAreaContainer: D3.Selection[];
-        public svgSymbolContainer: D3.Selection[];
         public svgArea: D3.Selection[];
         constructor(config?: IChart2D);
         public drawData(): void;

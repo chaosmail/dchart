@@ -1,4 +1,3 @@
-/// <reference path="../../d.ts/DefinitelyTyped/underscore/underscore.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
 /// <reference path="../../lib/d3-styles/dist/d3-styles.d.ts" />
 /// <reference path="point.ts" />
@@ -7,6 +6,7 @@
 /// <reference path="Utils/style.ts" />
 /// <reference path="Utils/transition.ts" />
 /// <reference path="Utils/solver.ts" />
+/// <reference path="Utils/animation.ts" />
 "use strict";
 
 module dChart {
@@ -116,7 +116,8 @@ module dChart {
 
             this.svg
                 .attr("width", this.width)
-                .attr("height", this.height);
+                .attr("height", this.height)
+                .attr("xmlns", "http://www.w3.org/2000/svg");
 
             this.container
                 .attr("width", this.nettoWidth)
@@ -261,7 +262,7 @@ module dChart {
 
                 this.dataSets = [];
 
-                _.map(value.dataSets, (config) => {
+                value.dataSets.forEach((config) => {
 
                     var dataSet = new DataSet(this);
                     dataSet.normalize(config);
@@ -272,7 +273,7 @@ module dChart {
 
         recalculate() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet) => {
                 dataSet.calculate();
             });
         }
@@ -442,10 +443,100 @@ module dChart {
         }
     }
 
-    export class LineChart extends Chart2D {
+    export class PointChart extends Chart2D {
+
+        svgSymbolContainer:D3.Selection[] = [];
+
+        constructor(config?:IChart2D) {
+            super();
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+        }
+
+        drawData() {
+
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
+
+                this.svgSymbolContainer[key] = this.dataContainer.append("g");
+            });
+        }
+
+        redrawData() {
+
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
+
+
+                if (!dataSet.showSymbol) {
+                    return;
+                }
+
+                var group = this.svgSymbolContainer[key]
+                    .selectAll("path")
+                    .data(dataSet.data, (d:Point2D) => d.x);
+
+                var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
+
+                if (!this.showTransition) {
+
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("path")
+                        .areaStyle(dataSet.symbolStyle)
+                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
+                        .attr("d", symbol);
+                }
+                else {
+
+                    // Generate a temporary Line function,
+                    // on which the symbols are animated
+                    var lineFn = d3.svg.line()
+                        .interpolate(dataSet.interpolate)
+                        .x(function(d:Point2D) { return xScale(d.x); })
+                        .y(function(d:Point2D) { return yScale(d.y); });
+
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("path")
+                        .areaStyle(dataSet.symbolStyle)
+                        .attr("transform", (d:Point2D) => "translate("+xScale(0)+","+yScale(0)+") scale(1)")
+                        .attr("d", symbol)
+                        .transition()
+                        .duration((d,i) => this.transition.duration * (key+1))
+                        .ease(this.transition.ease)
+                        .attrTween("transform",
+                            (d,i) => Utils.Animation.animateAlongPath(
+
+                                // Draw a temporary Line for each point
+                                // only to the last points coordinates
+                                this.svgSymbolContainer[key]
+                                    .append("path")
+                                    .attr("class","animationLine")
+                                    .attr("stroke","none")
+                                    .attr("fill","none")
+                                    .attr("d",lineFn(dataSet.data.slice(0,i+1))
+                            )
+                        ));
+
+                    // Remove temporary Lines
+                    this.svgSymbolContainer[key].selectAll('.animationLine').remove();
+                }
+            });
+        }
+    }
+
+    export class LineChart extends PointChart {
 
         svgLineContainer:D3.Selection[] = [];
-        svgSymbolContainer:D3.Selection[] = [];
         svgLine:D3.Selection[] = [];
 
         constructor(config?:IChart2D) {
@@ -455,24 +546,20 @@ module dChart {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
 
         drawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 this.svgLineContainer[key] = this.dataContainer
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 this.svgLine[key] = this.svgLineContainer[key].append("path");
-
-                this.svgSymbolContainer[key] = this.dataContainer
-                    .append("g");
-
             });
+
+            super.drawData();
         }
 
         redrawData() {
@@ -481,47 +568,57 @@ module dChart {
             var yScale = this.yAxis.getScale();
             var lineFn = [];
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
-                if (dataSet.showLine) {
+                if (!dataSet.showLine) {
+                    return;
+                }
 
-                    lineFn[key] = d3.svg.line()
-                        .interpolate(dataSet.interpolate)
-                        .x(function(d:Point2D) { return xScale(d.x); })
-                        .y(function(d:Point2D) { return yScale(d.y); });
+                lineFn[key] = d3.svg.line()
+                    .interpolate(dataSet.interpolate)
+                    .x(function(d:Point2D) { return xScale(d.x); })
+                    .y(function(d:Point2D) { return yScale(d.y); });
+
+                if (!this.showTransition) {
 
                     this.svgLine[key].attr("d", lineFn[key](dataSet.data))
                         .lineStyle(dataSet.lineStyle)
                         .style("fill","none");
-
                 }
+                else {
 
-                if (dataSet.showSymbol) {
+                    this.svgLine[key]
+                        .attr("d", lineFn[key](dataSet.data))
+                        .attr("stroke", dataSet.lineStyle.stroke)
+                        .attr("stroke-width", dataSet.lineStyle.strokeWidth)
+                        .attr("stroke-opacity", dataSet.lineStyle.strokeOpacity)
+                        .attr("stroke-linecap", dataSet.lineStyle.strokeLinecap)
+                        .style("fill","none");
 
-                    var group = this.svgSymbolContainer[key].selectAll("path")
-                        .data(dataSet.data, (d:Point2D) => d.x);
+                    var path = <any>this.svgLine[key];
+                    var totalLength = path.node().getTotalLength();
 
-                    var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
-
-                    group.exit()
-                        .remove();
-
-                    group.enter()
-                        .append("path")
-                        .areaStyle(dataSet.symbolStyle)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
-                        .attr("d", symbol);
-
-
+                    this.svgLine[key]
+                        .attr("stroke-dasharray", totalLength + " " + totalLength)
+                        .attr("stroke-dashoffset", totalLength)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => key*this.transition.delay)
+                        .attr("stroke-dashoffset", 0)
+                        .each("end", function() {
+                            // Apply the Dasharray after the Transition
+                            d3.select(<any>this).attr("stroke-dasharray", dataSet.lineStyle.strokeDasharray);
+                        });
                 }
             });
+
+            super.redrawData();
         }
     }
 
-    export class AreaChart extends Chart2D {
+    export class AreaChart extends PointChart {
 
         svgAreaContainer:D3.Selection[] = [];
-        svgSymbolContainer:D3.Selection[] = [];
         svgArea:D3.Selection[] = [];
 
         constructor(config?:IChart2D) {
@@ -531,24 +628,20 @@ module dChart {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
 
         drawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 this.svgAreaContainer[key] = this.dataContainer
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 this.svgArea[key] = this.svgAreaContainer[key].append("path");
-
-                this.svgSymbolContainer[key] = this.dataContainer
-                    .append("g");
-
             });
+
+            super.drawData();
         }
 
         redrawData() {
@@ -557,7 +650,7 @@ module dChart {
             var yScale = this.yAxis.getScale();
             var areaFn = [];
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 areaFn[key] = d3.svg.area()
                     .interpolate(dataSet.interpolate)
@@ -565,28 +658,24 @@ module dChart {
                     .y0(<any>this.nettoHeight)
                     .y1(function(d) { return yScale(d.y); });
 
-                this.svgArea[key].attr("d", areaFn[key](dataSet.data))
-                    .areaStyle(dataSet.areaStyle);
+                if (!this.showTransition) {
 
-                if (dataSet.showSymbol) {
+                    this.svgArea[key].attr("d", areaFn[key](dataSet.data))
+                        .areaStyle(dataSet.areaStyle);
+                }
+                else {
 
-                    var group = this.svgSymbolContainer[key].selectAll("path")
-                        .data(dataSet.data, (d:Point2D) => d.x);
-
-                    var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
-
-                    group.exit()
-                        .remove();
-
-                    group.enter()
-                        .append("path")
-                        .areaStyle(dataSet.symbolStyle)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
-                        .attr("d", symbol);
-
-
+                    this.svgArea[key]
+                        .areaStyle(dataSet.areaStyle)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => i*this.transition.delay)
+                        .ease(this.transition.ease)
+                        .attr("d", areaFn[key](dataSet.data));
                 }
             });
+
+            super.redrawData();
         }
     }
 
@@ -601,13 +690,11 @@ module dChart {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
 
         drawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 dataSet.showValues = true;
 
@@ -623,7 +710,7 @@ module dChart {
             var xScale = this.xAxis.getScale();
             var yScale = this.yAxis.getScale();
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 var group = this.svgRectContainer[key].selectAll("rect")
                     .data(dataSet.data, (d:Point2D) => d.x);
@@ -666,6 +753,7 @@ module dChart {
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
+                        .ease(this.transition.ease)
                         .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
                         .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
                 }
@@ -685,13 +773,11 @@ module dChart {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
 
         drawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 this.svgScatterContainer[key] = this.dataContainer
                     .append("g")
@@ -705,7 +791,7 @@ module dChart {
             var xScale = this.xAxis.getScale();
             var yScale = this.yAxis.getScale();
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 var group = this.svgScatterContainer[key].selectAll("path")
                     .data(dataSet.data, (d:Point2D) => d.x);
@@ -736,6 +822,7 @@ module dChart {
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
+                        .ease(this.transition.ease)
                         .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")");
                 }
 
@@ -756,8 +843,6 @@ module dChart {
                 this.normalize(config);
                 this.draw();
             }
-
-            console.log(this);
         }
 
         getPoint() {
@@ -777,7 +862,7 @@ module dChart {
 
         drawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 dataSet.showValues = true;
 
@@ -791,7 +876,7 @@ module dChart {
 
         redrawData() {
 
-            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 var pie = d3.layout.pie()
                     .sort(null)
@@ -834,6 +919,7 @@ module dChart {
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
+                        .ease(this.transition.ease)
                         .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+")");
                 }
             });

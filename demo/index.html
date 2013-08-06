@@ -26,7 +26,6 @@
 
     </style>
 
-    <script src="lib/underscore/underscore-min.js"></script>
     <script src="lib/d3/d3.min.js" charset="utf-8"></script>
     <script src="lib/d3-styles/dist/d3-styles.min.js"></script>
     <script src="lib/jquery/jquery.min.js"></script>
@@ -105,7 +104,6 @@
         <h2 id="basic-usage-dependencies">Dependencies</h2>
 
         <ul>
-            <li><a target="_new" href="https://github.com/jashkenas/underscore">underscore</a></li>
             <li><a target="_new" href="https://github.com/mbostock/d3">d3.js</a></li>
             <li><a target="_new" href="https://github.com/chaosmail/d3-styles">d3-styles</a></li>
         </ul>
@@ -119,7 +117,6 @@
             <pre class="prettyprint">
     &lt;html&gt;
     &lt;head&gt;
-        &lt;script src="lib/underscore.min.js"&gt;&lt;/script&gt;
         &lt;script src="lib/d3.min.js"&gt;&lt;/script&gt;
         &lt;script src="lib/d3-styles.min.js"&gt;&lt;/script&gt;
         &lt;script src="js/dchart.min.js"&gt;&lt;/script&gt;
@@ -575,6 +572,93 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="bs-callout bs-callout-info">
+            <p>
+                <small><a href="https://github.com/mbostock/d3/wiki/Quantitative-Scales" target="_new">https://github.com/mbostock/d3/wiki/Quantitative-Scales</a></small>
+            </p>
+            <h4>D3.js Quantitative Scales</h4>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-linear">linear</a></li>
+            </ul>
+            <p>
+                Linear scales are the most common scale, and a good default choice to map a continuous input domain
+                to a continuous output range. The mapping is linear in that the output range value y can be expressed
+                as a linear function of the input domain value x: y = mx + b. The input domain is typically a dimension
+                of the data that you want to visualize, such as the height of students (measured in meters) in a sample
+                population. The output range is typically a dimension of the desired output visualization, such as the
+                height of bars (measured in pixels) in a histogram.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-identity">identity</a></li>
+            </ul>
+            <p>
+                Identity scales are a special case of linear scales where the domain and range are identical; the scale
+                and its invert method are both the identity function. These scales are occasionally useful when working
+                with pixel coordinates, say in conjunction with the axis and brush components.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-pow">pow</a></li>
+            </ul>
+            <p>
+                Power scales are similar to linear scales, except there's an exponential transform that is applied to
+                the input domain value before the output range value is computed. The mapping to the output range value
+                y can be expressed as a function of the input domain value x: y = mx^k + b, where k is the exponent value.
+                Power scales also support negative values, in which case the input value is multiplied by -1, and the
+                resulting output value is also multiplied by -1.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-sqrt">sqrt</a></li>
+            </ul>
+            <p>
+                Constructs a new power scale with the default domain [0,1], the default range [0,1], and the exponent .5.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-log">log</a></li>
+            </ul>
+            <p>
+                Log scales are similar to linear scales, except there's a logarithmic transform that is applied to the
+                input domain value before the output range value is computed. The mapping to the output range value y
+                can be expressed as a function of the input domain value x: y = m log(*x*) + b. Log scales also support
+                negative values, in which case the input value is multiplied by -1, and the resulting output value is also
+                multiplied by -1. However, note that the domain of a log scale should never contain zero, as log(0) is
+                negative infinity.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-quantize">quantize</a></li>
+            </ul>
+            <p>
+                Quantize scales are a variant of linear scales with a discrete rather than continuous range. The input
+                domain is still continuous, and divided into uniform segments based on the number of values in (the
+                cardinality of) the output range. The mapping is linear in that the output range value y can be expressed
+                as a linear function of the input domain value x: y = mx + b. The input domain is typically a dimension
+                of the data that you want to visualize, such as the height of students (measured in meters) in a sample
+                population. The output range is typically a dimension of the desired output visualization, such as the
+                height of bars (measured in pixels) in a histogram.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-quantile">quantile</a></li>
+            </ul>
+            <p>
+                Quantile scales map an input domain to a discrete range. Although the input domain is continuous and
+                the scale will accept any reasonable input value, the input domain is specified as a discrete set of
+                values. The number of values in (the cardinality of) the output range determines the number of quantiles
+                that will be computed from the input domain. To compute the quantiles, the input domain is sorted, and
+                treated as a population of discrete values. The input domain is typically a dimension of the data that
+                you want to visualize, such as the daily change of the stock market. The output range is typically a
+                dimension of the desired output visualization, such as a diverging color scale.
+            </p>
+            <ul>
+                <li><a target="_new" href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-threshold">treshold</a></li>
+            </ul>
+             <p>
+                 Threshold scales are similar to quantize scales, except they allow you to map arbitrary subsets of the domain
+                 to discrete values in the range. The input domain is still continuous, and divided into slices based on a set
+                 of threshold values. The input domain is typically a dimension of the data that you want to visualize, such
+                 as the height of students (measured in meters) in a sample population. The output range is typically a dimension
+                 of the desired output visualization, such as a set of colors (represented as strings).
+             </p>
+            </ul>
         </div>
     </div>
 
@@ -1482,6 +1566,32 @@
                 </tbody>
             </table>
         </div>
+        <div class="bs-callout bs-callout-info">
+            <p>
+                <small><a href="https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease" target="_new">https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease</a></small>
+            </p>
+            <h4>D3.js Ease</h4>
+            <ul>
+                <li>linear - the identity function, <em>t</em>.</li>
+                <li>poly(k) - raises <em>t</em> to the specified power <em>k</em> (e.g., 3).</li>
+                <li>quad - equivalent to poly(2).</li>
+                <li>cubic - equivalent to poly(3).</li>
+                <li>sin - applies the trigonometric function <em>sin</em>.</li>
+                <li>exp - raises 2 to a power based on <em>t</em>.</li>
+                <li>circle - the quarter circle.</li>
+                <li>elastic(a, p) - simulates an elastic band; may extend slightly beyond 0 and 1.</li>
+                <li>back(s) - simulates backing into a parking space.</li>
+                <li>bounce - simulates a bouncy collision.</li>
+            </ul>
+            <p>These built-in types may be extended using a variety of modes:</p>
+            <ul>
+                <li>in - the identity function.</li>
+                <li>out - reverses the easing direction to [1,0].</li>
+                <li>in-out - copies and mirrors the easing function from [0,.5] and [.5,1].</li>
+                <li>out-in - copies and mirrors the easing function from [1,.5] and [.5,0].</li>
+            </ul>
+            <p>The default easing function is "cubic-in-out" which provides suitable <a target="_new" href="http://en.wikipedia.org/wiki/12_basic_principles_of_animation#Slow_in_and_slow_out">slow-in slow-out</a> animation.</p>
+        </div>
     </div>
 
     <div class="bs-docs-section">
@@ -1584,13 +1694,17 @@
                             }
                         }
                     },
+                    transition: {
+                        duration: 1500,
+                        delay: 1500
+                    },
                     dataSets:[
                         {
                             label: "Dataset 1",
                             lineStyle: {
                                 stroke: "mediumslateblue",
                                 strokeWidth: 2,
-                                strokeDasharray: "5,5"
+                                strokeDasharray: "5,1,5"
                             },
                             symbolStyle: {
                                 stroke: "mediumslateblue",
@@ -1780,6 +1894,7 @@
             </script>
             <div class="bs-example bs-example-type">
                 <div id="areaChart2"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="areaChart2.draw();">redraw</button>
             </div>
             <pre class="prettyprint">
     var areaChart2 = new dChart.AreaChart({
@@ -1862,6 +1977,10 @@
                                 strokeOpacity: 0.25
                             }
                         }
+                    },
+                    transition: {
+                        duration: 1500,
+                        delay: 1500
                     },
                     dataSets: [
                         {

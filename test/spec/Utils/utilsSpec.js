@@ -2,10 +2,9 @@
 
 var assert = require("assert"),
     load = require('load'),
-    jsdom = require("jsdom"),
-    _ = require("underscore")._;
+    jsdom = require("jsdom");
 
-var libDChart = load(process.cwd()+'/dist/dchart.min.js',{_:_});
+var libDChart = load(process.cwd()+'/dist/dchart.min.js');
 var dChart = libDChart.dChart;
 
 describe('dChart.Utils.Elem', function(){

@@ -84,7 +84,7 @@ module dChart {
          */
          parse(elem:Element) {
 
-            _.map(elem.attributes, (value) => {
+            elem.attributes.forEach((value:any) => {
 
                 if (value.nodeName.match(/^label$/i)) {
                     this.label = value.nodeValue;
@@ -175,7 +175,7 @@ module dChart {
 
             if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
 
-                _.map(value.data, (config) => {
+                value.data.forEach((config) => {
 
                     var p = this.chart.getPoint();
                     p.normalize(config);
@@ -199,7 +199,7 @@ module dChart {
 
                 loader.getData((data, map)=>{
 
-                    _.map(data, (val) => {
+                    data.forEach((val) => {
 
                         var p = this.chart.getPoint();
                         p.map(val,map);
@@ -223,7 +223,7 @@ module dChart {
 
                 var data = this.solver.solve();
 
-                _.map(data, (val) => {
+                data.forEach((val) => {
 
                     var p = this.chart.getPoint();
                     p.normalize(val);
