@@ -1534,7 +1534,7 @@ var dChart;
                     _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).attr("stroke", dataSet.lineStyle.stroke).attr("stroke-width", dataSet.lineStyle.strokeWidth).attr("stroke-opacity", dataSet.lineStyle.strokeOpacity).attr("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("fill", "none");
 
                     var path = _this.svgLine[key];
-                    var totalLength = path.node().getTotalLength();
+                    var totalLength = (path.node()).getTotalLength();
 
                     _this.svgLine[key].attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return key * _this.transition.delay;

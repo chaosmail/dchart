@@ -596,7 +596,7 @@ module dChart {
                         .style("fill","none");
 
                     var path = <any>this.svgLine[key];
-                    var totalLength = path.node().getTotalLength();
+                    var totalLength = (<any>path.node()).getTotalLength();
 
                     this.svgLine[key]
                         .attr("stroke-dasharray", totalLength + " " + totalLength)

@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Tue Aug 06 2013 20:51:43
+/** dchart - v0.0.4 - Tue Aug 06 2013 20:53:21
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1538,7 +1538,7 @@ var dChart;
                     _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).attr("stroke", dataSet.lineStyle.stroke).attr("stroke-width", dataSet.lineStyle.strokeWidth).attr("stroke-opacity", dataSet.lineStyle.strokeOpacity).attr("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("fill", "none");
 
                     var path = _this.svgLine[key];
-                    var totalLength = path.node().getTotalLength();
+                    var totalLength = (path.node()).getTotalLength();
 
                     _this.svgLine[key].attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return key * _this.transition.delay;
