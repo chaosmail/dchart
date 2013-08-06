@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Tue Aug 06 2013 20:19:53
+/** dchart - v0.0.4 - Tue Aug 06 2013 20:51:43
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1801,10 +1801,10 @@ var dChart;
                     }).attr("d", arc.outerRadius(outerRadius));
                     pieces.append("text").text(function (d) {
                         return _this.format(d.value);
-                    }).style("text-anchor", "middle").fontStyle(dataSet.fontStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
+                    }).attr("transform", "scale(0)").style("text-anchor", "middle").fontStyle(dataSet.fontStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return i * _this.transition.delay;
                     }).ease(_this.transition.ease).attr("transform", function (d) {
-                        return "translate(" + arc.centroid(d) + ")";
+                        return "translate(" + arc.centroid(d) + ") scale(1)";
                     });
                 }
             });

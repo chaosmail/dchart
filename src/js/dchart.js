@@ -1797,10 +1797,10 @@ var dChart;
                     }).attr("d", arc.outerRadius(outerRadius));
                     pieces.append("text").text(function (d) {
                         return _this.format(d.value);
-                    }).style("text-anchor", "middle").fontStyle(dataSet.fontStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
+                    }).attr("transform", "scale(0)").style("text-anchor", "middle").fontStyle(dataSet.fontStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return i * _this.transition.delay;
                     }).ease(_this.transition.ease).attr("transform", function (d) {
-                        return "translate(" + arc.centroid(d) + ")";
+                        return "translate(" + arc.centroid(d) + ") scale(1)";
                     });
                 }
             });

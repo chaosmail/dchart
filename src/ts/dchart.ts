@@ -914,13 +914,14 @@ module dChart {
                         .attr("d", arc.outerRadius(outerRadius));
                     pieces.append("text")
                         .text((d:D3.ArcDescriptor) => this.format(d.value))
+                        .attr("transform","scale(0)")
                         .style("text-anchor", "middle")
                         .fontStyle(dataSet.fontStyle)
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+")");
+                        .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+") scale(1)");
                 }
             });
         }
