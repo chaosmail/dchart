@@ -269,6 +269,13 @@ module dChart {
                 });
             }
         }
+
+        recalculate() {
+
+            _.map(this.dataSets, (dataSet:DataSet,key:number) => {
+                dataSet.calculate();
+            });
+        }
     }
 
     export class Chart2D extends Chart {
@@ -478,7 +485,8 @@ module dChart {
 
                 if (dataSet.showLine) {
 
-                    lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate)
+                    lineFn[key] = d3.svg.line()
+                        .interpolate(dataSet.interpolate)
                         .x(function(d:Point2D) { return xScale(d.x); })
                         .y(function(d:Point2D) { return yScale(d.y); });
 

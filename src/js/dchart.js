@@ -969,13 +969,9 @@ var dChart;
             if (value.hasOwnProperty("dataFn")) {
                 var solver = this.chart.getSolver();
                 solver.normalize(value.dataFn);
-                var data = solver.solve();
+                this.solver = solver;
 
-                _.map(data, function (val) {
-                    var p = _this.chart.getPoint();
-                    p.normalize(val);
-                    _this.data.push(p);
-                });
+                this.calculate();
             }
 
             if (value.hasOwnProperty("dataSrc")) {
@@ -990,6 +986,25 @@ var dChart;
                     });
 
                     _this.chart.redraw();
+                });
+            }
+        };
+
+        DataSet.prototype.clear = function () {
+            this.data = [];
+        };
+
+        DataSet.prototype.calculate = function () {
+            var _this = this;
+            if (this.solver) {
+                this.clear();
+
+                var data = this.solver.solve();
+
+                _.map(data, function (val) {
+                    var p = _this.chart.getPoint();
+                    p.normalize(val);
+                    _this.data.push(p);
                 });
             }
         };
@@ -1201,6 +1216,12 @@ var dChart;
                     _this.dataSets.push(dataSet);
                 });
             }
+        };
+
+        Chart.prototype.recalculate = function () {
+            _.map(this.dataSets, function (dataSet, key) {
+                dataSet.calculate();
+            });
         };
         return Chart;
     })();

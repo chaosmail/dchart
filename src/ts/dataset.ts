@@ -33,6 +33,8 @@ module dChart {
         showSymbol:bool = false;
         showValues:bool = false;
 
+        solver:Utils.Solver;
+
         data:any[] = [];
 
         /**
@@ -175,15 +177,9 @@ module dChart {
 
                 var solver = this.chart.getSolver();
                 solver.normalize(value.dataFn);
-                var data = solver.solve();
+                this.solver = solver;
 
-                _.map(data, (val) => {
-
-                    var p = this.chart.getPoint();
-                    p.normalize(val);
-                    this.data.push(p);
-
-                });
+                this.calculate();
             }
 
             if (value.hasOwnProperty("dataSrc")) {
@@ -201,6 +197,27 @@ module dChart {
                     });
 
                     this.chart.redraw();
+                });
+            }
+        }
+
+        clear() {
+            this.data = [];
+        }
+
+        calculate() {
+
+            if (this.solver) {
+
+                this.clear();
+
+                var data = this.solver.solve();
+
+                _.map(data, (val) => {
+
+                    var p = this.chart.getPoint();
+                    p.normalize(val);
+                    this.data.push(p);
                 });
             }
         }

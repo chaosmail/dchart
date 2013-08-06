@@ -1275,6 +1275,8 @@
         <div>
             <div class="bs-example bs-example-type">
                 <div id="lineChart1"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="lineChart1.draw();">redraw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="lineChart1.recalculate();lineChart1.draw();">randomize</button>
             </div>
             <pre class="prettyprint">
     var lineChart1 = new dChart.LineChart({
@@ -1408,10 +1410,43 @@
             </script>
         </div>
 
+        <h3>Dataset Options</h3>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>interpolate</code>
+                    </td>
+                    <td>string</td>
+                    <td>'linear'</td>
+                    <td>Interpolation of 2 data points. Use <a target="_new" href="https://github.com/mbostock/d3/wiki/SVG-Shapes#wiki-line_interpolate">D3.js Line Interpolate</a> for this option.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
         <h2 id="chart-types-area-chart">Area Chart</h2>
         <div>
             <div class="bs-example bs-example-type">
                 <div id="areaChart1"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="areaChart1.draw();">redraw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="areaChart1.recalculate();areaChart1.draw();">randomize</button>
             </div>
             <pre class="prettyprint">
     var areaChart1 = new dChart.AreaChart({
@@ -1627,7 +1662,8 @@
         <div>
             <div class="bs-example bs-example-type">
                 <div id="barChart1"></div>
-                <button type="button" class="btn btn-primary btn-ms" onclick="barChart1.draw();">draw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="barChart1.draw();">redraw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="barChart1.recalculate();barChart1.draw();">randomize</button>
             </div>
             <pre class="prettyprint">
     var barChart1 = new dChart.BarChart({
@@ -1739,7 +1775,7 @@
         <div>
             <div class="bs-example bs-example-type">
                 <div id="scatterChart1"></div>
-                <button type="button" class="btn btn-primary btn-ms" onclick="scatterChart1.draw();">draw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="scatterChart1.draw();">redraw</button>
             </div>
             <pre class="prettyprint">
     var scatterChart1 = new dChart.ScatterChart({
@@ -1838,7 +1874,8 @@
 
             <div class="bs-example bs-example-type">
                 <div id="scatterChart2"></div>
-                <button type="button" class="btn btn-primary btn-ms" onclick="scatterChart2.draw();">draw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="scatterChart2.draw();">redraw</button>
+
             </div>
             <pre class="prettyprint">
     var scatterChart2 = new dChart.ScatterChart({
@@ -1887,7 +1924,7 @@
         <div>
             <div class="bs-example bs-example-type">
                 <div id="pieChart1"></div>
-                <button type="button" class="btn btn-primary btn-ms" onclick="pieChart1.draw();">draw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="pieChart1.draw();">redraw</button>
             </div>
             <pre class="prettyprint">
     var pieChart1 = new dChart.PieChart({
@@ -1957,7 +1994,8 @@
             </script>
             <div class="bs-example bs-example-type">
                 <div id="pieChart2"></div>
-                <button type="button" class="btn btn-primary btn-ms" onclick="pieChart2.draw();">draw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="pieChart2.draw();">redraw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="pieChart2.recalculate();pieChart2.draw();">randomize</button>
             </div>
             <pre class="prettyprint">
     var pieChart2 = new dChart.PieChart({

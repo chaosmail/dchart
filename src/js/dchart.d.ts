@@ -269,6 +269,7 @@ declare module dChart {
         public showArea: boolean;
         public showSymbol: boolean;
         public showValues: boolean;
+        public solver: dChart.Utils.Solver;
         public data: any[];
         public label: string;
         public interpolate: string;
@@ -280,6 +281,8 @@ declare module dChart {
         constructor(chart: any);
         public parse(elem: Element): void;
         public normalize(value: any): void;
+        public clear(): void;
+        public calculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
     }
@@ -358,6 +361,7 @@ declare module dChart {
         public drawData(): void;
         public redrawData(): void;
         public normalize(value: any): void;
+        public recalculate(): void;
     }
     class Chart2D extends Chart {
         public xAxis: dChart.xAxis;
