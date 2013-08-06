@@ -3,7 +3,7 @@ Declarative Chart Library
 
 [![Build Status](https://travis-ci.org/chaosmail/dchart.png?branch=master)](https://travis-ci.org/chaosmail/dchart)
 
-This library is an extensible declarative Chart Library written in typescript. The goal was to build a chart library, which lets you easily declare the chart pieces whithout having to hack the same d3.js functions all the time.
+This library is an extensible declarative Chart Library written in typescript (compiled to JS). The goal was to build a chart library, which lets you easily declare the chart pieces whithout having to hack the same d3.js functions all the time.
 
 Demos and Docs can be found here: http://chaosmail.at/2013/dchart/
 
