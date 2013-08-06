@@ -77,9 +77,10 @@ npm test
 
 Todo
 ----
-+ Implement Full Functionality
++ Implement Full Functionality (Legends, Timeseries)
 + Add more Unit Tests
-+ Add Demos
++ Add E2E Tests
++ Add more Demos
 
 License
 -------
