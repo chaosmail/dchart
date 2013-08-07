@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Wed Aug 07 2013 12:38:57
+/** dchart - v0.0.4 - Wed Aug 07 2013 20:09:20
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1478,10 +1478,8 @@ var dChart;
 
                     group.exit().remove();
 
-                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
-                        return "translate(" + xScale(0) + "," + yScale(0) + ") scale(1)";
-                    }).attr("d", symbol).transition().duration(function (d, i) {
-                        return _this.transition.duration * (key + 1);
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", "translate(" + xScale(dataSet.data[0].x) + "," + yScale(dataSet.data[0].y) + ") scale(1)").attr("d", symbol).transition().duration(_this.transition.duration).delay(function (d, i) {
+                        return _this.transition.delay * key;
                     }).ease(_this.transition.ease).attrTween("transform", function (d, i) {
                         return dChart.Utils.Animation.animateAlongPath(_this.svgSymbolContainer[key].append("path").attr("class", "animationLine").attr("stroke", "none").attr("fill", "none").attr("d", lineFn(dataSet.data.slice(0, i + 1))));
                     });
@@ -1596,8 +1594,34 @@ var dChart;
                     _this.svgArea[key].attr("d", areaFn[key](dataSet.data)).areaStyle(dataSet.areaStyle);
                 } else {
                     _this.svgArea[key].areaStyle(dataSet.areaStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
-                        return i * _this.transition.delay;
-                    }).ease(_this.transition.ease).attr("d", areaFn[key](dataSet.data));
+                        return key * _this.transition.delay;
+                    }).ease(_this.transition.ease).attrTween("d", function () {
+                        var data = [], minX = dataSet.min("x"), maxX = dataSet.max("x"), difX = maxX - minX, index = 0;
+
+                        return function (t) {
+                            data = dataSet.data.slice(0);
+
+                            var accX = t * difX + minX;
+
+                            while (data[index].x < accX) {
+                                index += 1;
+                            }
+
+                            if (index === 0) {
+                                return areaFn[key](data.slice(0, 1));
+                            }
+
+                            data = data.slice(0, index + 1);
+
+                            var interpolate = d3.interpolate(data[index - 1], data[index]);
+
+                            var accT = (accX - data[index - 1].x) / (data[index].x - data[index - 1].x);
+
+                            data.splice(index, 1, interpolate(accT));
+
+                            return areaFn[key](data);
+                        };
+                    });
                 }
             });
 

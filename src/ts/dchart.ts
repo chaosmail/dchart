@@ -508,10 +508,11 @@ module dChart {
                     group.enter()
                         .append("path")
                         .areaStyle(dataSet.symbolStyle)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(0)+","+yScale(0)+") scale(1)")
+                        .attr("transform", "translate("+xScale(dataSet.data[0].x)+","+yScale(dataSet.data[0].y)+") scale(1)")
                         .attr("d", symbol)
                         .transition()
-                        .duration((d,i) => this.transition.duration * (key+1))
+                        .duration(this.transition.duration)
+                        .delay((d,i) => this.transition.delay * key)
                         .ease(this.transition.ease)
                         .attrTween("transform",
                             (d,i) => Utils.Animation.animateAlongPath(
@@ -669,9 +670,49 @@ module dChart {
                         .areaStyle(dataSet.areaStyle)
                         .transition()
                         .duration(this.transition.duration)
-                        .delay((d,i) => i*this.transition.delay)
+                        .delay((d,i) => key*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("d", areaFn[key](dataSet.data));
+                        .attrTween("d", function() {
+
+                            var data = [],
+                                minX = dataSet.min("x"),
+                                maxX = dataSet.max("x"),
+                                difX = maxX - minX,
+                                index = 0;
+
+                            return function(t) {
+
+                                data = dataSet.data.slice(0);
+
+                                // calculate x value in range from minX to maxX
+                                var accX = t*difX+minX;
+
+                                // increment
+                                while (data[index].x < accX) {
+                                    index += 1;
+                                }
+
+                                // when first elem, return it
+                                if (index === 0) {
+                                    // return only first entry in data array
+                                    return areaFn[key](data.slice(0,1));
+                                }
+
+                                // cut array to the length of the actual elem
+                                data = data.slice(0,index+1);
+
+                                // define the interpolateFn
+                                var interpolate = d3.interpolate(data[index-1],data[index]);
+
+                                // calculate the t value in range from data[index-1].x to data[index].x
+                                var accT = (accX - data[index-1].x) / (data[index].x - data[index-1].x);
+
+                                // replace the last element with the interpolated
+                                data.splice(index,1,interpolate(accT));
+
+                                return areaFn[key](data);
+                            }
+                        });
                 }
             });
 
