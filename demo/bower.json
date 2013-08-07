@@ -10,8 +10,6 @@
     "bootstrap": "~3.0.0-rc1",
     "d3": "~3.2.8",
     "d3-styles": "*",
-    "google-code-prettify": "~1.0.0",
-    "google-code-prettify-lite": "*",
     "highlightjs": "~7.3.0"
   }
 }
