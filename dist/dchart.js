@@ -1,4 +1,4 @@
-/** dchart - v0.0.4 - Tue Aug 06 2013 20:53:21
+/** dchart - v0.0.4 - Wed Aug 07 2013 12:38:57
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -891,6 +891,8 @@ var dChart;
             this.areaStyle = new dChart.Utils.AreaStyle();
             this.symbolStyle = new dChart.Utils.SymbolStyle();
             this.fontStyle = new dChart.Utils.FontStyle();
+            this.fontStyle.stroke = "none";
+            this.fontStyle.fill = "black";
         }
         DataSet.prototype.parse = function (elem) {
             var _this = this;
@@ -1794,17 +1796,22 @@ var dChart;
                         return "translate(" + arc.centroid(d) + ")";
                     }).fontStyle(dataSet.fontStyle).style("text-anchor", "middle");
                 } else {
-                    pieces.append("path").attr("d", arc.outerRadius(innerRadius)).areaStyle(function (d) {
+                    pieces.append("path").each(function (d) {
+                        d._endAngle = d.endAngle;
+                        d._formatedValue = _this.format(d.value);
+                        d.endAngle = d.startAngle;
+                    }).attr("d", arc).areaStyle(function (d) {
                         return d.data.areaStyle;
                     }).transition().duration(_this.transition.duration).delay(function (d, i) {
                         return i * _this.transition.delay;
-                    }).attr("d", arc.outerRadius(outerRadius));
-                    pieces.append("text").text(function (d) {
-                        return _this.format(d.value);
-                    }).attr("transform", "scale(0)").style("text-anchor", "middle").fontStyle(dataSet.fontStyle).transition().duration(_this.transition.duration).delay(function (d, i) {
-                        return i * _this.transition.delay;
-                    }).ease(_this.transition.ease).attr("transform", function (d) {
-                        return "translate(" + arc.centroid(d) + ") scale(1)";
+                    }).ease(_this.transition.ease).attrTween("d", function (d) {
+                        var interpolate = d3.interpolate(d.startAngle, d._endAngle);
+                        return function (t) {
+                            d.endAngle = interpolate(t);
+                            return arc(d);
+                        };
+                    }).each("end", function (d) {
+                        d3.select(this.parentNode).append("text").text(d._formatedValue).attr("transform", "translate(" + arc.centroid(d) + ") scale(1)").style("text-anchor", "middle").fontStyle(dataSet.fontStyle);
                     });
                 }
             });

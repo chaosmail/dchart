@@ -906,22 +906,35 @@ module dChart {
                         .style("text-anchor", "middle");
                 }
                 else {
-                    pieces.append("path").attr("d", arc.outerRadius(innerRadius))
+
+                    pieces.append("path")
+                        .each((d:any)=> {
+                            d._endAngle = d.endAngle;
+                            d._formatedValue = this.format(d.value);
+                            d.endAngle = d.startAngle;
+                        })
+                        .attr("d", arc)
                         .areaStyle((d:D3.ArcDescriptor) => d.data.areaStyle)
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
-                        .attr("d", arc.outerRadius(outerRadius));
-                    pieces.append("text")
-                        .text((d:D3.ArcDescriptor) => this.format(d.value))
-                        .attr("transform","scale(0)")
-                        .style("text-anchor", "middle")
-                        .fontStyle(dataSet.fontStyle)
-                        .transition()
-                        .duration(this.transition.duration)
-                        .delay((d,i) => i*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+") scale(1)");
+                        .attrTween("d", (d:any) => {
+                            var interpolate = d3.interpolate(d.startAngle, d._endAngle);
+                            return function(t) {
+                                d.endAngle = interpolate(t);
+                                return arc(d);
+                            };
+                        })
+                        .each("end", function(d:any) {
+
+                            d3.select(this.parentNode)
+                                .append("text")
+                                .text(d._formatedValue)
+                                .attr("transform", "translate("+arc.centroid(d)+") scale(1)")
+                                .style("text-anchor", "middle")
+                                .fontStyle(dataSet.fontStyle)
+                        });
                 }
             });
         }

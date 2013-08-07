@@ -7,11 +7,11 @@
 
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="lib/bootstrap/assets/css/docs.css"/>
-    <link rel="stylesheet" href="lib/google-code-prettify-lite/prettify.css"/>
+    <link rel="stylesheet" href="lib/highlightjs/styles/github.css"/>
 
     <style>
 
-        pre.prettyprint {
+        pre {
             background-color: #f7f7f9;
             border: 1px solid #e1e1e8;
             border-radius: 4px;
@@ -30,11 +30,11 @@
     <script src="lib/d3-styles/dist/d3-styles.min.js"></script>
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="lib/google-code-prettify-lite/prettify.js"></script>
+    <script src="lib/highlightjs/highlight.pack.js"></script>
 
     <script src="js/dchart.js"></script>
 </head>
-<body onload="prettyPrint();">
+<body onload="hljs.initHighlighting();">
 
 
 
@@ -114,7 +114,7 @@
             <div class="bs-example bs-example-type">
                 <div id="basicChart1"></div>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     &lt;html&gt;
     &lt;head&gt;
         &lt;script src="lib/d3.min.js"&gt;&lt;/script&gt;
@@ -131,7 +131,7 @@
         &lt;/script&gt;
     &lt;/body&gt;
     &lt;/html&gt;
-            </pre>
+            </code></pre>
             <script>
                 var basicChart1 = new dChart.LineChart({
                     elem: 'basicChart1',
@@ -167,7 +167,7 @@
                 <div id="basicChart2"></div>
             </div>
 
-            <pre class="prettyprint">
+            <pre><code>
     &lt;div id="basicChart2"&gt;&lt;/div&gt;
     &lt;script&gt;
         var baseChart2 = new dChart.LineChart({
@@ -179,7 +179,7 @@
             ...
         });
     &lt;/script&gt;
-            </pre>
+            </code></pre>
             <script>
                 var baseChart2 = new dChart.LineChart({
                     elem: 'basicChart2',
@@ -334,7 +334,7 @@
             <div class="bs-example bs-example-type">
                 <div id="basicChart3"></div>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var baseChart3 = new dChart.LineChart({
         axis: {
             x: {
@@ -350,7 +350,7 @@
         },
         ...
     });
-            </pre>
+            </code></pre>
             <script>
                 var baseChart3 = new dChart.LineChart({
                     elem: 'basicChart3',
@@ -393,7 +393,7 @@
             <div class="bs-example bs-example-type">
                 <div id="basicChart4"></div>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var baseChart4 = new dChart.LineChart({
         marginTop: 40,
         marginRight: 40,
@@ -420,7 +420,7 @@
         },
         ...
     });
-            </pre>
+            </code></pre>
             <script>
                 var baseChart4 = new dChart.LineChart({
                     elem: 'basicChart4',
@@ -727,7 +727,7 @@
             <div class="bs-example bs-example-type">
                 <div id="pointsChart1"></div>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var pointsChart1 = new dChart.LineChart({
         ...
         dataSets: [
@@ -755,7 +755,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var pointsChart1 = new dChart.LineChart({
                     elem: 'pointsChart1',
@@ -932,7 +932,7 @@
             <div class="bs-example bs-example-type">
                 <div id="functionChart1"></div>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var functionChart1 = new dChart.LineChart({
         ...
         dataSets: [
@@ -956,7 +956,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var functionChart1 = new dChart.LineChart({
                     elem: 'functionChart1',
@@ -1005,7 +1005,7 @@
             <div class="bs-example bs-example-type">
                 <div id="functionChart2"></div>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var functionChart2 = new dChart.LineChart({
         ...
         dataSets: [
@@ -1022,7 +1022,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var functionChart2 = new dChart.LineChart({
                     elem: 'functionChart2',
@@ -1606,7 +1606,7 @@
                 <button type="button" class="btn btn-primary btn-ms" onclick="lineChart1.draw();">redraw</button>
                 <button type="button" class="btn btn-primary btn-ms" onclick="lineChart1.recalculate();lineChart1.draw();">randomize</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var lineChart1 = new dChart.LineChart({
         elem: 'lineChart1',
         width: 700,
@@ -1669,7 +1669,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
 
                 var lineChart1 = new dChart.LineChart({
@@ -1838,7 +1838,7 @@
                 <button type="button" class="btn btn-primary btn-ms" onclick="areaChart1.draw();">redraw</button>
                 <button type="button" class="btn btn-primary btn-ms" onclick="areaChart1.recalculate();areaChart1.draw();">randomize</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var areaChart1 = new dChart.AreaChart({
         elem: 'areaChart1',
         width: 700,
@@ -1876,7 +1876,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var areaChart1 = new dChart.AreaChart({
                     elem: 'areaChart1',
@@ -1920,7 +1920,7 @@
                 <div id="areaChart2"></div>
                 <button type="button" class="btn btn-primary btn-ms" onclick="areaChart2.draw();">redraw</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var areaChart2 = new dChart.AreaChart({
         elem: 'areaChart2',
         width: 700,
@@ -1986,7 +1986,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var areaChart2 = new dChart.AreaChart({
                     elem: 'areaChart2',
@@ -2121,7 +2121,7 @@
                 <button type="button" class="btn btn-primary btn-ms" onclick="barChart1.draw();">redraw</button>
                 <button type="button" class="btn btn-primary btn-ms" onclick="barChart1.recalculate();barChart1.draw();">randomize</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var barChart1 = new dChart.BarChart({
         elem: 'barChart1',
         width: 700,
@@ -2173,7 +2173,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var barChart1 = new dChart.BarChart({
                     elem: 'barChart1',
@@ -2270,7 +2270,7 @@
                 <div id="scatterChart1"></div>
                 <button type="button" class="btn btn-primary btn-ms" onclick="scatterChart1.draw();">redraw</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var scatterChart1 = new dChart.ScatterChart({
         elem: 'scatterChart1',
         width: 700,
@@ -2313,7 +2313,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var scatterData1 = [],
                     scatterData2 = []
@@ -2374,7 +2374,7 @@
                 <button type="button" class="btn btn-primary btn-ms" onclick="scatterChart2.draw();">redraw</button>
 
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var scatterChart2 = new dChart.ScatterChart({
         elem: 'scatterChart2',
         width: 700,
@@ -2395,7 +2395,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var scatterChart2 = new dChart.ScatterChart({
                     elem: 'scatterChart2',
@@ -2460,7 +2460,7 @@
                 <div id="pieChart1"></div>
                 <button type="button" class="btn btn-primary btn-ms" onclick="pieChart1.draw();">redraw</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var pieChart1 = new dChart.PieChart({
         elem: 'pieChart1',
         width: 700,
@@ -2494,7 +2494,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var pieChart1 = new dChart.PieChart({
                     elem: 'pieChart1',
@@ -2506,7 +2506,7 @@
                     marginTop: 0,
                     marginBottom: 40,
                     transition: {
-                        duration: 1500,
+                        duration: 500,
                         delay: 250
                     },
                     dataSets: [
@@ -2535,7 +2535,7 @@
                 <button type="button" class="btn btn-primary btn-ms" onclick="pieChart2.draw();">redraw</button>
                 <button type="button" class="btn btn-primary btn-ms" onclick="pieChart2.recalculate();pieChart2.draw();">randomize</button>
             </div>
-            <pre class="prettyprint">
+            <pre><code>
     var pieChart2 = new dChart.PieChart({
         elem: 'pieChart2',
         width: 700,
@@ -2570,7 +2570,7 @@
             }
         ]
     });
-            </pre>
+            </code></pre>
             <script>
                 var pieChart2 = new dChart.PieChart({
                     elem: 'pieChart2',
@@ -2582,7 +2582,7 @@
                     marginTop: 0,
                     marginBottom: 40,
                     transition: {
-                        duration: 1500,
+                        duration: 500,
                         delay: 250
                     },
                     dataSets: [

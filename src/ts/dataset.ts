@@ -76,6 +76,8 @@ module dChart {
 
         constructor(public chart:any) {
 
+            this.fontStyle.stroke = "none";
+            this.fontStyle.fill = "black";
         }
 
         /**
