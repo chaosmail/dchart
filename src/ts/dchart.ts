@@ -83,7 +83,8 @@ module dChart {
         fontStyle:Utils.FontStyle = new Utils.FontStyle();
 
         dataSets:DataSet[] = [];
-        format:any = d3.format("0.2f");
+
+        format:any;
 
         constructor() {
 ;
@@ -92,6 +93,8 @@ module dChart {
             this.fontStyle.fontWeight = "normal";
             this.fontStyle.stroke = "none";
             this.fontStyle.fill = "black";
+
+            this.setFormat(".2f");
         }
 
         clear() {
@@ -99,6 +102,13 @@ module dChart {
             if (this.svg) {
                 this.svg.remove();
             }
+        }
+
+        setFormat(format:string) {
+
+            this.format = d3.format(format);
+
+            return this;
         }
 
         getPoint() {
@@ -241,6 +251,10 @@ module dChart {
                 this.showTransition = true;
             }
 
+            if (value.hasOwnProperty("format")) {
+                this.setFormat(value.format);
+            }
+
             if (value.hasOwnProperty("transition")) {
 
                 var transition = new Utils.Transition();
@@ -277,13 +291,49 @@ module dChart {
                 dataSet.calculate();
             });
         }
+
+        unique(axis:string = "x") {
+
+            var u = {}, a = [];
+
+            this.dataSets.forEach(function(dataset) {
+
+                var value = dataset.unique(axis);
+
+                for(var i = 0, l = value.length; i < l; ++i){
+                    if(u.hasOwnProperty(value[i])) {
+                        continue;
+                    }
+                    a.push(value[i]);
+                    u[value[i]] = 1;
+                }
+            });
+
+            return a;
+        }
     }
 
     export class Chart2D extends Chart {
 
+        xAxis:xAxis;
+        yAxis:yAxis;
 
-        xAxis:xAxis = new xAxis();
-        yAxis:yAxis = new yAxis();
+        constructor() {
+
+            this.xAxis = new xAxis(this);
+            this.yAxis = new yAxis(this);
+
+            super();
+        }
+
+        setFormat(format:string) {
+
+            this.format = d3.format(format);
+            this.xAxis.setFormat(format);
+            this.yAxis.setFormat(format);
+
+            return this;
+        }
 
         getPoint() {
             return new Point2D();
@@ -366,9 +416,28 @@ module dChart {
 
         depth:number = 400;
 
-        xAxis:xAxis = new xAxis();
-        yAxis:yAxis = new yAxis();
-        zAxis:zAxis = new zAxis();
+        xAxis:xAxis;
+        yAxis:yAxis;
+        zAxis:zAxis;
+
+        constructor() {
+            super();
+
+            this.xAxis = new xAxis(this);
+            this.yAxis = new yAxis(this);
+            this.zAxis = new zAxis(this);
+        }
+
+
+        setFormat(format:string) {
+
+            this.format = d3.format(format);
+            this.xAxis.setFormat(format);
+            this.yAxis.setFormat(format);
+            this.zAxis.setFormat(format);
+
+            return this;
+        }
 
         getPoint() {
             return new Point3D();
@@ -775,9 +844,9 @@ module dChart {
                         .append("rect")
                         .areaStyle(dataSet.areaStyle)
                         .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
-                        .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
+                        .attr("y", (d:Point2D) => yScale(d.y))
                         .attr("width", (d:Point2D) => width)
-                        .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
+                        .attr("height", (d:Point2D) =>  this.nettoHeight - yScale(d.y));
                 }
                 else {
 
@@ -795,8 +864,8 @@ module dChart {
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("y", (d:Point2D) => this.nettoHeight - yScale(d.y))
-                        .attr("height", (d:Point2D) => Math.abs(yScale(d.y)));
+                        .attr("y", (d:Point2D) => yScale(d.y))
+                        .attr("height", (d:Point2D) => this.nettoHeight - yScale(d.y));
                 }
 
             });

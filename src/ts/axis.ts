@@ -8,7 +8,9 @@ module dChart {
         label:string;
         labelAlign:string;
         labelOffset:number;
+        format:string;
         gridStyle:Utils.LineStyle;
+        fontStyle:Utils.FontStyle;
         scale:string;
         autorange:bool;
         ticks:number;
@@ -23,7 +25,11 @@ module dChart {
 
         gridStyle:Utils.LineStyle = new Utils.LineStyle();
 
+        fontStyle:Utils.FontStyle;
+
         label:string;
+
+        format:any;
 
         labelOffset:number = 34;
 
@@ -64,7 +70,7 @@ module dChart {
          */
         labelAlign:string = "end";
 
-        ticks:number = 10;
+        ticks:number;
 
         ticksFormat:string[];
 
@@ -78,12 +84,13 @@ module dChart {
 
         visible:bool = true;
 
-        constructor() {
+        constructor(public chart:any) {
 
             this.gridStyle.stroke = "black";
             this.gridStyle.strokeWidth = 1;
             this.gridStyle.strokeOpacity = 0.25;
 
+            this.format = chart.format;
         }
 
         addScaleFn(fn:string,args:any) {
@@ -98,6 +105,13 @@ module dChart {
             this.orientation = (orientation.match(/^y|v|vertical$/i)) ? "y"
                 : (orientation.match(/^z$/i)) ? "z"
                 : "x";
+
+            return this;
+        }
+
+        setFormat(format:string) {
+
+            this.format = d3.format(format);
 
             return this;
         }
@@ -134,67 +148,6 @@ module dChart {
             return this;
         }
 
-
-        /**
-         * linear       d3.scale.linear()
-         *              Linear scales are the most common scale, and a good default choice to map a continuous input domain
-         *              to a continuous output range. The mapping is linear in that the output range value y can be expressed
-         *              as a linear function of the input domain value x: y = mx + b. The input domain is typically a dimension
-         *              of the data that you want to visualize, such as the height of students (measured in meters) in a sample
-         *              population. The output range is typically a dimension of the desired output visualization, such as the
-         *              height of bars (measured in pixels) in a histogram.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-linear
-         * identity     d3.scale.identity()
-         *              Identity scales are a special case of linear scales where the domain and range are identical; the scale
-         *              and its invert method are both the identity function. These scales are occasionally useful when working
-         *              with pixel coordinates, say in conjunction with the axis and brush components.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-identity
-         * pow          d3.scale.pow()
-         *              Power scales are similar to linear scales, except there's an exponential transform that is applied to
-         *              the input domain value before the output range value is computed. The mapping to the output range value
-         *              y can be expressed as a function of the input domain value x: y = mx^k + b, where k is the exponent value.
-         *              Power scales also support negative values, in which case the input value is multiplied by -1, and the
-         *              resulting output value is also multiplied by -1.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-pow
-         * sqrt         d3.scale.sqrt()
-         *              Constructs a new power scale with the default domain [0,1], the default range [0,1], and the exponent .5.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-sqrt
-         * log          d3.scale.log()
-         *              Log scales are similar to linear scales, except there's a logarithmic transform that is applied to the
-         *              input domain value before the output range value is computed. The mapping to the output range value y
-         *              can be expressed as a function of the input domain value x: y = m log(*x*) + b. Log scales also support
-         *              negative values, in which case the input value is multiplied by -1, and the resulting output value is also
-         *              multiplied by -1. However, note that the domain of a log scale should never contain zero, as log(0) is
-         *              negative infinity.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-log
-         * quantize     d3.scale.quantize()
-         *              Quantize scales are a variant of linear scales with a discrete rather than continuous range. The input
-         *              domain is still continuous, and divided into uniform segments based on the number of values in (the
-         *              cardinality of) the output range. The mapping is linear in that the output range value y can be expressed
-         *              as a linear function of the input domain value x: y = mx + b. The input domain is typically a dimension
-         *              of the data that you want to visualize, such as the height of students (measured in meters) in a sample
-         *              population. The output range is typically a dimension of the desired output visualization, such as the
-         *              height of bars (measured in pixels) in a histogram.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-quantize
-         * quantile     d3.scale.quantile()
-         *              Quantile scales map an input domain to a discrete range. Although the input domain is continuous and
-         *              the scale will accept any reasonable input value, the input domain is specified as a discrete set of
-         *              values. The number of values in (the cardinality of) the output range determines the number of quantiles
-         *              that will be computed from the input domain. To compute the quantiles, the input domain is sorted, and
-         *              treated as a population of discrete values. The input domain is typically a dimension of the data that
-         *              you want to visualize, such as the daily change of the stock market. The output range is typically a
-         *              dimension of the desired output visualization, such as a diverging color scale.
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-quantile
-         * treshold     d3.scale.threshold()
-         *              Threshold scales are similar to quantize scales, except they allow you to map arbitrary subsets of the domain
-         *              to discrete values in the range. The input domain is still continuous, and divided into slices based on a set
-         *              of threshold values. The input domain is typically a dimension of the data that you want to visualize, such
-         *              as the height of students (measured in meters) in a sample population. The output range is typically a dimension
-         *              of the desired output visualization, such as a set of colors (represented as strings).
-         *              https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-threshold
-         * @param scale {string}
-         * @see https://github.com/mbostock/d3/wiki/Quantitative-Scales
-         */
         getScale() {
 
             var d3Scale = (this.scale.match(/^identity$/i)) ? d3.scale.identity()
@@ -223,10 +176,16 @@ module dChart {
                 orient = this.align === "end" ? "right" : "left";
             }
 
+            if (!this.ticks) {
+                var u = this.chart.unique(this.orientation);
+                this.ticks = u.length;
+            }
+
             var axis = d3.svg.axis()
                          .scale(this.getScale())
                          .orient(orient)
-                         .ticks(this.ticks);
+                         .ticks(this.ticks)
+                         .tickFormat(this.format);
 
             if (this.showGrid) {
 
@@ -307,6 +266,11 @@ module dChart {
                 this.autorange = value.autorange;
             }
 
+            if (value.hasOwnProperty("format")){
+
+                this.setFormat(value.format);
+            }
+
             if (value.hasOwnProperty("showGrid")){
 
                 this.showGrid = value.showGrid;
@@ -343,8 +307,8 @@ module dChart {
 
         orientation:string = "x";
 
-        constructor() {
-            super();
+        constructor(chart:any) {
+            super(chart);
 
             this.setAlign("bottom");
             this.setLabelAlign("right");
@@ -376,8 +340,8 @@ module dChart {
 
         orientation:string = "y";
 
-        constructor() {
-            super();
+        constructor(chart:any) {
+            super(chart);
 
             this.setAlign("left");
             this.setLabelAlign("top");
@@ -413,5 +377,10 @@ module dChart {
     export class zAxis extends Axis {
 
         orientation:string = "z";
+
+        constructor(chart:any) {
+            super(chart);
+
+        }
     }
 }

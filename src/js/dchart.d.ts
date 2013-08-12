@@ -137,7 +137,9 @@ declare module dChart {
         label: string;
         labelAlign: string;
         labelOffset: number;
+        format: string;
         gridStyle: dChart.Utils.LineStyle;
+        fontStyle: dChart.Utils.FontStyle;
         scale: string;
         autorange: boolean;
         ticks: number;
@@ -145,10 +147,13 @@ declare module dChart {
         domain: number[];
     }
     class Axis {
+        public chart: any;
         public svg: D3.Selection;
         public svgLabel: D3.Selection;
         public gridStyle: dChart.Utils.LineStyle;
+        public fontStyle: dChart.Utils.FontStyle;
         public label: string;
+        public format: any;
         public labelOffset: number;
         public range: number[];
         public domain: number[];
@@ -167,9 +172,10 @@ declare module dChart {
         public tickSize: number[];
         public tickPadding: number;
         public visible: boolean;
-        constructor();
+        constructor(chart: any);
         public addScaleFn(fn: string, args: any): void;
         public setOrientation(orientation?: string): Axis;
+        public setFormat(format: string): Axis;
         public setDomain(domain: number[]): Axis;
         public setRange(range: number[]): Axis;
         public setAlign(align: string): Axis;
@@ -183,16 +189,17 @@ declare module dChart {
     }
     class xAxis extends Axis {
         public orientation: string;
-        constructor();
+        constructor(chart: any);
         public redraw(min?: number, max?: number): void;
     }
     class yAxis extends Axis {
         public orientation: string;
-        constructor();
+        constructor(chart: any);
         public redraw(min?: number, max?: number): void;
     }
     class zAxis extends Axis {
         public orientation: string;
+        constructor(chart: any);
     }
 }
 declare module dChart.Utils {
@@ -235,16 +242,36 @@ declare module dChart.Utils {
     }
 }
 declare module dChart.Utils {
+    interface IFilter {
+        name: string;
+        operator: string;
+        value: any;
+    }
+    class Filter {
+        public key: string;
+        public operator: string;
+        public value: any;
+        public is(object: any): boolean;
+        public not(object: any): boolean;
+        public normalize(value: any): void;
+    }
+}
+declare module dChart.Utils {
     interface IDataSrc {
         url: string;
         dataType: string;
         map: any;
+        filter: Utils.Filter;
     }
     class Loader {
         public url: string;
         public dataType: string;
         public map: any;
         public getData(callback: (data: any, map: any) => void): void;
+        public getJsonData(callback: (data: any, map: any) => void): void;
+        public getTxtData(callback: (data: any, map: any) => void): void;
+        public getCsvData(callback: (data: any, map: any) => void): void;
+        public getTsvData(callback: (data: any, map: any) => void): void;
         public normalize(value: any): void;
     }
 }
@@ -285,6 +312,7 @@ declare module dChart {
         public calculate(): void;
         public min(axis: string): number;
         public max(axis: string): number;
+        public unique(axis: string): any[];
     }
 }
 declare module dChart.Utils {
@@ -357,6 +385,7 @@ declare module dChart {
         public format: any;
         constructor();
         public clear(): void;
+        public setFormat(format: string): Chart;
         public getPoint(): dChart.Point;
         public getSolver(): dChart.Utils.Solver;
         public redraw(): void;
@@ -367,10 +396,13 @@ declare module dChart {
         public redrawData(): void;
         public normalize(value: any): void;
         public recalculate(): void;
+        public unique(axis?: string): any[];
     }
     class Chart2D extends Chart {
         public xAxis: dChart.xAxis;
         public yAxis: dChart.yAxis;
+        constructor();
+        public setFormat(format: string): Chart2D;
         public getPoint(): dChart.Point2D;
         public getSolver(): dChart.Utils.Solver2D;
         public redraw(): void;
@@ -388,6 +420,8 @@ declare module dChart {
         public xAxis: dChart.xAxis;
         public yAxis: dChart.yAxis;
         public zAxis: dChart.zAxis;
+        constructor();
+        public setFormat(format: string): Chart3D;
         public getPoint(): dChart.Point3D;
         public drawAxis(): void;
         public redrawAxis(): void;

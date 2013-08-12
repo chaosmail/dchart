@@ -713,7 +713,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <code>DataSrc</code> <span class="label label-danger">not implemented</span>
+                        <code>dataSrc</code>
                     </td>
                     <td><a href="#datasets-files">DataSrc</a></td>
                     <td>{}</td>
@@ -964,13 +964,16 @@
                     width:700,
                     height:400,
                     label: "Dataset: Function Example",
+                    format: '.1f',
                     axis: {
                         x: {
                             label: "x axis",
-                            align: "center"
+                            align: "center",
+                            ticks: 18
                         },
                         y: {
-                            label: "y axis"
+                            label: "y axis",
+                            ticks: 10
                         }
                     },
                     dataSets: [
@@ -1032,10 +1035,14 @@
                     label: "Dataset: Function Example",
                     axis: {
                         x: {
-                            label: "x axis"
+                            label: "x axis",
+                            ticks: 15,
+                            format: ".0f"
                         },
                         y: {
-                            label: "y axis"
+                            label: "y axis",
+                            ticks:10,
+                            format: ".1f"
                         }
                     },
                     dataSets: [
@@ -1117,7 +1124,162 @@
 
         <h2 id="datasets-files">Files</h2>
 
-            <span class="label label-danger">not implemented</span>
+        <div>
+            <div class="bs-example bs-example-type">
+                <div id="fileChart1"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="fileChart1.draw();">redraw</button>
+            </div>
+            <pre><code>
+
+    var fileChart1 = new dChart.BarChart({
+        elem: 'fileChart1',
+        dataSets: [
+            {
+                label: "CSV Data: Male",
+                areaStyle: {
+                    stroke: "thistle",
+                    fill: "thistle",
+                    fillOpacity: 0.7
+                },
+                dataSrc: {
+                    url: 'files/population.csv',
+                    dataType: 'csv',
+                    map: {
+                        x:'year',
+                        y:'people'
+                    },
+                    filter: [
+                        {
+                            key:'sex',
+                            operator:'===',
+                            value:"1"
+                        },
+                        {
+                            key:'age',
+                            operator:'===',
+                            value:"20"
+                        }
+                    ]
+                }
+            },
+            {
+                label: "CSV Data: Female",
+                areaStyle: {
+                    stroke: "tomato",
+                    fill: "tomato",
+                    fillOpacity: 0.7
+                },
+                dataSrc: {
+                    url: 'files/population.csv',
+                    dataType: 'csv',
+                    map: {
+                        x:'year',
+                        y:'people'
+                    },
+                    filter: [
+                        {
+                            key:'sex',
+                            operator:'===',
+                            value:"2"
+                        },
+                        {
+                            key:'age',
+                            operator:'===',
+                            value:"20"
+                        }
+                    ]
+                }
+            }
+        ]
+    });
+
+            </code></pre>
+            <script>
+                var fileChart1 = new dChart.BarChart({
+                    elem: 'fileChart1',
+                    width: 700,
+                    height: 400,
+                    marginRight: 30,
+                    axis: {
+                        x: {
+                            format: '.',
+                            range: [1840,2000],
+                            ticks: 22
+                        },
+                        y: {
+                            format: 's',
+                            range:[0,10000000],
+                            gridStyle: {
+                                stroke: "lightgrey",
+                                strokeOpacity: 0.5
+                            }
+                        }
+                    },
+                    transition: {
+                        duration: 250,
+                        delay: 150
+                    },
+                    dataSets: [
+                        {
+                            label: "CSV Data: Male",
+                            areaStyle: {
+                                stroke: "thistle",
+                                fill: "thistle",
+                                fillOpacity: 0.7
+                            },
+                            dataSrc: {
+                                url: 'files/population.csv',
+                                dataType: 'csv',
+                                map: {
+                                    x:'year',
+                                    y:'people'
+                                },
+                                filter: [
+                                    {
+                                        key:'sex',
+                                        operator:'===',
+                                        value:"1"
+                                    },
+                                    {
+                                        key:'age',
+                                        operator:'===',
+                                        value:"20"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            label: "CSV Data: Female",
+                            areaStyle: {
+                                stroke: "tomato",
+                                fill: "tomato",
+                                fillOpacity: 0.7
+                            },
+                            dataSrc: {
+                                url: 'files/population.csv',
+                                dataType: 'csv',
+                                map: {
+                                    x:'year',
+                                    y:'people'
+                                },
+                                filter: [
+                                    {
+                                        key:'sex',
+                                        operator:'===',
+                                        value:"2"
+                                    },
+                                    {
+                                        key:'age',
+                                        operator:'===',
+                                        value:"20"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                });
+            </script>
+        </div>
 
         <h3 id="datasets-files-datasrc">DataSrc Options</h3>
 
@@ -1161,6 +1323,14 @@
                     <td><a href="#datasets-files-map">PointMap</a></td>
                     <td>{}</td>
                     <td>Map, that maps the parsed object to a <a href="#datasets-points-point">Point</a>-object</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>filter</code>
+                    </td>
+                    <td><a href="#datasets-files-filter">Filter[]</a></td>
+                    <td>[]</td>
+                    <td>Array of Filters, that filter the parsed object</td>
                 </tr>
                 </tbody>
             </table>
@@ -1284,9 +1454,54 @@
                 </tbody>
             </table>
         </div>
+
+        <h3 id="datasets-files-filter">Filter Options</h3>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>key</code>
+                    </td>
+                    <td>string</td>
+                    <td>''</td>
+                    <td>Key of the object, which value should be filtered. If key is '', than the object/variable itself gets filtered.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>operator</code>
+                    </td>
+                    <td>string</td>
+                    <td>'=='</td>
+                    <td>Boolean operator, to compare the values</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>value</code>
+                    </td>
+                    <td>any</td>
+                    <td>''</td>
+                    <td>Value, which should be compared to</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-
 
     <div class="bs-docs-section">
         <div class="page-header">
@@ -2023,11 +2238,15 @@
                     label: "Area Chart",
                     axis: {
                         x: {
-                            label: "x-Axis"
+                            label: "x-Axis",
+                            ticks:18,
+                            format:"0.1f"
                         },
                         y: {
                             label: "y-Axis",
                             range:[-1,1],
+                            ticks:21,
+                            format:"0.1f",
                             gridStyle: {
                                 stroke: "black",
                                 strokeOpacity: 0.25
@@ -2209,10 +2428,13 @@
                     height: 400,
                     axis: {
                         x: {
-                            range: [0,11]
+                            range: [0,11],
+                            format: "f"
                         },
                         y: {
                             range: [0,10],
+                            ticks: 20,
+                            format:"0.1f",
                             gridStyle: {
                                 stroke: "lightgrey",
                                 strokeOpacity: 0.5
@@ -2359,10 +2581,13 @@
                     height: 400,
                     axis: {
                         x: {
-                            range: [0,11]
+                            range: [0,11],
+                            ticks:20,
+                            format: "0.1f"
                         },
                         y: {
                             range: [0,10],
+                            ticks:10,
                             gridStyle: {
                                 stroke: "lightgrey",
                                 strokeOpacity: 0.5
@@ -2429,6 +2654,16 @@
                     elem: 'scatterChart2',
                     width: 700,
                     height: 400,
+                    axis: {
+                        x: {
+                            ticks:20,
+                            format: "0.1f"
+                        },
+                        y: {
+                            ticks:20,
+                            format: "0.1f"
+                        }
+                    },
                     transition: {
                         duration: 100,
                         delay: 10

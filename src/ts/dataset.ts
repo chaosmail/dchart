@@ -4,6 +4,7 @@
 /// <reference path="Utils/elem.ts" />
 /// <reference path="Utils/solver.ts" />
 /// <reference path="Utils/loader.ts" />
+/// <reference path="Utils/filter.ts" />
 
 module dChart {
 
@@ -195,6 +196,16 @@ module dChart {
 
             if (value.hasOwnProperty("dataSrc")) {
 
+                var filter = [];
+
+                if (value.dataSrc.hasOwnProperty("filter")) {
+
+                    value.dataSrc.filter.forEach(function(f,k) {
+                        filter[k] = new Utils.Filter();
+                        filter[k].normalize(f);
+                    });
+                }
+
                 var loader = new Utils.Loader();
                 loader.normalize(value.dataSrc);
 
@@ -202,12 +213,27 @@ module dChart {
 
                     data.forEach((val) => {
 
+                        if (filter.length) {
+
+                            var stop = false;
+
+                            filter.forEach(function(f) {
+                                if (f.not(val)) {
+                                    stop = true;
+                                }
+                            });
+
+                            if (stop) {
+                                return;
+                            }
+                        }
+
                         var p = this.chart.getPoint();
                         p.map(val,map);
                         this.data.push(p);
                     });
 
-                    this.chart.redraw();
+                    this.chart.draw();
                 });
             }
         }
@@ -241,6 +267,24 @@ module dChart {
         max(axis:string) {
 
             return d3.max(this.data, (d:Point) => d[axis]);
+        }
+
+        unique(axis:string) {
+
+            var u = {}, a = [];
+
+            this.data.forEach(function(value) {
+
+                if(u.hasOwnProperty(value[axis])) {
+                    return;
+                }
+
+                a.push(value[axis]);
+                u[value[axis]] = 1;
+
+            });
+
+            return a;
         }
     }
 }
