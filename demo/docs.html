@@ -1132,6 +1132,7 @@
             <pre><code>
 
     var fileChart1 = new dChart.BarChart({
+        ...
         elem: 'fileChart1',
         dataSets: [
             {
@@ -1279,6 +1280,62 @@
                     ]
                 });
             </script>
+
+            <div class="bs-example bs-example-type">
+                <div id="fileChart2"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="fileChart2.draw();">redraw</button>
+            </div>
+            <pre><code>
+
+    var fileChart2 = new dChart.PieChart({
+        ...
+        elem: 'fileChart2',
+        format: '0.1s',
+        dataSets: [
+            {
+                label: 'Population',
+                dataSrc:
+                {
+                    url: 'files/population2.csv',
+                    dataType: 'csv',
+                    map: {
+                        x: 'population'
+                    }
+                }
+            }
+        ]
+    });
+            </code></pre>
+            <script>
+                var fileChart2 = new dChart.PieChart({
+                    elem: 'fileChart2',
+                    width: 700,
+                    height: 400,
+                    label: "Pie Chart from File",
+                    marginLeft: 0,
+                    marginRight: 0,
+                    marginTop: 0,
+                    marginBottom: 40,
+                    format: "0.1s",
+                    transition: {
+                        duration: 500,
+                        delay: 250
+                    },
+                    dataSets: [
+                        {
+                            label: "Population",
+                            dataSrc: {
+                                url: "files/population2.csv",
+                                dataType: "csv",
+                                map: {
+                                    x: "population"
+                                }
+                            }
+                        }
+                    ]
+                });
+            </script>
+
         </div>
 
         <h3 id="datasets-files-datasrc">DataSrc Options</h3>
