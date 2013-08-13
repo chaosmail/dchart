@@ -311,6 +311,14 @@
                 </tr>
                 <tr>
                     <td>
+                        <code>format</code>
+                    </td>
+                    <td>string</td>
+                    <td>'0.2f'</td>
+                    <td>Number Format, which is used in the whole chart</td>
+                </tr>
+                <tr>
+                    <td>
                         <code>transition</code>
                     </td>
                     <td><a href="#chart-styling-transitions">Transition</a></td>
@@ -564,6 +572,15 @@
                     </tr>
                     <tr>
                         <td>
+                            <code>format</code>
+                        </td>
+                        <td>string</td>
+                        <td>'0.2f'</td>
+                        <td>Number format for the axis. Use <a target="_new" href="https://github.com/mbostock/d3/wiki/Formatting#numbers">D3.js Formatting</a> for this option.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <code>scale</code> <span class="label label-danger">not implemented</span>
                         </td>
                         <td>string</td>
@@ -574,6 +591,61 @@
                 </table>
             </div>
         </div>
+
+        <div class="bs-callout bs-callout-info">
+            <p>
+                <small><a href="https://github.com/mbostock/d3/wiki/Formatting#numbers" target="_new">https://github.com/mbostock/d3/wiki/Formatting#numbers</a></small>
+            </p>
+            <h4>D3.js Formatting</h4>
+            <p>The format specifier is modeled after Python 3.1's built-in <a href="http://docs.python.org/release/3.1.3/library/string.html#formatspec">format specification mini-language</a>.
+                The general form of a specifier is [​[fill]align][sign][symbol][0][width][,][.precision][type].</p>
+
+            <p>The <em>fill</em> can be any character other than "{" or "}". The presence of a fill character is signaled by the character following it, which must be one of the <em>align</em> options.</p>
+
+            <p>The <em>align</em> can be:</p>
+
+            <ul>
+                <li>("&lt;") Forces the field to be left-aligned within the available space. </li>
+                <li>("&gt;") Forces the field to be right-aligned within the available space. (This is the default).</li>
+                <li>("^") Forces the field to be centered within the available space.</li>
+            </ul><p>The <em>sign</em> can be:</p>
+
+            <ul>
+                <li>plus ("+") - a sign should be used for both positive and negative numbers.</li>
+                <li>minus ("-") - a sign should be used only for negative numbers. (This is the default.)</li>
+                <li>space (" ") - a leading space should be used on positive numbers, and a minus sign on negative numbers.</li>
+            </ul><p>The <em>symbol</em> can be:</p>
+
+            <ul>
+                <li>currency ("$") - a currency symbol should be prefixed (or suffixed) per the locale.</li>
+                <li>base ("#") - for binary, octal, or hexadecimal output, prefix by "0b", "0o", or "0x", respectively.</li>
+            </ul><p>The "0" option enables zero-padding.</p>
+
+            <p>The <em>width</em> defines the minimum field width. If not specified, then the width will be determined by the content.</p>
+
+            <p>The <em>comma</em> (",") option enables the use of a comma for a thousands separator.</p>
+
+            <p>The <em>precision</em> indicates how many digits should be displayed after the decimal point for a value formatted with types "f" and "%", or before and after the decimal point for a value formatted with types "g", "r" and "p".</p>
+
+            <p>The available <em>type</em> values are:</p>
+
+            <ul>
+                <li>exponent ("e") - use <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number/toExponential">Number.toExponential</a>.</li>
+                <li>general ("g") - use <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number/toPrecision">Number.toPrecision</a>.</li>
+                <li>fixed ("f") - use <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number/toFixed">Number.toFixed</a>.</li>
+                <li>integer ("d") - use <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number/toString">Number.toString</a>, but ignore any non-integer values.</li>
+                <li>rounded ("r") - like fixed, but round to <em>precision</em> significant digits.</li>
+                <li>percentage ("%") - like fixed, but multiply by 100 and suffix with "%".</li>
+                <li>rounded percentage ("p") - like rounded, but multiply by 100 and suffix with "%".</li>
+                <li>binary ("b") - outputs the number in base 2.</li>
+                <li>octal ("o") - outputs the number in base 8.</li>
+                <li>hexadecimal ("x") - outputs the number in base 16, using lower-case letters for the digits above 9.</li>
+                <li>hexadecimal ("X") - outputs the number in base 16, using upper-case letters for the digits above 9.</li>
+                <li>character ("c") - converts the integer to the corresponding unicode character before printing.</li>
+                <li>SI-prefix ("s") - like rounded, but with a unit suffixed such as "9.5M" for mega, or "1.00µ" for micro.</li>
+            </ul><p>The type "n" is also supported as shorthand for ",g". </p>
+        </div>
+
         <div class="bs-callout bs-callout-info">
             <p>
                 <small><a href="https://github.com/mbostock/d3/wiki/Quantitative-Scales" target="_new">https://github.com/mbostock/d3/wiki/Quantitative-Scales</a></small>
