@@ -1,4 +1,4 @@
-/** dchart - v0.0.6 - Fri Aug 16 2013 10:57:08
+/** dchart - v0.0.6 - Fri Aug 16 2013 11:29:14
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -2141,6 +2141,7 @@ var dChart;
             _super.call(this);
             this.svgPieContainer = [];
             this.numPoints = 0;
+            this.innerRadius = 0;
             this.colorScale = d3.scale.category20c();
 
             if (config) {
@@ -2179,10 +2180,10 @@ var dChart;
                     return d.x;
                 });
 
-                var radius = _this.nettoHeight > _this.nettoWidth ? _this.nettoWidth * 0.5 : _this.nettoHeight * 0.5;
+                var radius = _this.nettoHeight > _this.nettoWidth ? _this.nettoWidth * 0.5 - _this.innerRadius : _this.nettoHeight * 0.5 - _this.innerRadius;
 
-                var outerRadius = (key + 1) * radius / _this.dataSets.length;
-                var innerRadius = key * radius / _this.dataSets.length;
+                var outerRadius = (key + 1) * radius / _this.dataSets.length + _this.innerRadius;
+                var innerRadius = key * radius / _this.dataSets.length + _this.innerRadius;
 
                 var arc = d3.svg.arc().outerRadius(outerRadius).innerRadius(innerRadius);
 
@@ -2221,4 +2222,21 @@ var dChart;
         return PieChart;
     })(Chart);
     dChart.PieChart = PieChart;
+
+    var DoughnutChart = (function (_super) {
+        __extends(DoughnutChart, _super);
+        function DoughnutChart() {
+            _super.apply(this, arguments);
+            this.innerRadius = 10;
+        }
+        DoughnutChart.prototype.normalize = function (value) {
+            _super.prototype.normalize.call(this, value);
+
+            if (value.hasOwnProperty("innerRadius")) {
+                this.innerRadius = parseFloat(value.innerRadius);
+            }
+        };
+        return DoughnutChart;
+    })(PieChart);
+    dChart.DoughnutChart = DoughnutChart;
 })(dChart || (dChart = {}));

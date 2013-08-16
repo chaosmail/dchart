@@ -472,11 +472,16 @@ declare module dChart {
     class PieChart extends Chart {
         public svgPieContainer: D3.Selection[];
         public numPoints: number;
+        public innerRadius: number;
         public colorScale: any;
         constructor(config?: IChart);
         public getPoint(): dChart.Point1D;
         public getSolver(): dChart.Utils.Solver1D;
         public drawData(): void;
         public redrawData(): void;
+    }
+    class DoughnutChart extends PieChart {
+        public innerRadius: number;
+        public normalize(value: any): void;
     }
 }

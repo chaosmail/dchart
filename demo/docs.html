@@ -89,6 +89,7 @@
                             <li><a href="#chart-types-bar-chart-horizontal">Bar Chart Horizontal</a></li>
                             <li><a href="#chart-types-scatter-chart">Scatter Chart</a></li>
                             <li><a href="#chart-types-pie-chart">Pie Chart</a></li>
+                            <li><a href="#chart-types-doughnut-chart">Doughnut Chart</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -330,6 +331,14 @@
                     <td><a href="#basic-usage-axis">Axis</a></td>
                     <td>{x:{},y:{}}</td>
                     <td>The configuration for 2D-axis</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>dataSets</code>
+                    </td>
+                    <td><a href="#datasets">DataSet</a>[]</td>
+                    <td>[]</td>
+                    <td>Data, which should be displayed in the chart</td>
                 </tr>
                 </tbody>
             </table>
@@ -3198,6 +3207,154 @@
         </div>
 
         <h3>PieChart Options</h3>
+
+        <h4>Data</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>areaStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-area">AreaStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the pie-areas</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="chart-types-doughnut-chart">Doughnut Chart</h2>
+
+        <div>
+            <div class="bs-example bs-example-type">
+                <div id="doughnutChart1"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="doughnutChart1.draw();">redraw</button>
+                <button type="button" class="btn btn-primary btn-ms" onclick="doughnutChart1.recalculate();doughnutChart1.draw();">randomize</button>
+            </div>
+            <pre><code>
+    var doughnutChart1 = new dChart.DoughnutChart({
+        elem: 'doughnutChart1',
+        width: 700,
+        height: 400,
+        label: "Doughnut Chart Example",
+        innerRadius: 100,
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 40,
+        transition: {
+            duration: 500,
+            delay: 250
+        },
+        dataSets: [
+            {
+                label: "Random Dataset",
+                dataFn: {
+                    fn: function() { return Math.random()*100 },
+                    min: 0,
+                    max: 3,
+                    step: 1
+                }
+            },
+            {
+                label: "Another random Dataset",
+                dataFn: {
+                    fn: function() { return Math.random()*100 },
+                    min: 0,
+                    max: 6,
+                    step: 1
+                }
+            }
+        ]
+    });
+            </code></pre>
+            <script>
+                var doughnutChart1 = new dChart.DoughnutChart({
+                    elem: 'doughnutChart1',
+                    width: 700,
+                    height: 400,
+                    label: "Doughnut Chart Example",
+                    innerRadius: 100,
+                    marginLeft: 0,
+                    marginRight: 0,
+                    marginTop: 0,
+                    marginBottom: 40,
+                    transition: {
+                        duration: 500,
+                        delay: 250
+                    },
+                    dataSets: [
+                        {
+                            label: "Random Dataset",
+                            dataFn: {
+                                fn: function() { return Math.random()*100 },
+                                min: 0,
+                                max: 3,
+                                step: 1
+                            }
+                        },
+                        {
+                            label: "Another random Dataset",
+                            dataFn: {
+                                fn: function() { return Math.random()*100 },
+                                min: 0,
+                                max: 6,
+                                step: 1
+                            }
+                        }
+                    ]
+                });
+            </script>
+        </div>
+
+        <h3>DoughnutChart Options</h3>
+
+        <h4>Chart</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>innerRadius</code>
+                    </td>
+                    <td>number</td>
+                    <td>10</td>
+                    <td>Radius of the doughnut hole</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
         <h4>Data</h4>
 

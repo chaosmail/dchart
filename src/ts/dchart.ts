@@ -1026,6 +1026,7 @@ module dChart {
 
         svgPieContainer:D3.Selection[] = [];
         numPoints:number = 0;
+        innerRadius:number = 0;
         colorScale:any = d3.scale.category20c();
 
         constructor(config?:IChart) {
@@ -1074,10 +1075,10 @@ module dChart {
                     .sort(null)
                     .value( (d:Point1D) => d.x);
 
-                var radius = this.nettoHeight > this.nettoWidth ? this.nettoWidth*0.5 : this.nettoHeight*0.5;
+                var radius = this.nettoHeight > this.nettoWidth ? this.nettoWidth*0.5-this.innerRadius : this.nettoHeight*0.5-this.innerRadius;
 
-                var outerRadius = (key + 1) * radius/this.dataSets.length;
-                var innerRadius = key * radius/this.dataSets.length;
+                var outerRadius = (key + 1) * radius/this.dataSets.length + this.innerRadius;
+                var innerRadius = key * radius/this.dataSets.length + this.innerRadius;
 
                 var arc = d3.svg.arc()
                     .outerRadius(outerRadius)
@@ -1129,6 +1130,19 @@ module dChart {
                         });
                 }
             });
+        }
+    }
+
+    export class DoughnutChart extends PieChart {
+
+        innerRadius:number = 10;
+
+        normalize(value:any) {
+            super.normalize(value);
+
+            if (value.hasOwnProperty("innerRadius")) {
+                this.innerRadius = parseFloat(value.innerRadius);
+            }
         }
     }
 }
