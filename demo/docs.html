@@ -2502,10 +2502,13 @@
         height: 400,
         axis: {
             x: {
-                range: [0,11]
+                range: [0,11],
+                format: "f"
             },
             y: {
                 range: [0,10],
+                ticks: 20,
+                format:"0.1f",
                 gridStyle: {
                     stroke: "lightgrey",
                     strokeOpacity: 0.5
@@ -2836,10 +2839,13 @@
         height: 400,
         axis: {
             x: {
-                range: [0,11]
+                range: [0,11],
+                ticks:20,
+                format: "0.1f"
             },
             y: {
                 range: [0,10],
+                ticks:10,
                 gridStyle: {
                     stroke: "lightgrey",
                     strokeOpacity: 0.5
@@ -2941,6 +2947,16 @@
         elem: 'scatterChart2',
         width: 700,
         height: 400,
+        axis: {
+            x: {
+                ticks:20,
+                format: "0.1f"
+            },
+            y: {
+                ticks:20,
+                format: "0.1f"
+            }
+        },
         transition: {
             duration: 100,
             delay: 10

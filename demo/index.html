@@ -8,10 +8,18 @@
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="lib/bootstrap/assets/css/docs.css"/>
 
+    <script src="lib/d3/d3.min.js" charset="utf-8"></script>
+
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <script src="js/dchart.js"></script>
+
+    <style>
+        .chart {
+            float:left;
+        }
+    </style>
 </head>
 <body>
 
@@ -33,9 +41,362 @@
     <div class="container">
         <h1>dChart</h1>
         <p class="lead">Extensible declarative chart library using D3.js</p>
+    </div>
+
+    <div class="container">
+    <div id="lineChart1" class="chart"></div>
+    <script>
+        var lineChart1 = new dChart.LineChart({
+            elem: 'lineChart1',
+            width: 195,
+            height: 195,
+            label: "Line Chart",
+            axis: {
+                x: {
+                    label: "x-Axis",
+                    align: "bottom",
+                    labelAlign: "right",
+                    ticks: 4
+                },
+                y: {
+                    label: "y-Axis",
+                    ticks:4,
+                    align: "left",
+                    labelAlign: "top",
+                    gridStyle: {
+                        stroke: "black",
+                        strokeOpacity: 0.25
+                    }
+                }
+            },
+            transition: {
+                duration: 1500,
+                delay: 1500
+            },
+            dataSets:[
+                {
+                    label: "Dataset 1",
+                    lineStyle: {
+                        stroke: "mediumslateblue",
+                        strokeWidth: 2,
+                        strokeDasharray: "5,5"
+                    },
+                    symbolStyle: {
+                        stroke: "mediumslateblue",
+                        strokeWidth: 2,
+                        fill: "#fff",
+                        size: 1.2
+                    },
+                    interpolate: "linear",
+                    data: [
+                        {x:0,y:0},
+                        {x:1,y:0.5},
+                        {x:2,y:0.7},
+                        {x:3,y:0.85},
+                        {x:4,y:0.9},
+                        {x:5,y:0.92}
+                    ]
+                },
+                {
+                    label: "Dataset 2: Function",
+                    lineStyle: {
+                        stroke: "red",
+                        strokeWidth: 2
+                    },
+                    interpolate:'cardinal',
+                    dataFn: {
+                        fn: function() { return Math.random() },
+                        min: 0,
+                        max: 5,
+                        step: 0.25
+                    }
+                }
+            ]
+        });
+    </script>
+
+    <div id="areaChart1" class="chart"></div>
+    <script>
+        var areaChart1 = new dChart.AreaChart({
+            elem: 'areaChart1',
+            width: 195,
+            height: 195,
+            label: "Area Chart",
+            axis: {
+                x: {
+                    label: "x-Axis",
+                    ticks: 4
+                },
+                y: {
+                    label: "y-Axis",
+                    ticks: 4,
+                    range:[0,1.5],
+                    gridStyle: {
+                        stroke: "black",
+                        strokeOpacity: 0.25
+                    }
+                }
+            },
+            transition: {
+                duration: 1500,
+                delay: 250
+            },
+            dataSets:[
+                {
+                    label: "Dataset: Function",
+                    areaStyle: {
+                        stroke: "steelblue",
+                        strokeWidth: 2,
+                        fill: "steelblue",
+                        fillOpacity: 0.4
+                    },
+                    interpolate:'cardinal',
+                    dataFn: {
+                        fn: function() { return Math.random() },
+                        min: 0,
+                        max: 5,
+                        step: 0.25
+                    }
+                }
+            ]
+        });
+    </script>
+
+    <div id="barChart1" class="chart"></div>
+    <script>
+        var barChart1 = new dChart.BarChart({
+            elem: 'barChart1',
+            width: 195,
+            height: 195,
+            label: "Bar Chart",
+            axis: {
+                x: {
+                    range: [0,11],
+                    format: "f"
+                },
+                y: {
+                    range: [0,10],
+                    ticks: 5,
+                    format:"0.1f",
+                    gridStyle: {
+                        stroke: "lightgrey",
+                        strokeOpacity: 0.5
+                    }
+                }
+            },
+            transition: {
+                duration: 250,
+                delay: 150
+            },
+            dataSets: [
+                {
+                    label: "Random Data",
+                    areaStyle: {
+                        stroke: "mistyrose",
+                        fill: "mistyrose",
+                        fillOpacity: 1
+                    },
+                    dataFn: {
+                        fn: function() { return Math.random()*10 },
+                        min: 1,
+                        max: 10,
+                        step: 1
+                    }
+                },
+                {
+                    label: "Random Data",
+                    areaStyle: {
+                        stroke: "moccasin",
+                        fill: "moccasin",
+                        fillOpacity: 1
+                    },
+                    dataFn: {
+                        fn: function() { return Math.random()*10 },
+                        min: 1,
+                        max: 10,
+                        step: 1
+                    }
+                }
+            ]
+        });
+    </script>
+
+    <div id="barChartHorizontal1" class="chart"></div>
+    <script>
+        var barChartHorizontal1 = new dChart.BarChartHorizontal({
+            elem: 'barChartHorizontal1',
+            width: 195,
+            height: 195,
+            marginTop:20,
+            marginRight:20,
+            label: "Bar Chart Horizontal",
+            axis: {
+                x: {
+                    range: [0,10],
+                    ticks: 4,
+                    format: "0.1f",
+                    gridStyle: {
+                        stroke: "lightgrey",
+                        strokeOpacity: 0.5
+                    },
+                    align:"top"
+                },
+                y: {
+                    range: [9,0],
+                    ticks: 9,
+                    format:"f"
+                }
+            },
+            transition: {
+                duration: 250,
+                delay: 150
+            },
+            dataSets: [
+                {
+                    label: "Dataset 1",
+                    areaStyle: {
+                        stroke: "darkgoldenrod",
+                        fill: "darkgoldenrod",
+                        fillOpacity: 0.7
+                    },
+                    data: [
+                        {x:1, y:1},
+                        {x:4, y:2},
+                        {x:6, y:3},
+                        {x:7.5, y:4},
+                        {x:8, y:5},
+                        {x:8.5, y:6},
+                        {x:9, y:7},
+                        {x:9.5, y:8},
+                        {x:10, y:9}
+                    ]
+                },
+                {
+                    label: "Dataset 2",
+                    areaStyle: {
+                        stroke: "chocolate",
+                        fill: "chocolate",
+                        fillOpacity: 0.7
+                    },
+                    data: [
+                        {x:10, y:1},
+                        {x:9.5, y:2},
+                        {x:9, y:3},
+                        {x:8.5, y:4},
+                        {x:8, y:5},
+                        {x:7.5, y:6},
+                        {x:6, y:7},
+                        {x:4, y:8},
+                        {x:1, y:9}
+                    ]
+                }
+            ]
+        });
+    </script>
+
+    <div id="scatterChart1" class="chart"></div>
+    <script>
+        var scatterData1 = [],
+                scatterData2 = []
+        scatterData3 = [];
+        var i = 0;
+        for (i=0;i<=10;i++) {
+            scatterData1.push({x:Math.random()*10,y:Math.random()*10});
+            scatterData2.push({x:Math.random()*10,y:Math.random()*10});
+            scatterData3.push({x:Math.random()*10,y:Math.random()*10});
+        }
+
+        var scatterChart1 = new dChart.ScatterChart({
+            elem: 'scatterChart1',
+            width: 195,
+            height: 195,
+            label: "Scatter Chart",
+            axis: {
+                x: {
+                    range: [0,10],
+                    ticks: 4,
+                    format: "0.1f"
+                },
+                y: {
+                    range: [0,10],
+                    ticks: 4,
+                    gridStyle: {
+                        stroke: "lightgrey",
+                        strokeOpacity: 0.5
+                    }
+                }
+            },
+            transition: {
+                duration: 100,
+                delay: 10
+            },
+            dataSets: [
+                {
+                    label: "Random Data",
+                    symbolStyle: {
+                        stroke: "olivedrab",
+                        fill: "olivedrab",
+                        fillOpacity: 0.7,
+                        size: 0.6
+                    },
+                    data: scatterData1
+                },
+                {
+                    label: "Random Data",
+                    symbolStyle: {
+                        stroke: "navy",
+                        fill: "navy",
+                        fillOpacity: 0.7,
+                        size: 0.5
+                    },
+                    data: scatterData2
+                }
+            ]
+        });
+    </script>
+
+    <div id="pieChart2" class="chart"></div>
+    <script>
+        var pieChart2 = new dChart.PieChart({
+            elem: 'pieChart2',
+            width: 195,
+            height: 195,
+            label: "Pie Chart",
+            marginLeft: 0,
+            marginRight: 0,
+            marginTop: 0,
+            marginBottom: 40,
+            transition: {
+                duration: 1500,
+                delay: 250
+            },
+            dataSets: [
+                {
+                    label: "Random Dataset Pie Chart",
+                    dataFn: {
+                        fn: function() { return Math.random()*100 },
+                        min: 0,
+                        max: 3,
+                        step: 1
+                    }
+                },
+                {
+                    label: "Another random Dataset Pie Chart",
+                    dataFn: {
+                        fn: function() { return Math.random()*100 },
+                        min: 0,
+                        max: 6,
+                        step: 1
+                    }
+                }
+            ]
+        });
+    </script>
+    </div>
+    <div class="container">
         <p>
-            <a href="https://github.com/chaosmail/dchart/archive/v0.0.5.zip" class="btn btn-default btn-lg">Download dChart 0.0.5 (zip)</a>
-            <a href="https://github.com/chaosmail/dchart/archive/v0.0.5.tar.gz" class="btn btn-default btn-lg">Download dChart 0.0.5 (tar.gz)</a>
+            <a href="https://github.com/chaosmail/dchart/archive/v0.0.6.zip" class="btn btn-default btn-lg">Download dChart 0.0.6 (zip)</a>
+            <a href="https://github.com/chaosmail/dchart/archive/v0.0.6.tar.gz" class="btn btn-default btn-lg">Download dChart 0.0.6 (tar.gz)</a>
         </p>
     </div>
 </div>
