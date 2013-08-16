@@ -872,6 +872,88 @@ module dChart {
         }
     }
 
+    export class BarChartHorizontal extends Chart2D {
+
+        svgRectContainer:D3.Selection[] = [];
+
+        constructor(config?:IChart2D) {
+            super();
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+        }
+
+        drawData() {
+
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
+
+                dataSet.showValues = true;
+
+                this.svgRectContainer[key] = this.dataContainer
+                    .append("g")
+                    .attr("class", "dchart-data-set dchart-data-set-" + key);
+
+            });
+        }
+
+        redrawData() {
+
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            this.dataSets.forEach((dataSet:DataSet,key:number) => {
+
+                var group = this.svgRectContainer[key].selectAll("rect")
+                    .data(dataSet.data, (d:Point2D) => d.x);
+
+                if (dataSet.data.length === 0) {
+                    return;
+                }
+
+                var yTickElems = this.yAxis.svg.selectAll('.tick');
+                var yTicks = yTickElems[0].length;
+
+                var start = (this.nettoHeight / (yTicks + 1))*0.5;
+                var height = this.nettoHeight / (yTicks + 1) / this.dataSets.length;
+
+                if (!this.showTransition) {
+
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("rect")
+                        .areaStyle(dataSet.areaStyle)
+                        .attr("x", (d:Point2D) => xScale(0))
+                        .attr("y", (d:Point2D) => yScale(d.y) - start + key*height)
+                        .attr("width", (d:Point2D) => xScale(d.x))
+                        .attr("height", (d:Point2D) => height);
+                }
+                else {
+
+                    group.exit()
+                        .remove();
+
+                    group.enter()
+                        .append("rect")
+                        .areaStyle(dataSet.areaStyle)
+                        .attr("x", (d:Point2D) => xScale(0))
+                        .attr("y", (d:Point2D) => yScale(d.y) - start + key*height)
+                        .attr("width", (d:Point2D) => 0)
+                        .attr("height", height)
+                        .transition()
+                        .duration(this.transition.duration)
+                        .delay((d,i) => i*this.transition.delay)
+                        .ease(this.transition.ease)
+                        .attr("width", (d:Point2D) => xScale(d.x));
+                }
+
+            });
+        }
+    }
+
     export class ScatterChart extends Chart2D {
 
         svgScatterContainer:D3.Selection[] = [];

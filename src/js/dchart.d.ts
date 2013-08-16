@@ -457,6 +457,12 @@ declare module dChart {
         public drawData(): void;
         public redrawData(): void;
     }
+    class BarChartHorizontal extends Chart2D {
+        public svgRectContainer: D3.Selection[];
+        constructor(config?: IChart2D);
+        public drawData(): void;
+        public redrawData(): void;
+    }
     class ScatterChart extends Chart2D {
         public svgScatterContainer: D3.Selection[];
         constructor(config?: IChart2D);

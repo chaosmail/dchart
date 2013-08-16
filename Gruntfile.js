@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         banner: banner
       },
       js: {
-        src: ['src/js/<%= pkg.name %>.js','src/js/<%= pkg.name %>.*.js'],
+        src: ['lib/d3-styles/dist/d3-styles.js','src/js/<%= pkg.name %>.js','src/js/<%= pkg.name %>.*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },

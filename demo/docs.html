@@ -27,7 +27,6 @@
     </style>
 
     <script src="lib/d3/d3.min.js" charset="utf-8"></script>
-    <script src="lib/d3-styles/dist/d3-styles.min.js"></script>
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="lib/highlightjs/highlight.pack.js"></script>
@@ -87,6 +86,7 @@
                             <li><a href="#chart-types-line-chart">Line Chart</a></li>
                             <li><a href="#chart-types-area-chart">Area Chart</a></li>
                             <li><a href="#chart-types-bar-chart">Bar Chart</a></li>
+                            <li><a href="#chart-types-bar-chart-horizontal">Bar Chart Horizontal</a></li>
                             <li><a href="#chart-types-scatter-chart">Scatter Chart</a></li>
                             <li><a href="#chart-types-pie-chart">Pie Chart</a></li>
                         </ul>
@@ -106,7 +106,6 @@
 
         <ul>
             <li><a target="_new" href="https://github.com/mbostock/d3">d3.js</a></li>
-            <li><a target="_new" href="https://github.com/chaosmail/d3-styles">d3-styles</a></li>
         </ul>
 
         <h2 id="basic-usage-initializing">Initializing</h2>
@@ -119,7 +118,6 @@
     &lt;html&gt;
     &lt;head&gt;
         &lt;script src="lib/d3.min.js"&gt;&lt;/script&gt;
-        &lt;script src="lib/d3-styles.min.js"&gt;&lt;/script&gt;
         &lt;script src="js/dchart.min.js"&gt;&lt;/script&gt;
     &lt;/head&gt;
     &lt;body&gt;
@@ -2610,6 +2608,188 @@
         </div>
 
         <h3>BarChart Options</h3>
+
+        <h4>Dataset</h4>
+
+        <div class="bs-table-scrollable">
+            <table class="table table-bordered table-striped bs-table">
+                <colgroup>
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-1">
+                    <col class="col-lg-5">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>default</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <code>areaStyle</code>
+                    </td>
+                    <td><a href="#chart-styling-area">AreaStyle</a></td>
+                    <td>{}</td>
+                    <td>Style of the area</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="chart-types-bar-chart-horizontal">Bar Chart Horizontal</h2>
+
+        <div>
+            <div class="bs-example bs-example-type">
+                <div id="barChartHorizontal1"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="barChartHorizontal1.draw();">redraw</button>
+            </div>
+            <pre><code>
+    var barChartHorizontal1 = new dChart.BarChartHorizontal({
+        elem: 'barChartHorizontal1',
+        width: 700,
+        height: 400,
+        marginTop:20,
+        marginRight:20,
+        axis: {
+            x: {
+                range: [0,10],
+                ticks:20,
+                format: "0.1f",
+                gridStyle: {
+                    stroke: "lightgrey",
+                    strokeOpacity: 0.5
+                },
+                align:"top"
+            },
+            y: {
+                range: [9,0],
+                ticks: 9,
+                format:"f"
+            }
+        },
+        transition: {
+            duration: 250,
+            delay: 150
+        },
+        dataSets: [
+            {
+                label: "Dataset 1",
+                areaStyle: {
+                    stroke: "darkgoldenrod",
+                    fill: "darkgoldenrod",
+                    fillOpacity: 0.7
+                },
+                data: [
+                    {x:1, y:1},
+                    {x:4, y:2},
+                    {x:6, y:3},
+                    {x:7.5, y:4},
+                    {x:8, y:5},
+                    {x:8.5, y:6},
+                    {x:9, y:7},
+                    {x:9.5, y:8},
+                    {x:10, y:9}
+                ]
+            },
+            {
+                label: "Dataset 2",
+                areaStyle: {
+                    stroke: "chocolate",
+                    fill: "chocolate",
+                    fillOpacity: 0.7
+                },
+                data: [
+                    {x:10, y:1},
+                    {x:9.5, y:2},
+                    {x:9, y:3},
+                    {x:8.5, y:4},
+                    {x:8, y:5},
+                    {x:7.5, y:6},
+                    {x:6, y:7},
+                    {x:4, y:8},
+                    {x:1, y:9}
+                ]
+            }
+        ]
+    });
+            </code></pre>
+            <script>
+                var barChartHorizontal1 = new dChart.BarChartHorizontal({
+                    elem: 'barChartHorizontal1',
+                    width: 700,
+                    height: 400,
+                    marginTop:20,
+                    marginRight:20,
+                    axis: {
+                        x: {
+                            range: [0,10],
+                            ticks:20,
+                            format: "0.1f",
+                            gridStyle: {
+                                stroke: "lightgrey",
+                                strokeOpacity: 0.5
+                            },
+                            align:"top"
+                        },
+                        y: {
+                            range: [9,0],
+                            ticks: 9,
+                            format:"f"
+                        }
+                    },
+                    transition: {
+                        duration: 250,
+                        delay: 150
+                    },
+                    dataSets: [
+                        {
+                            label: "Dataset 1",
+                            areaStyle: {
+                                stroke: "darkgoldenrod",
+                                fill: "darkgoldenrod",
+                                fillOpacity: 0.7
+                            },
+                            data: [
+                                {x:1, y:1},
+                                {x:4, y:2},
+                                {x:6, y:3},
+                                {x:7.5, y:4},
+                                {x:8, y:5},
+                                {x:8.5, y:6},
+                                {x:9, y:7},
+                                {x:9.5, y:8},
+                                {x:10, y:9}
+                            ]
+                        },
+                        {
+                            label: "Dataset 2",
+                            areaStyle: {
+                                stroke: "chocolate",
+                                fill: "chocolate",
+                                fillOpacity: 0.7
+                            },
+                            data: [
+                                {x:10, y:1},
+                                {x:9.5, y:2},
+                                {x:9, y:3},
+                                {x:8.5, y:4},
+                                {x:8, y:5},
+                                {x:7.5, y:6},
+                                {x:6, y:7},
+                                {x:4, y:8},
+                                {x:1, y:9}
+                            ]
+                        }
+                    ]
+                });
+            </script>
+        </div>
+
+        <h3>BarChart Horizontal Options</h3>
 
         <h4>Dataset</h4>
 

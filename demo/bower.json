@@ -9,7 +9,6 @@
   "dependencies": {
     "bootstrap": "~3.0.0-rc1",
     "d3": "~3.2.8",
-    "d3-styles": "*",
     "highlightjs": "~7.3.0"
   }
 }

@@ -1,7 +1,122 @@
-/** dchart - v0.0.5 - Mon Aug 12 2013 19:21:12
+/** dchart - v0.0.5 - Fri Aug 16 2013 10:09:13
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
+'use strict';
+
+d3.selection.prototype.lineStyle = function(arg) {
+
+    if (typeof arg === "function") {
+
+        this.style("stroke",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("stroke") ? res.stroke : "";
+        });
+        this.style("stroke-width",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("strokeWidth") ? res.strokeWidth : "";
+        });
+        this.style("stroke-opacity",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("strokeOpacity") ? res.strokeOpacity : "";
+        });
+        this.style("stroke-linecap",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("strokeLinecap") ? res.strokeLinecap : "";
+        });
+        this.style("stroke-dasharray",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("strokeDasharray") ? res.strokeDasharray : "";
+        });
+    }
+    else {
+        if (arg.hasOwnProperty("stroke")) {
+            this.style("stroke",arg.stroke);
+        }
+
+        if (arg.hasOwnProperty("strokeWidth")) {
+            this.style("stroke-width",arg.strokeWidth);
+        }
+
+        if (arg.hasOwnProperty("strokeOpacity")) {
+            this.style("stroke-opacity",arg.strokeOpacity);
+        }
+
+        if (arg.hasOwnProperty("strokeLinecap")) {
+            this.style("stroke-linecap",arg.strokeLinecap);
+        }
+
+        if (arg.hasOwnProperty("strokeDasharray")) {
+            this.style("stroke-dasharray",arg.strokeDasharray);
+        }
+    }
+
+    return this;
+};
+
+d3.selection.prototype.areaStyle = function(arg) {
+
+    this.lineStyle(arg);
+
+    if (typeof arg === "function") {
+
+        this.style("fill",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("fill") ? res.fill : "";
+        });
+        this.style("fill-opacity",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("fillOpacity") ? res.fillOpacity : "";
+        });
+    }
+    else {
+        if (arg.hasOwnProperty("fill")) {
+            this.style("fill",arg.fill);
+        }
+
+        if (arg.hasOwnProperty("fillOpacity")) {
+            this.style("fill-opacity",arg.fillOpacity);
+        }
+    }
+
+    return this;
+};
+
+d3.selection.prototype.fontStyle = function(arg) {
+
+    this.areaStyle(arg);
+
+    if (typeof arg === "function") {
+
+        this.style("font-family",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("fontFamily") ? res.fontFamily : "";
+        });
+        this.style("font-size",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("fontSize") ? res.fontSize : "";
+        });
+        this.style("font-weight",function(d,i) {
+            var res = arg(d,i);
+            return res.hasOwnProperty("fontWeight") ? res.fontWeight : "";
+        });
+    }
+    else {
+        if (arg.hasOwnProperty("fontFamily")) {
+            this.style('font-family', arg.fontFamily)
+        }
+
+        if (arg.hasOwnProperty("fontSize")) {
+            this.style('font-size', arg.fontSize)
+        }
+
+        if (arg.hasOwnProperty("fontWeight")) {
+            this.style('font-weight', arg.fontWeight)
+        }
+    }
+
+    return this;
+};
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1893,6 +2008,79 @@ var dChart;
         return BarChart;
     })(Chart2D);
     dChart.BarChart = BarChart;
+
+    var BarChartHorizontal = (function (_super) {
+        __extends(BarChartHorizontal, _super);
+        function BarChartHorizontal(config) {
+            _super.call(this);
+            this.svgRectContainer = [];
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+        }
+        BarChartHorizontal.prototype.drawData = function () {
+            var _this = this;
+            this.dataSets.forEach(function (dataSet, key) {
+                dataSet.showValues = true;
+
+                _this.svgRectContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+            });
+        };
+
+        BarChartHorizontal.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            this.dataSets.forEach(function (dataSet, key) {
+                var group = _this.svgRectContainer[key].selectAll("rect").data(dataSet.data, function (d) {
+                    return d.x;
+                });
+
+                if (dataSet.data.length === 0) {
+                    return;
+                }
+
+                var yTickElems = _this.yAxis.svg.selectAll('.tick');
+                var yTicks = yTickElems[0].length;
+
+                var start = (_this.nettoHeight / (yTicks + 1)) * 0.5;
+                var height = _this.nettoHeight / (yTicks + 1) / _this.dataSets.length;
+
+                if (!_this.showTransition) {
+                    group.exit().remove();
+
+                    group.enter().append("rect").areaStyle(dataSet.areaStyle).attr("x", function (d) {
+                        return xScale(0);
+                    }).attr("y", function (d) {
+                        return yScale(d.y) - start + key * height;
+                    }).attr("width", function (d) {
+                        return xScale(d.x);
+                    }).attr("height", function (d) {
+                        return height;
+                    });
+                } else {
+                    group.exit().remove();
+
+                    group.enter().append("rect").areaStyle(dataSet.areaStyle).attr("x", function (d) {
+                        return xScale(0);
+                    }).attr("y", function (d) {
+                        return yScale(d.y) - start + key * height;
+                    }).attr("width", function (d) {
+                        return 0;
+                    }).attr("height", height).transition().duration(_this.transition.duration).delay(function (d, i) {
+                        return i * _this.transition.delay;
+                    }).ease(_this.transition.ease).attr("width", function (d) {
+                        return xScale(d.x);
+                    });
+                }
+            });
+        };
+        return BarChartHorizontal;
+    })(Chart2D);
+    dChart.BarChartHorizontal = BarChartHorizontal;
 
     var ScatterChart = (function (_super) {
         __extends(ScatterChart, _super);
