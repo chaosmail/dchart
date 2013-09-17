@@ -60,7 +60,7 @@ module.exports = function(grunt) {
             },
             command: 'sh publish_demo'
         }
-    }
+    },
     watch: {
       scripts: {
         files: ['src/css/**/*.css', 'src/ts/**/*.ts'],
