@@ -53,6 +53,14 @@ module.exports = function(grunt) {
           }
       }
     },
+    shell: {
+        deploy: {
+            options: {
+                stdout: true
+            },
+            command: 'sh publish_demo'
+        }
+    }
     watch: {
       scripts: {
         files: ['src/css/**/*.css', 'src/ts/**/*.ts'],
@@ -67,7 +75,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-typescript');
+  grunt.loadNpmTasks('grunt-shell');
 
   // Default task(s).
   grunt.registerTask('default', ['clean:dist', 'typescript', 'concat', 'uglify', 'copy']);
+  grunt.registerTask('deploy', ['shell:deploy']);
 };

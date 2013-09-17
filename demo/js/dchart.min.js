@@ -1,4 +1,4 @@
-/** dchart - v0.0.6 - Fri Aug 16 2013 11:29:14
+/** dchart - v0.0.6 - Fri Aug 16 2013 12:22:49
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
