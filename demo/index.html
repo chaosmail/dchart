@@ -226,7 +226,7 @@
             elem: 'barChartHorizontal1',
             width: 195,
             height: 195,
-            marginTop:20,
+            marginTop:25,
             marginRight:20,
             label: "Bar Chart Horizontal",
             axis: {
@@ -361,17 +361,17 @@
             width: 195,
             height: 195,
             label: "Pie Chart",
-            marginLeft: 0,
-            marginRight: 0,
-            marginTop: 0,
-            marginBottom: 40,
+            marginLeft: 10,
+            marginRight: 10,
+            marginTop: 30,
+            marginBottom: 60,
             transition: {
                 duration: 1500,
                 delay: 250
             },
             dataSets: [
                 {
-                    label: "Random Dataset Pie Chart",
+                    label: "R",
                     dataFn: {
                         fn: function() { return Math.random()*100 },
                         min: 0,
@@ -380,11 +380,11 @@
                     }
                 },
                 {
-                    label: "Another random Dataset Pie Chart",
+                    label: "R",
                     dataFn: {
                         fn: function() { return Math.random()*100 },
                         min: 0,
-                        max: 6,
+                        max: 4,
                         step: 1
                     }
                 }

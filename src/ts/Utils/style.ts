@@ -3,13 +3,27 @@
 
 module dChart.Utils {
 
+    export class Style {
+
+        clone() {
+
+            var tmp = new (<any> this).constructor();
+
+            for(var k in this) {
+                tmp[k] = this[k];
+            }
+
+            return <any> tmp;
+        }
+    }
+
     /**
      * Styles for strokes
      * @see http://www.w3schools.com/svg/svg_stroking.asp
      */
-    export class LineStyle {
+    export class LineStyle extends Style {
 
-        stroke:string = "red";
+        stroke:string = "black";
         strokeWidth:number = 1;
         strokeOpacity:number = 1;
         strokeLinecap:string = "butt";
@@ -44,7 +58,7 @@ module dChart.Utils {
      */
     export class AreaStyle extends LineStyle {
 
-        fill:string = "blue";
+        fill:string = "black";
         fillOpacity:number = 1;
 
         normalize(value:any) {

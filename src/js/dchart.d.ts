@@ -57,6 +57,7 @@ declare module dChart {
         z: string;
     }
     class Point {
+        public label: string;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
         constructor();
@@ -107,7 +108,10 @@ declare module dChart {
     }
 }
 declare module dChart.Utils {
-    class LineStyle {
+    class Style {
+        public clone();
+    }
+    class LineStyle extends Style {
         public stroke: string;
         public strokeWidth: number;
         public strokeOpacity: number;
@@ -328,6 +332,7 @@ declare module dChart.Utils {
         static animateAlongPath(path: any): (t: any) => string;
     }
 }
+declare function clone(obj);
 declare module dChart {
     interface IChart {
         elem: string;
@@ -358,12 +363,24 @@ declare module dChart {
     interface IChart3D extends IChart {
         axis: IChart3DAxis;
     }
+    interface ISvgContainer {
+        chart: D3.Selection;
+        root: D3.Selection;
+        axis: D3.Selection;
+        data: D3.Selection;
+        label: D3.Selection;
+        legend: D3.Selection;
+    }
+    interface IFontContainer {
+        root: dChart.Utils.FontStyle;
+        axis: dChart.Utils.FontStyle;
+        ticks: dChart.Utils.FontStyle;
+        legend: dChart.Utils.FontStyle;
+        label: dChart.Utils.FontStyle;
+        description: dChart.Utils.FontStyle;
+    }
     class Chart {
-        public svg: D3.Selection;
-        public container: D3.Selection;
-        public axisContainer: D3.Selection;
-        public dataContainer: D3.Selection;
-        public labelContainer: D3.Selection;
+        public _svg: ISvgContainer;
         public elem: Element;
         public elemId: string;
         public marginLeft: number;
@@ -376,10 +393,10 @@ declare module dChart {
         public nettoHeight: number;
         public showTransition: boolean;
         public transition: dChart.Utils.Transition;
-        public svgLabel: D3.Selection;
         public label: string;
-        public svgDescription: D3.Selection;
         public description: string;
+        public showLegend: boolean;
+        public _font: IFontContainer;
         public fontStyle: dChart.Utils.FontStyle;
         public dataSets: dChart.DataSet[];
         public format: any;
@@ -390,6 +407,7 @@ declare module dChart {
         public getSolver(): dChart.Utils.Solver;
         public redraw(): void;
         public draw(): void;
+        public drawLegend(): void;
         public drawAxis(): void;
         public redrawAxis(): void;
         public drawData(): void;
@@ -479,6 +497,7 @@ declare module dChart {
         public getSolver(): dChart.Utils.Solver1D;
         public drawData(): void;
         public redrawData(): void;
+        public drawLegend(): void;
     }
     class DoughnutChart extends PieChart {
         public innerRadius: number;

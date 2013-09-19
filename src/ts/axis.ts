@@ -206,14 +206,17 @@ module dChart {
 
             this.clear();
 
+            this.fontStyle = this.fontStyle || this.chart._font.axis;
+
             this.svg = container.append("g")
                         .attr("class","dchart-axis dchart-axis-" + this.orientation);
 
-            this.svgLabel = container.append("g")
-                        .attr("class","dchart-axis-label dchart-axis-" + this.orientation + "-label")
-                        .append("text");
-
-
+            this.svgLabel =
+                container
+                    .append("g")
+                    .attr("class","dchart-axis-label dchart-axis-" + this.orientation + "-label")
+                    .append("text")
+                    .fontStyle(this.fontStyle);
 
             this.redraw(min, max);
         }
@@ -274,6 +277,13 @@ module dChart {
             if (value.hasOwnProperty("showGrid")){
 
                 this.showGrid = value.showGrid;
+            }
+
+            if (value.hasOwnProperty("fontStyle")) {
+
+                this.fontStyle = this.fontStyle || this.chart._font.axis;
+
+                this.fontStyle.normalize(value.fontStyle);
             }
 
             if (value.hasOwnProperty("gridStyle")){

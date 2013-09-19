@@ -9,6 +9,17 @@
 /// <reference path="Utils/animation.ts" />
 "use strict";
 
+function clone(obj){
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+
+    var temp = obj.constructor(); // changed
+
+    for(var key in obj)
+        temp[key] = clone(obj[key]);
+    return temp;
+}
+
 module dChart {
 
     export interface IChart {
@@ -50,20 +61,41 @@ module dChart {
         axis: IChart3DAxis;
     }
 
+    export interface ISvgContainer {
+        chart:D3.Selection;
+        root:D3.Selection;
+        axis:D3.Selection;
+        data:D3.Selection;
+        label:D3.Selection;
+        legend:D3.Selection;
+    }
+
+    export interface IFontContainer {
+        root:Utils.FontStyle;
+        axis:Utils.FontStyle;
+        ticks:Utils.FontStyle;
+        legend:Utils.FontStyle;
+        label:Utils.FontStyle;
+        description:Utils.FontStyle;
+    }
+
     export class Chart {
 
-        svg:D3.Selection;
-        container:D3.Selection;
-        axisContainer:D3.Selection;
-        dataContainer:D3.Selection;
-        labelContainer:D3.Selection;
+        _svg:ISvgContainer =  {
+            chart:null,
+            root:null,
+            axis:null,
+            data:null,
+            label:null,
+            legend:null
+        };
 
         elem:Element;
         elemId:string;
 
         marginLeft:number = 50;
         marginRight:number = 10;
-        marginTop:number = 10;
+        marginTop:number = 20;
         marginBottom:number = 80;
 
         width:number = 400;
@@ -74,11 +106,19 @@ module dChart {
         showTransition:bool = false;
         transition:Utils.Transition = new Utils.Transition();
 
-        svgLabel:D3.Selection;
         label:string;
-
-        svgDescription:D3.Selection;
         description:string;
+
+        showLegend:bool = true;
+
+        _font:IFontContainer = {
+            root: null,
+            axis: null,
+            ticks: null,
+            legend: null,
+            label: null,
+            description: null
+        };
 
         fontStyle:Utils.FontStyle = new Utils.FontStyle();
 
@@ -94,13 +134,24 @@ module dChart {
             this.fontStyle.stroke = "none";
             this.fontStyle.fill = "black";
 
+            this._font.root = this.fontStyle.clone();
+            this._font.legend = this.fontStyle.clone();
+            this._font.label = this.fontStyle.clone();
+            this._font.description = this.fontStyle.clone();
+            this._font.axis = this.fontStyle.clone();
+            this._font.ticks = this.fontStyle.clone();
+
+            this._font.label.fontWeight = "bold";
+            this._font.label.fontSize += 2;
+            this._font.ticks.fontSize -= 2;
+
             this.setFormat(".2f");
         }
 
         clear() {
 
-            if (this.svg) {
-                this.svg.remove();
+            if (this._svg.root) {
+                this._svg.root.remove();
             }
         }
 
@@ -124,23 +175,23 @@ module dChart {
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
             this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
-            this.svg
+            this._svg.root
                 .attr("width", this.width)
                 .attr("height", this.height)
                 .attr("xmlns", "http://www.w3.org/2000/svg");
 
-            this.container
+            this._svg.chart
                 .attr("width", this.nettoWidth)
                 .attr("height", this.nettoHeight)
                 .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
 
-            this.svgDescription
+            this._svg.label.select(".description")
                 .text(this.description)
                 .attr("x", this.nettoWidth * 0.5)
                 .attr("y", this.nettoHeight + this.marginBottom - 5)
                 .attr("text-anchor", "middle");
 
-            this.svgLabel
+            this._svg.label.select(".label")
                 .text(this.label)
                 .attr("x", this.nettoWidth * 0.5)
                 .attr("y", this.nettoHeight + this.marginBottom - 20)
@@ -149,13 +200,26 @@ module dChart {
             this.redrawAxis();
             this.redrawData();
 
-            this.container
-                .selectAll('text').fontStyle(this.fontStyle);
+            /*
+                Apply the FontStyles
+             */
 
-            this.svgLabel
-                .fontStyle(this.fontStyle)
-                .style('font-size', this.fontStyle.fontSize + 2)
-                .style('font-weight', "bold");
+            this._svg.chart
+                .selectAll('text')
+                .fontStyle(this.fontStyle);
+
+            this._svg.chart
+                .selectAll(".tick > text")
+                .fontStyle(this._font.ticks);
+
+            this._svg.label.select(".label")
+                .fontStyle(this._font.label);
+
+            this._svg.label.select(".description")
+                .fontStyle(this._font.description);
+
+            var legendDimen = this._svg.legend[0][0].getBBox();
+            this._svg.legend.attr("transform", "translate("+ this.marginLeft +"," + (legendDimen.height*0.5) + ")");
         }
 
         draw() {
@@ -165,31 +229,87 @@ module dChart {
 
             this.clear();
 
-            this.svg = d3.select(this.elem)
+            this._svg.root = d3.select(this.elem)
                          .append("svg")
                          .attr("id", "dchart-" + this.elemId);
 
-            this.container = this.svg.append("g")
+            this._svg.chart = this._svg.root.append("g")
                          .attr("class","dchart-container");
 
-            this.axisContainer = this.container.append("g")
+            this._svg.axis = this._svg.chart.append("g")
                 .attr("class","dchart-container-axis");
 
-            this.dataContainer = this.container.append("g")
+            this._svg.data = this._svg.chart.append("g")
                 .attr("class","dchart-container-data");
 
-            this.labelContainer = this.container.append("g")
+            this._svg.label = this._svg.root.append("g")
                 .attr("class","dchart-container-label");
 
-            this.svgLabel = this.labelContainer.append("text");
+            this._svg.legend = this._svg.root.append("g")
+                .attr("class","dchart-container-legend");
 
-            this.svgDescription = this.labelContainer.append("text");
 
+            this._svg.label.append("text")
+                .attr("class","label");
+
+            this._svg.label.append("text")
+                .attr("class","description");
+
+            if (this.showLegend) {
+
+                this.drawLegend();
+            }
 
             this.drawAxis();
             this.drawData();
 
             this.redraw();
+        }
+
+        drawLegend() {
+
+            var legendDotRadius = this._font.legend.fontSize * 0.42,
+                legendOffsetMin = 10,
+                legendOffsetFactor = 0.03,
+                legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin,
+                translateX = 0;
+
+            this.dataSets.forEach((dataset:DataSet,k:number) => {
+
+               var container =
+                    this._svg.legend
+                        .append("g")
+                        .attr("height", legendDotRadius * 2),
+                   color = dataset.symbolStyle ? dataset.symbolStyle.fill : dataset.areaStyle ? dataset.areaStyle.fill : dataset.lineStyle.stroke;
+
+                container
+                    .append("circle")
+                    .style("stroke", "none")
+                    .style("stroke-width", 0)
+                    .style("fill", color)
+                    .attr("cx", 0)
+                    .attr("cy", 0)
+                    .attr("r", legendDotRadius);
+
+                container
+                    .append("text")
+                    .attr("x", legendDotRadius*1.5)
+                    .attr("y", legendDotRadius*0.5)
+                    .style("alignment-baseline", "middle")
+                    .fontStyle(this._font.legend)
+                    .text(dataset.label);
+
+                if (k > 0) {
+                    var allLegends = this._svg.legend.selectAll("g"),
+                        prevLegend = allLegends[0][k - 1],
+                        prevLegendDimen = prevLegend.getBBox();
+
+                    translateX += prevLegendDimen.x + prevLegendDimen.width + legendOffset;
+                }
+
+                container.attr("transform", "translate (" + translateX + ")");
+
+            });
         }
 
         drawAxis() {
@@ -361,8 +481,8 @@ module dChart {
             var min = [this.min("x"),this.min("y")];
             var max = [this.max("x"),this.max("y")];
 
-            this.xAxis.draw(this.axisContainer, min[0], max[0]);
-            this.yAxis.draw(this.axisContainer, min[1], max[1]);
+            this.xAxis.draw(this._svg.axis, min[0], max[0]);
+            this.yAxis.draw(this._svg.axis, min[1], max[1]);
         }
 
         redrawAxis() {
@@ -447,9 +567,9 @@ module dChart {
             var min = [this.min("x"),this.min("y"),this.min("z")];
             var max = [this.max("x"),this.max("y"),this.min("z")];
 
-            this.xAxis.draw(this.axisContainer, min[0], max[0]);
-            this.yAxis.draw(this.axisContainer, min[1], max[1]);
-            this.zAxis.draw(this.axisContainer, min[2], max[2]);
+            this.xAxis.draw(this._svg.axis, min[0], max[0]);
+            this.yAxis.draw(this._svg.axis, min[1], max[1]);
+            this.zAxis.draw(this._svg.axis, min[2], max[2]);
         }
 
         redrawAxis() {
@@ -529,7 +649,7 @@ module dChart {
 
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
-                this.svgSymbolContainer[key] = this.dataContainer.append("g");
+                this.svgSymbolContainer[key] = this._svg.data.append("g");
             });
         }
 
@@ -622,7 +742,7 @@ module dChart {
 
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
-                this.svgLineContainer[key] = this.dataContainer
+                this.svgLineContainer[key] = this._svg.data
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
@@ -704,7 +824,7 @@ module dChart {
 
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
-                this.svgAreaContainer[key] = this.dataContainer
+                this.svgAreaContainer[key] = this._svg.data
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
@@ -808,7 +928,7 @@ module dChart {
 
                 dataSet.showValues = true;
 
-                this.svgRectContainer[key] = this.dataContainer
+                this.svgRectContainer[key] = this._svg.data
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
@@ -891,7 +1011,7 @@ module dChart {
 
                 dataSet.showValues = true;
 
-                this.svgRectContainer[key] = this.dataContainer
+                this.svgRectContainer[key] = this._svg.data
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
@@ -971,7 +1091,7 @@ module dChart {
 
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
-                this.svgScatterContainer[key] = this.dataContainer
+                this.svgScatterContainer[key] = this._svg.data
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key);
 
@@ -1059,7 +1179,7 @@ module dChart {
 
                 dataSet.showValues = true;
 
-                this.svgPieContainer[key] = this.dataContainer
+                this.svgPieContainer[key] = this._svg.data
                     .append("g")
                     .attr("class", "dchart-data-set dchart-data-set-" + key)
                     .attr("transform","translate("+(this.nettoWidth*0.5)+","+(this.nettoHeight*0.5)+")");
@@ -1129,6 +1249,58 @@ module dChart {
                                 .fontStyle(dataSet.fontStyle)
                         });
                 }
+            });
+        }
+
+        drawLegend() {
+
+            var legendDotRadius = this._font.legend.fontSize * 0.42,
+                legendOffsetMin = 10,
+                legendOffsetFactor = 0.03,
+                legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin;
+
+            this.dataSets.forEach((dataset:DataSet,j:number) => {
+
+                var translateX = 0,
+                    containerDataSet = this._svg.legend.append("g");
+
+                dataset.data.forEach( (data:any,k:number) => {
+
+                    var translateY = j*legendDotRadius* 2 * 1.2,
+                        container =
+                            containerDataSet
+                                .append("g")
+                                .attr("height", legendDotRadius * 2),
+                        color = data.areaStyle.fill,
+                        text = data.label ? data.label : dataset.label + " " + k;
+
+                    container
+                        .append("circle")
+                        .style("stroke", "none")
+                        .style("stroke-width", 0)
+                        .style("fill", color)
+                        .attr("cx", 0)
+                        .attr("cy", 0)
+                        .attr("r", legendDotRadius);
+
+                    container
+                        .append("text")
+                        .attr("x", legendDotRadius*1.5)
+                        .attr("y", legendDotRadius*0.5)
+                        .style("alignment-baseline", "middle")
+                        .fontStyle(this._font.legend)
+                        .text(text);
+
+                    if (k > 0) {
+                        var allLegends = containerDataSet.selectAll("g"),
+                            prevLegend = allLegends[0][k - 1],
+                            prevLegendDimen = prevLegend.getBBox();
+
+                        translateX += prevLegendDimen.x + prevLegendDimen.width + legendOffset;
+                    }
+
+                    container.attr("transform", "translate (" + translateX + ","+ translateY +")");
+                });
             });
         }
     }

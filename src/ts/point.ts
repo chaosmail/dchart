@@ -83,6 +83,8 @@ module dChart {
 
     export class Point {
 
+        label:string = "";
+
         /**
          * dChart Line Element, that stores all Attribute Styles
          */
@@ -98,6 +100,10 @@ module dChart {
         }
 
         normalize(value:any) {
+
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
 
             if (value.hasOwnProperty("lineStyle")) {
 

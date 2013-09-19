@@ -70,8 +70,8 @@ module dChart {
         visible:bool = true;
 
         lineStyle:Utils.LineStyle = new Utils.LineStyle();
-        areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
-        symbolStyle:Utils.SymbolStyle = new Utils.SymbolStyle();
+        areaStyle:Utils.AreaStyle;
+        symbolStyle:Utils.SymbolStyle;
         fontStyle:Utils.FontStyle = new Utils.FontStyle();
 
         constructor(public chart:any) {

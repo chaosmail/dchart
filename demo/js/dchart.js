@@ -1,122 +1,179 @@
-/** dchart - v0.0.6 - Fri Aug 16 2013 12:22:49
+/** dchart - v0.0.6 - Fri Sep 20 2013 00:26:25
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
 'use strict';
 
-d3.selection.prototype.lineStyle = function(arg) {
+/**
+ * LineStyle
+ * =========
+ */
 
-    if (typeof arg === "function") {
+/*
+    Selection
+    ---------
+ */
+if (!d3.selection.prototype.lineStyle) {
+    d3.selection.prototype.lineStyle = function(arg) {
 
-        this.style("stroke",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("stroke") ? res.stroke : "";
-        });
-        this.style("stroke-width",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("strokeWidth") ? res.strokeWidth : "";
-        });
-        this.style("stroke-opacity",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("strokeOpacity") ? res.strokeOpacity : "";
-        });
-        this.style("stroke-linecap",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("strokeLinecap") ? res.strokeLinecap : "";
-        });
-        this.style("stroke-dasharray",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("strokeDasharray") ? res.strokeDasharray : "";
-        });
-    }
-    else {
-        if (arg.hasOwnProperty("stroke")) {
-            this.style("stroke",arg.stroke);
+        if (typeof arg === "function") {
+
+            this.style("stroke",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("stroke") ? res.stroke : "";
+            });
+            this.style("stroke-width",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("strokeWidth") ? res.strokeWidth : "";
+            });
+            this.style("stroke-opacity",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("strokeOpacity") ? res.strokeOpacity : "";
+            });
+            this.style("stroke-linecap",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("strokeLinecap") ? res.strokeLinecap : "";
+            });
+            this.style("stroke-dasharray",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("strokeDasharray") ? res.strokeDasharray : "";
+            });
+        }
+        else {
+            if (arg.hasOwnProperty("stroke")) {
+                this.style("stroke",arg.stroke);
+            }
+
+            if (arg.hasOwnProperty("strokeWidth")) {
+                this.style("stroke-width",arg.strokeWidth);
+            }
+
+            if (arg.hasOwnProperty("strokeOpacity")) {
+                this.style("stroke-opacity",arg.strokeOpacity);
+            }
+
+            if (arg.hasOwnProperty("strokeLinecap")) {
+                this.style("stroke-linecap",arg.strokeLinecap);
+            }
+
+            if (arg.hasOwnProperty("strokeDasharray")) {
+                this.style("stroke-dasharray",arg.strokeDasharray);
+            }
         }
 
-        if (arg.hasOwnProperty("strokeWidth")) {
-            this.style("stroke-width",arg.strokeWidth);
+        return this;
+    };
+}
+
+/*
+    Transition
+    ----------
+ */
+if (!d3.transition.prototype.lineStyle) {
+    d3.transition.prototype.lineStyle = d3.selection.prototype.lineStyle;
+}
+
+/**
+ * AreaStyle
+ * =========
+ */
+
+/*
+ Selection
+ ---------
+ */
+if (!d3.selection.prototype.areaStyle) {
+    d3.selection.prototype.areaStyle = function(arg) {
+
+        this.lineStyle(arg);
+
+        if (typeof arg === "function") {
+
+            this.style("fill",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("fill") ? res.fill : "";
+            });
+            this.style("fill-opacity",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("fillOpacity") ? res.fillOpacity : "";
+            });
+        }
+        else {
+            if (arg.hasOwnProperty("fill")) {
+                this.style("fill",arg.fill);
+            }
+
+            if (arg.hasOwnProperty("fillOpacity")) {
+                this.style("fill-opacity",arg.fillOpacity);
+            }
         }
 
-        if (arg.hasOwnProperty("strokeOpacity")) {
-            this.style("stroke-opacity",arg.strokeOpacity);
+        return this;
+    };
+}
+
+/*
+ Transition
+ ----------
+ */
+if (!d3.transition.prototype.areaStyle) {
+    d3.transition.prototype.areaStyle = d3.selection.prototype.areaStyle;
+}
+
+/**
+ * FontStyle
+ * =========
+ */
+
+/*
+ Selection
+ ---------
+ */
+if (!d3.selection.prototype.fontStyle) {
+    d3.selection.prototype.fontStyle = function(arg) {
+
+        this.areaStyle(arg);
+
+        if (typeof arg === "function") {
+
+            this.style("font-family",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("fontFamily") ? res.fontFamily : "";
+            });
+            this.style("font-size",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("fontSize") ? res.fontSize : "";
+            });
+            this.style("font-weight",function(d,i) {
+                var res = arg(d,i);
+                return res.hasOwnProperty("fontWeight") ? res.fontWeight : "";
+            });
+        }
+        else {
+            if (arg.hasOwnProperty("fontFamily")) {
+                this.style('font-family', arg.fontFamily)
+            }
+
+            if (arg.hasOwnProperty("fontSize")) {
+                this.style('font-size', arg.fontSize)
+            }
+
+            if (arg.hasOwnProperty("fontWeight")) {
+                this.style('font-weight', arg.fontWeight)
+            }
         }
 
-        if (arg.hasOwnProperty("strokeLinecap")) {
-            this.style("stroke-linecap",arg.strokeLinecap);
-        }
+        return this;
+    };
+}
 
-        if (arg.hasOwnProperty("strokeDasharray")) {
-            this.style("stroke-dasharray",arg.strokeDasharray);
-        }
-    }
-
-    return this;
-};
-
-d3.selection.prototype.areaStyle = function(arg) {
-
-    this.lineStyle(arg);
-
-    if (typeof arg === "function") {
-
-        this.style("fill",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("fill") ? res.fill : "";
-        });
-        this.style("fill-opacity",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("fillOpacity") ? res.fillOpacity : "";
-        });
-    }
-    else {
-        if (arg.hasOwnProperty("fill")) {
-            this.style("fill",arg.fill);
-        }
-
-        if (arg.hasOwnProperty("fillOpacity")) {
-            this.style("fill-opacity",arg.fillOpacity);
-        }
-    }
-
-    return this;
-};
-
-d3.selection.prototype.fontStyle = function(arg) {
-
-    this.areaStyle(arg);
-
-    if (typeof arg === "function") {
-
-        this.style("font-family",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("fontFamily") ? res.fontFamily : "";
-        });
-        this.style("font-size",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("fontSize") ? res.fontSize : "";
-        });
-        this.style("font-weight",function(d,i) {
-            var res = arg(d,i);
-            return res.hasOwnProperty("fontWeight") ? res.fontWeight : "";
-        });
-    }
-    else {
-        if (arg.hasOwnProperty("fontFamily")) {
-            this.style('font-family', arg.fontFamily)
-        }
-
-        if (arg.hasOwnProperty("fontSize")) {
-            this.style('font-size', arg.fontSize)
-        }
-
-        if (arg.hasOwnProperty("fontWeight")) {
-            this.style('font-weight', arg.fontWeight)
-        }
-    }
-
-    return this;
-};
+/*
+ Transition
+ ----------
+ */
+if (!d3.transition.prototype.fontStyle) {
+    d3.transition.prototype.fontStyle = d3.selection.prototype.fontStyle;
+}
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -127,10 +184,15 @@ var dChart;
 (function (dChart) {
     var Point = (function () {
         function Point() {
+            this.label = "";
             this.lineStyle = new dChart.Utils.LineStyle();
             this.areaStyle = new dChart.Utils.AreaStyle();
         }
         Point.prototype.normalize = function (value) {
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
+
             if (value.hasOwnProperty("lineStyle")) {
                 var lineStyle = new dChart.Utils.LineStyle();
                 lineStyle.normalize(value.lineStyle);
@@ -483,9 +545,27 @@ var dChart;
 var dChart;
 (function (dChart) {
     (function (Utils) {
-        var LineStyle = (function () {
+        var Style = (function () {
+            function Style() {
+            }
+            Style.prototype.clone = function () {
+                var tmp = new (this).constructor();
+
+                for (var k in this) {
+                    tmp[k] = this[k];
+                }
+
+                return tmp;
+            };
+            return Style;
+        })();
+        Utils.Style = Style;
+
+        var LineStyle = (function (_super) {
+            __extends(LineStyle, _super);
             function LineStyle() {
-                this.stroke = "red";
+                _super.apply(this, arguments);
+                this.stroke = "black";
                 this.strokeWidth = 1;
                 this.strokeOpacity = 1;
                 this.strokeLinecap = "butt";
@@ -513,14 +593,14 @@ var dChart;
                 }
             };
             return LineStyle;
-        })();
+        })(Style);
         Utils.LineStyle = LineStyle;
 
         var AreaStyle = (function (_super) {
             __extends(AreaStyle, _super);
             function AreaStyle() {
                 _super.apply(this, arguments);
-                this.fill = "blue";
+                this.fill = "black";
                 this.fillOpacity = 1;
             }
             AreaStyle.prototype.normalize = function (value) {
@@ -699,9 +779,11 @@ var dChart;
         Axis.prototype.draw = function (container, min, max) {
             this.clear();
 
+            this.fontStyle = this.fontStyle || this.chart._font.axis;
+
             this.svg = container.append("g").attr("class", "dchart-axis dchart-axis-" + this.orientation);
 
-            this.svgLabel = container.append("g").attr("class", "dchart-axis-label dchart-axis-" + this.orientation + "-label").append("text");
+            this.svgLabel = container.append("g").attr("class", "dchart-axis-label dchart-axis-" + this.orientation + "-label").append("text").fontStyle(this.fontStyle);
 
             this.redraw(min, max);
         };
@@ -761,6 +843,12 @@ var dChart;
 
             if (value.hasOwnProperty("showGrid")) {
                 this.showGrid = value.showGrid;
+            }
+
+            if (value.hasOwnProperty("fontStyle")) {
+                this.fontStyle = this.fontStyle || this.chart._font.axis;
+
+                this.fontStyle.normalize(value.fontStyle);
             }
 
             if (value.hasOwnProperty("gridStyle")) {
@@ -1106,8 +1194,6 @@ var dChart;
             this.interpolate = "linear";
             this.visible = true;
             this.lineStyle = new dChart.Utils.LineStyle();
-            this.areaStyle = new dChart.Utils.AreaStyle();
-            this.symbolStyle = new dChart.Utils.SymbolStyle();
             this.fontStyle = new dChart.Utils.FontStyle();
             this.fontStyle.stroke = "none";
             this.fontStyle.fill = "black";
@@ -1344,13 +1430,32 @@ var dChart;
     var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
 "use strict";
+function clone(obj) {
+    if (obj == null || typeof (obj) != 'object')
+        return obj;
+
+    var temp = obj.constructor();
+
+    for (var key in obj)
+        temp[key] = clone(obj[key]);
+    return temp;
+}
+
 var dChart;
 (function (dChart) {
     var Chart = (function () {
         function Chart() {
+            this._svg = {
+                chart: null,
+                root: null,
+                axis: null,
+                data: null,
+                label: null,
+                legend: null
+            };
             this.marginLeft = 50;
             this.marginRight = 10;
-            this.marginTop = 10;
+            this.marginTop = 20;
             this.marginBottom = 80;
             this.width = 400;
             this.height = 400;
@@ -1358,6 +1463,15 @@ var dChart;
             this.nettoHeight = 310;
             this.showTransition = false;
             this.transition = new dChart.Utils.Transition();
+            this.showLegend = true;
+            this._font = {
+                root: null,
+                axis: null,
+                ticks: null,
+                legend: null,
+                label: null,
+                description: null
+            };
             this.fontStyle = new dChart.Utils.FontStyle();
             this.dataSets = [];
             ;
@@ -1367,11 +1481,22 @@ var dChart;
             this.fontStyle.stroke = "none";
             this.fontStyle.fill = "black";
 
+            this._font.root = this.fontStyle.clone();
+            this._font.legend = this.fontStyle.clone();
+            this._font.label = this.fontStyle.clone();
+            this._font.description = this.fontStyle.clone();
+            this._font.axis = this.fontStyle.clone();
+            this._font.ticks = this.fontStyle.clone();
+
+            this._font.label.fontWeight = "bold";
+            this._font.label.fontSize += 2;
+            this._font.ticks.fontSize -= 2;
+
             this.setFormat(".2f");
         }
         Chart.prototype.clear = function () {
-            if (this.svg) {
-                this.svg.remove();
+            if (this._svg.root) {
+                this._svg.root.remove();
             }
         };
 
@@ -1393,20 +1518,27 @@ var dChart;
             this.nettoWidth = this.width - this.marginLeft - this.marginRight;
             this.nettoHeight = this.height - this.marginTop - this.marginBottom;
 
-            this.svg.attr("width", this.width).attr("height", this.height).attr("xmlns", "http://www.w3.org/2000/svg");
+            this._svg.root.attr("width", this.width).attr("height", this.height).attr("xmlns", "http://www.w3.org/2000/svg");
 
-            this.container.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
+            this._svg.chart.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
 
-            this.svgDescription.text(this.description).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 5).attr("text-anchor", "middle");
+            this._svg.label.select(".description").text(this.description).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 5).attr("text-anchor", "middle");
 
-            this.svgLabel.text(this.label).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 20).attr("text-anchor", "middle");
+            this._svg.label.select(".label").text(this.label).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 20).attr("text-anchor", "middle");
 
             this.redrawAxis();
             this.redrawData();
 
-            this.container.selectAll('text').fontStyle(this.fontStyle);
+            this._svg.chart.selectAll('text').fontStyle(this.fontStyle);
 
-            this.svgLabel.fontStyle(this.fontStyle).style('font-size', this.fontStyle.fontSize + 2).style('font-weight', "bold");
+            this._svg.chart.selectAll(".tick > text").fontStyle(this._font.ticks);
+
+            this._svg.label.select(".label").fontStyle(this._font.label);
+
+            this._svg.label.select(".description").fontStyle(this._font.description);
+
+            var legendDimen = this._svg.legend[0][0].getBBox();
+            this._svg.legend.attr("transform", "translate(" + this.marginLeft + "," + (legendDimen.height * 0.5) + ")");
         };
 
         Chart.prototype.draw = function () {
@@ -1415,24 +1547,51 @@ var dChart;
 
             this.clear();
 
-            this.svg = d3.select(this.elem).append("svg").attr("id", "dchart-" + this.elemId);
+            this._svg.root = d3.select(this.elem).append("svg").attr("id", "dchart-" + this.elemId);
 
-            this.container = this.svg.append("g").attr("class", "dchart-container");
+            this._svg.chart = this._svg.root.append("g").attr("class", "dchart-container");
 
-            this.axisContainer = this.container.append("g").attr("class", "dchart-container-axis");
+            this._svg.axis = this._svg.chart.append("g").attr("class", "dchart-container-axis");
 
-            this.dataContainer = this.container.append("g").attr("class", "dchart-container-data");
+            this._svg.data = this._svg.chart.append("g").attr("class", "dchart-container-data");
 
-            this.labelContainer = this.container.append("g").attr("class", "dchart-container-label");
+            this._svg.label = this._svg.root.append("g").attr("class", "dchart-container-label");
 
-            this.svgLabel = this.labelContainer.append("text");
+            this._svg.legend = this._svg.root.append("g").attr("class", "dchart-container-legend");
 
-            this.svgDescription = this.labelContainer.append("text");
+            this._svg.label.append("text").attr("class", "label");
+
+            this._svg.label.append("text").attr("class", "description");
+
+            if (this.showLegend) {
+                this.drawLegend();
+            }
 
             this.drawAxis();
             this.drawData();
 
             this.redraw();
+        };
+
+        Chart.prototype.drawLegend = function () {
+            var _this = this;
+            var legendDotRadius = this._font.legend.fontSize * 0.42, legendOffsetMin = 10, legendOffsetFactor = 0.03, legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin, translateX = 0;
+
+            this.dataSets.forEach(function (dataset, k) {
+                var container = _this._svg.legend.append("g").attr("height", legendDotRadius * 2), color = dataset.symbolStyle ? dataset.symbolStyle.fill : dataset.areaStyle ? dataset.areaStyle.fill : dataset.lineStyle.stroke;
+
+                container.append("circle").style("stroke", "none").style("stroke-width", 0).style("fill", color).attr("cx", 0).attr("cy", 0).attr("r", legendDotRadius);
+
+                container.append("text").attr("x", legendDotRadius * 1.5).attr("y", legendDotRadius * 0.5).style("alignment-baseline", "middle").fontStyle(_this._font.legend).text(dataset.label);
+
+                if (k > 0) {
+                    var allLegends = _this._svg.legend.selectAll("g"), prevLegend = allLegends[0][k - 1], prevLegendDimen = prevLegend.getBBox();
+
+                    translateX += prevLegendDimen.x + prevLegendDimen.width + legendOffset;
+                }
+
+                container.attr("transform", "translate (" + translateX + ")");
+            });
         };
 
         Chart.prototype.drawAxis = function () {
@@ -1588,8 +1747,8 @@ var dChart;
             var min = [this.min("x"), this.min("y")];
             var max = [this.max("x"), this.max("y")];
 
-            this.xAxis.draw(this.axisContainer, min[0], max[0]);
-            this.yAxis.draw(this.axisContainer, min[1], max[1]);
+            this.xAxis.draw(this._svg.axis, min[0], max[0]);
+            this.yAxis.draw(this._svg.axis, min[1], max[1]);
         };
 
         Chart2D.prototype.redrawAxis = function () {
@@ -1667,9 +1826,9 @@ var dChart;
             var min = [this.min("x"), this.min("y"), this.min("z")];
             var max = [this.max("x"), this.max("y"), this.min("z")];
 
-            this.xAxis.draw(this.axisContainer, min[0], max[0]);
-            this.yAxis.draw(this.axisContainer, min[1], max[1]);
-            this.zAxis.draw(this.axisContainer, min[2], max[2]);
+            this.xAxis.draw(this._svg.axis, min[0], max[0]);
+            this.yAxis.draw(this._svg.axis, min[1], max[1]);
+            this.zAxis.draw(this._svg.axis, min[2], max[2]);
         };
 
         Chart3D.prototype.redrawAxis = function () {
@@ -1748,7 +1907,7 @@ var dChart;
         PointChart.prototype.drawData = function () {
             var _this = this;
             this.dataSets.forEach(function (dataSet, key) {
-                _this.svgSymbolContainer[key] = _this.dataContainer.append("g");
+                _this.svgSymbolContainer[key] = _this._svg.data.append("g");
             });
         };
 
@@ -1812,7 +1971,7 @@ var dChart;
         LineChart.prototype.drawData = function () {
             var _this = this;
             this.dataSets.forEach(function (dataSet, key) {
-                _this.svgLineContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+                _this.svgLineContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 _this.svgLine[key] = _this.svgLineContainer[key].append("path");
             });
@@ -1874,7 +2033,7 @@ var dChart;
         AreaChart.prototype.drawData = function () {
             var _this = this;
             this.dataSets.forEach(function (dataSet, key) {
-                _this.svgAreaContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+                _this.svgAreaContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
 
                 _this.svgArea[key] = _this.svgAreaContainer[key].append("path");
             });
@@ -1952,7 +2111,7 @@ var dChart;
             this.dataSets.forEach(function (dataSet, key) {
                 dataSet.showValues = true;
 
-                _this.svgRectContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+                _this.svgRectContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
             });
         };
 
@@ -2025,7 +2184,7 @@ var dChart;
             this.dataSets.forEach(function (dataSet, key) {
                 dataSet.showValues = true;
 
-                _this.svgRectContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+                _this.svgRectContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
             });
         };
 
@@ -2096,7 +2255,7 @@ var dChart;
         ScatterChart.prototype.drawData = function () {
             var _this = this;
             this.dataSets.forEach(function (dataSet, key) {
-                _this.svgScatterContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+                _this.svgScatterContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
             });
         };
 
@@ -2169,7 +2328,7 @@ var dChart;
             this.dataSets.forEach(function (dataSet, key) {
                 dataSet.showValues = true;
 
-                _this.svgPieContainer[key] = _this.dataContainer.append("g").attr("class", "dchart-data-set dchart-data-set-" + key).attr("transform", "translate(" + (_this.nettoWidth * 0.5) + "," + (_this.nettoHeight * 0.5) + ")");
+                _this.svgPieContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key).attr("transform", "translate(" + (_this.nettoWidth * 0.5) + "," + (_this.nettoHeight * 0.5) + ")");
             });
         };
 
@@ -2217,6 +2376,31 @@ var dChart;
                         d3.select(this.parentNode).append("text").text(d._formatedValue).attr("transform", "translate(" + arc.centroid(d) + ") scale(1)").style("text-anchor", "middle").fontStyle(dataSet.fontStyle);
                     });
                 }
+            });
+        };
+
+        PieChart.prototype.drawLegend = function () {
+            var _this = this;
+            var legendDotRadius = this._font.legend.fontSize * 0.42, legendOffsetMin = 10, legendOffsetFactor = 0.03, legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin;
+
+            this.dataSets.forEach(function (dataset, j) {
+                var translateX = 0, containerDataSet = _this._svg.legend.append("g");
+
+                dataset.data.forEach(function (data, k) {
+                    var translateY = j * legendDotRadius * 2 * 1.2, container = containerDataSet.append("g").attr("height", legendDotRadius * 2), color = data.areaStyle.fill, text = data.label ? data.label : dataset.label + " " + k;
+
+                    container.append("circle").style("stroke", "none").style("stroke-width", 0).style("fill", color).attr("cx", 0).attr("cy", 0).attr("r", legendDotRadius);
+
+                    container.append("text").attr("x", legendDotRadius * 1.5).attr("y", legendDotRadius * 0.5).style("alignment-baseline", "middle").fontStyle(_this._font.legend).text(text);
+
+                    if (k > 0) {
+                        var allLegends = containerDataSet.selectAll("g"), prevLegend = allLegends[0][k - 1], prevLegendDimen = prevLegend.getBBox();
+
+                        translateX += prevLegendDimen.x + prevLegendDimen.width + legendOffset;
+                    }
+
+                    container.attr("transform", "translate (" + translateX + "," + translateY + ")");
+                });
             });
         };
         return PieChart;

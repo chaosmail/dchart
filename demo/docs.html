@@ -2080,7 +2080,8 @@
                             symbolStyle: {
                                 stroke: "mediumslateblue",
                                 strokeWidth: 2,
-                                fill: "#fff",
+                                fill: "mediumslateblue",
+                                fillOpacity: 0.2,
                                 size: 1.2
                             },
                             interpolate: "linear",
@@ -3007,7 +3008,8 @@
                             label: "Random Data",
                             symbolStyle: {
                                 stroke: "tomato",
-                                fill: "white",
+                                fill: "tomato",
+                                fillOpacity: 0.2,
                                 type: "triangle-up"
                             },
                             data: scatterData3
@@ -3098,29 +3100,37 @@
                     width: 700,
                     height: 400,
                     label: "Pie Chart Example",
-                    marginLeft: 0,
-                    marginRight: 0,
-                    marginTop: 0,
-                    marginBottom: 40,
+                    marginLeft: 10,
+                    marginRight: 10,
+                    marginTop: 20,
+                    marginBottom: 60,
                     transition: {
                         duration: 500,
                         delay: 250
                     },
                     dataSets: [
                         {
-                            label: "Dataset Pie Chart",
                             data: [
-                                {x:5,areaStyle:{
-                                    fill:"mediumvioletred",
-                                    stroke:"none"
+                                {
+                                    x:5,
+                                    label: "First",
+                                    areaStyle:{
+                                        fill:"mediumvioletred",
+                                        stroke:"none"
                                 }},
-                                {x:10, areaStyle:{
-                                    fill:"royalblue",
-                                    stroke:"none"
+                                {
+                                    x:10,
+                                    label: "Second",
+                                    areaStyle:{
+                                        fill:"royalblue",
+                                        stroke:"none"
                                 }},
-                                {x:15, areaStyle:{
-                                    fill:"palevioletred",
-                                    stroke:"none"
+                                {
+                                    x:15,
+                                    label: "Third",
+                                    areaStyle:{
+                                        fill:"palevioletred",
+                                        stroke:"none"
                                 }}
                             ]
                         }
@@ -3174,17 +3184,17 @@
                     width: 700,
                     height: 400,
                     label: "Another Pie Chart Example",
-                    marginLeft: 0,
-                    marginRight: 0,
-                    marginTop: 0,
-                    marginBottom: 40,
+                    marginLeft: 10,
+                    marginRight: 10,
+                    marginTop: 30,
+                    marginBottom: 60,
                     transition: {
                         duration: 500,
                         delay: 250
                     },
                     dataSets: [
                         {
-                            label: "Random Dataset Pie Chart",
+                            label: "Random",
                             dataFn: {
                                 fn: function() { return Math.random()*100 },
                                 min: 0,
@@ -3193,7 +3203,7 @@
                             }
                         },
                         {
-                            label: "Another random Dataset Pie Chart",
+                            label: "Also Random",
                             dataFn: {
                                 fn: function() { return Math.random()*100 },
                                 min: 0,
