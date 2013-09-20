@@ -1,4 +1,4 @@
-/** dchart - v0.0.6 - Fri Sep 20 2013 00:26:25
+/** dchart - v0.0.7 - Fri Sep 20 2013 15:01:19
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1474,7 +1474,6 @@ var dChart;
             };
             this.fontStyle = new dChart.Utils.FontStyle();
             this.dataSets = [];
-            ;
             this.fontStyle.fontFamily = "sans-serif";
             this.fontStyle.fontSize = 11;
             this.fontStyle.fontWeight = "normal";
@@ -1522,10 +1521,7 @@ var dChart;
 
             this._svg.chart.attr("width", this.nettoWidth).attr("height", this.nettoHeight).attr("transform", "translate(" + this.marginLeft + ", " + this.marginTop + ")");
 
-            this._svg.label.select(".description").text(this.description).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 5).attr("text-anchor", "middle");
-
-            this._svg.label.select(".label").text(this.label).attr("x", this.nettoWidth * 0.5).attr("y", this.nettoHeight + this.marginBottom - 20).attr("text-anchor", "middle");
-
+            this.redrawLabel();
             this.redrawAxis();
             this.redrawData();
 
@@ -1555,32 +1551,46 @@ var dChart;
 
             this._svg.data = this._svg.chart.append("g").attr("class", "dchart-container-data");
 
-            this._svg.label = this._svg.root.append("g").attr("class", "dchart-container-label");
-
             this._svg.legend = this._svg.root.append("g").attr("class", "dchart-container-legend");
 
-            this._svg.label.append("text").attr("class", "label");
-
-            this._svg.label.append("text").attr("class", "description");
-
-            if (this.showLegend) {
-                this.drawLegend();
-            }
-
+            this.drawLegend();
+            this.drawLabel();
             this.drawAxis();
             this.drawData();
 
             this.redraw();
         };
 
+        Chart.prototype.drawLabel = function () {
+            this._svg.label = this._svg.root.append("g").attr("class", "dchart-container-label");
+
+            this._svg.label.append("text").attr("class", "label");
+
+            this._svg.label.append("text").attr("class", "description");
+        };
+
+        Chart.prototype.redrawLabel = function () {
+            this._svg.label.select(".description").text(this.description).attr("x", this.width * 0.5).attr("y", this.nettoHeight + this.marginBottom - 5).attr("text-anchor", "middle");
+
+            this._svg.label.select(".label").text(this.label).attr("x", this.width * 0.5).attr("y", this.nettoHeight + this.marginBottom - 20).attr("text-anchor", "middle");
+        };
+
         Chart.prototype.drawLegend = function () {
             var _this = this;
-            var legendDotRadius = this._font.legend.fontSize * 0.42, legendOffsetMin = 10, legendOffsetFactor = 0.03, legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin, translateX = 0;
+            var legendDotRadius = this._font.legend.fontSize * 0.5, legendOffsetMin = 10, legendOffsetFactor = 0.03, legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin, translateX = 0;
 
             this.dataSets.forEach(function (dataset, k) {
-                var container = _this._svg.legend.append("g").attr("height", legendDotRadius * 2), color = dataset.symbolStyle ? dataset.symbolStyle.fill : dataset.areaStyle ? dataset.areaStyle.fill : dataset.lineStyle.stroke;
+                var container = _this._svg.legend.append("g").attr("height", legendDotRadius * 2), symbolType = dataset.symbolStyle ? dataset.symbolStyle.type : "circle", symbolPath = d3.svg.symbol().type(symbolType), symbol = container.append("path").attr("transform", "scale(" + legendDotRadius * 0.18 + ")").attr("x", 0).attr("y", 0).attr("d", symbolPath);
 
-                container.append("circle").style("stroke", "none").style("stroke-width", 0).style("fill", color).attr("cx", 0).attr("cy", 0).attr("r", legendDotRadius);
+                if (dataset.symbolStyle) {
+                    symbol.areaStyle(dataset.symbolStyle);
+                } else if (dataset.areaStyle) {
+                    symbol.areaStyle(dataset.areaStyle);
+                } else {
+                    symbol.style("stroke", "none");
+                    symbol.style("fill", dataset.lineStyle.stroke);
+                    symbol.style("fillOpacity", dataset.lineStyle.strokeOpacity);
+                }
 
                 container.append("text").attr("x", legendDotRadius * 1.5).attr("y", legendDotRadius * 0.5).style("alignment-baseline", "middle").fontStyle(_this._font.legend).text(dataset.label);
 
@@ -1592,6 +1602,9 @@ var dChart;
 
                 container.attr("transform", "translate (" + translateX + ")");
             });
+        };
+
+        Chart.prototype.redrawLegend = function () {
         };
 
         Chart.prototype.drawAxis = function () {
@@ -2381,15 +2394,13 @@ var dChart;
 
         PieChart.prototype.drawLegend = function () {
             var _this = this;
-            var legendDotRadius = this._font.legend.fontSize * 0.42, legendOffsetMin = 10, legendOffsetFactor = 0.03, legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin;
+            var legendDotRadius = this._font.legend.fontSize * 0.5, legendOffsetMin = 10, legendOffsetFactor = 0.03, legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin;
 
             this.dataSets.forEach(function (dataset, j) {
                 var translateX = 0, containerDataSet = _this._svg.legend.append("g");
 
                 dataset.data.forEach(function (data, k) {
-                    var translateY = j * legendDotRadius * 2 * 1.2, container = containerDataSet.append("g").attr("height", legendDotRadius * 2), color = data.areaStyle.fill, text = data.label ? data.label : dataset.label + " " + k;
-
-                    container.append("circle").style("stroke", "none").style("stroke-width", 0).style("fill", color).attr("cx", 0).attr("cy", 0).attr("r", legendDotRadius);
+                    var translateY = j * legendDotRadius * 2 * 1.2, container = containerDataSet.append("g").attr("height", legendDotRadius * 2), text = data.label ? data.label : dataset.label + " " + k, symbolType = dataset.symbolStyle ? dataset.symbolStyle.type : "circle", symbolPath = d3.svg.symbol().type(symbolType), symbol = container.append("path").attr("transform", "scale(" + legendDotRadius * 0.18 + ")").attr("d", symbolPath).areaStyle(data.areaStyle);
 
                     container.append("text").attr("x", legendDotRadius * 1.5).attr("y", legendDotRadius * 0.5).style("alignment-baseline", "middle").fontStyle(_this._font.legend).text(text);
 

@@ -407,7 +407,10 @@ declare module dChart {
         public getSolver(): dChart.Utils.Solver;
         public redraw(): void;
         public draw(): void;
+        public drawLabel(): void;
+        public redrawLabel(): void;
         public drawLegend(): void;
+        public redrawLegend(): void;
         public drawAxis(): void;
         public redrawAxis(): void;
         public drawData(): void;

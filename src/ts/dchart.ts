@@ -127,7 +127,7 @@ module dChart {
         format:any;
 
         constructor() {
-;
+
             this.fontStyle.fontFamily = "sans-serif";
             this.fontStyle.fontSize = 11;
             this.fontStyle.fontWeight = "normal";
@@ -185,18 +185,8 @@ module dChart {
                 .attr("height", this.nettoHeight)
                 .attr("transform","translate("+ this.marginLeft +", "+ this.marginTop +")");
 
-            this._svg.label.select(".description")
-                .text(this.description)
-                .attr("x", this.nettoWidth * 0.5)
-                .attr("y", this.nettoHeight + this.marginBottom - 5)
-                .attr("text-anchor", "middle");
 
-            this._svg.label.select(".label")
-                .text(this.label)
-                .attr("x", this.nettoWidth * 0.5)
-                .attr("y", this.nettoHeight + this.marginBottom - 20)
-                .attr("text-anchor", "middle");
-
+            this.redrawLabel();
             this.redrawAxis();
             this.redrawData();
 
@@ -242,33 +232,47 @@ module dChart {
             this._svg.data = this._svg.chart.append("g")
                 .attr("class","dchart-container-data");
 
-            this._svg.label = this._svg.root.append("g")
-                .attr("class","dchart-container-label");
-
             this._svg.legend = this._svg.root.append("g")
                 .attr("class","dchart-container-legend");
 
-
-            this._svg.label.append("text")
-                .attr("class","label");
-
-            this._svg.label.append("text")
-                .attr("class","description");
-
-            if (this.showLegend) {
-
-                this.drawLegend();
-            }
-
+            this.drawLegend();
+            this.drawLabel();
             this.drawAxis();
             this.drawData();
 
             this.redraw();
         }
 
+        drawLabel() {
+
+            this._svg.label = this._svg.root.append("g")
+                .attr("class","dchart-container-label");
+
+            this._svg.label.append("text")
+                .attr("class","label");
+
+            this._svg.label.append("text")
+                .attr("class","description");
+        }
+
+        redrawLabel() {
+
+            this._svg.label.select(".description")
+                .text(this.description)
+                .attr("x", this.width * 0.5)
+                .attr("y", this.nettoHeight + this.marginBottom - 5)
+                .attr("text-anchor", "middle");
+
+            this._svg.label.select(".label")
+                .text(this.label)
+                .attr("x", this.width * 0.5)
+                .attr("y", this.nettoHeight + this.marginBottom - 20)
+                .attr("text-anchor", "middle");
+        }
+
         drawLegend() {
 
-            var legendDotRadius = this._font.legend.fontSize * 0.42,
+            var legendDotRadius = this._font.legend.fontSize * 0.5,
                 legendOffsetMin = 10,
                 legendOffsetFactor = 0.03,
                 legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin,
@@ -280,16 +284,26 @@ module dChart {
                     this._svg.legend
                         .append("g")
                         .attr("height", legendDotRadius * 2),
-                   color = dataset.symbolStyle ? dataset.symbolStyle.fill : dataset.areaStyle ? dataset.areaStyle.fill : dataset.lineStyle.stroke;
+                   symbolType = dataset.symbolStyle ? dataset.symbolStyle.type: "circle",
+                   symbolPath = d3.svg.symbol().type(symbolType),
+                   symbol = container
+                    .append("path")
+                    .attr("transform", "scale("+ legendDotRadius*0.18 +")")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("d", symbolPath);
 
-                container
-                    .append("circle")
-                    .style("stroke", "none")
-                    .style("stroke-width", 0)
-                    .style("fill", color)
-                    .attr("cx", 0)
-                    .attr("cy", 0)
-                    .attr("r", legendDotRadius);
+                if (dataset.symbolStyle) {
+                    symbol.areaStyle(dataset.symbolStyle);
+                }
+                else if (dataset.areaStyle) {
+                    symbol.areaStyle(dataset.areaStyle);
+                }
+                else {
+                    symbol.style("stroke", "none");
+                    symbol.style("fill", dataset.lineStyle.stroke);
+                    symbol.style("fillOpacity", dataset.lineStyle.strokeOpacity);
+                }
 
                 container
                     .append("text")
@@ -310,6 +324,10 @@ module dChart {
                 container.attr("transform", "translate (" + translateX + ")");
 
             });
+        }
+
+        redrawLegend() {
+
         }
 
         drawAxis() {
@@ -1254,7 +1272,7 @@ module dChart {
 
         drawLegend() {
 
-            var legendDotRadius = this._font.legend.fontSize * 0.42,
+            var legendDotRadius = this._font.legend.fontSize * 0.5,
                 legendOffsetMin = 10,
                 legendOffsetFactor = 0.03,
                 legendOffset = this.nettoWidth * legendOffsetFactor > legendOffsetMin ? this.nettoWidth * legendOffsetFactor : legendOffsetMin;
@@ -1271,17 +1289,14 @@ module dChart {
                             containerDataSet
                                 .append("g")
                                 .attr("height", legendDotRadius * 2),
-                        color = data.areaStyle.fill,
-                        text = data.label ? data.label : dataset.label + " " + k;
-
-                    container
-                        .append("circle")
-                        .style("stroke", "none")
-                        .style("stroke-width", 0)
-                        .style("fill", color)
-                        .attr("cx", 0)
-                        .attr("cy", 0)
-                        .attr("r", legendDotRadius);
+                        text = data.label ? data.label : dataset.label + " " + k,
+                        symbolType = dataset.symbolStyle ? dataset.symbolStyle.type: "circle",
+                        symbolPath = d3.svg.symbol().type(symbolType),
+                        symbol = container
+                            .append("path")
+                        .attr("transform", "scale("+ legendDotRadius*0.18 +")")
+                            .attr("d", symbolPath)
+                            .areaStyle(data.areaStyle);
 
                     container
                         .append("text")
