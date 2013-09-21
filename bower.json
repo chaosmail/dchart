@@ -3,8 +3,8 @@
   "version": "0.0.9",
   "main": "dist/dchart.js",
   "dependencies": {
-    "d3": "~3.3.*",
-    "d3-styles": "~0.0.*"
+    "d3": "~3.3.4",
+    "d3-styles": "~0.0.3"
   },
   "ignore": [
     "**/.*",
