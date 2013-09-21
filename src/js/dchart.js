@@ -1254,17 +1254,6 @@ var dChart;
     var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
 "use strict";
-function clone(obj) {
-    if (obj == null || typeof (obj) != 'object')
-        return obj;
-
-    var temp = obj.constructor();
-
-    for (var key in obj)
-        temp[key] = clone(obj[key]);
-    return temp;
-}
-
 var dChart;
 (function (dChart) {
     var Chart = (function () {
@@ -1280,14 +1269,13 @@ var dChart;
             this.marginLeft = 50;
             this.marginRight = 10;
             this.marginTop = 20;
-            this.marginBottom = 80;
+            this.marginBottom = 60;
             this.width = 400;
             this.height = 400;
             this.nettoWidth = 340;
             this.nettoHeight = 310;
             this.showTransition = false;
             this.transition = new dChart.Utils.Transition();
-            this.showLegend = true;
             this._font = {
                 root: null,
                 axis: null,
@@ -1298,6 +1286,20 @@ var dChart;
             };
             this.fontStyle = new dChart.Utils.FontStyle();
             this.dataSets = [];
+            this.initializeFonts();
+            this.initializeFormat();
+        }
+        Chart.prototype.clear = function () {
+            if (this._svg.root) {
+                this._svg.root.remove();
+            }
+        };
+
+        Chart.prototype.initializeFormat = function () {
+            this.setFormat(".2f");
+        };
+
+        Chart.prototype.initializeFonts = function () {
             this.fontStyle.fontFamily = "sans-serif";
             this.fontStyle.fontSize = 11;
             this.fontStyle.fontWeight = "normal";
@@ -1314,13 +1316,6 @@ var dChart;
             this._font.label.fontWeight = "bold";
             this._font.label.fontSize += 2;
             this._font.ticks.fontSize -= 2;
-
-            this.setFormat(".2f");
-        }
-        Chart.prototype.clear = function () {
-            if (this._svg.root) {
-                this._svg.root.remove();
-            }
         };
 
         Chart.prototype.setFormat = function (format) {
@@ -1357,8 +1352,7 @@ var dChart;
 
             this._svg.label.select(".description").fontStyle(this._font.description);
 
-            var legendDimen = this._svg.legend[0][0].getBBox();
-            this._svg.legend.attr("transform", "translate(" + this.marginLeft + "," + (legendDimen.height * 0.5) + ")");
+            this._svg.legend.attr("transform", "translate(" + this.marginLeft + "," + this._font.legend.fontSize * 0.5 + ")");
         };
 
         Chart.prototype.draw = function () {
@@ -1394,9 +1388,27 @@ var dChart;
         };
 
         Chart.prototype.redrawLabel = function () {
-            this._svg.label.select(".description").text(this.description).attr("x", this.width * 0.5).attr("y", this.nettoHeight + this.marginBottom - 5).attr("text-anchor", "middle");
+            var description = this._svg.label.select(".description").text(this.description).attr("x", this.nettoWidth * 0.5 + this.marginLeft).attr("y", this.height + this._font.label.fontSize * 0.8).attr("text-anchor", "middle");
 
-            this._svg.label.select(".label").text(this.label).attr("x", this.width * 0.5).attr("y", this.nettoHeight + this.marginBottom - 20).attr("text-anchor", "middle");
+            var label = this._svg.label.select(".label").text(this.label).attr("x", this.nettoWidth * 0.5 + this.marginLeft).attr("y", this.height + this._font.label.fontSize * 0.8).attr("text-anchor", "middle");
+
+            var descriptionOffset = 0, labelOffset = 0;
+
+            if (this.description) {
+                var descriptionDimen = description[0][0].getBBox();
+
+                descriptionOffset -= descriptionDimen.height;
+                labelOffset -= descriptionDimen.height;
+            }
+
+            if (this.label) {
+                var labelDimen = label[0][0].getBBox();
+
+                labelOffset -= labelDimen.height;
+            }
+
+            label.attr("transform", "translate(0," + labelOffset + ")");
+            description.attr("transform", "translate(0," + descriptionOffset + ")");
         };
 
         Chart.prototype.drawLegend = function () {

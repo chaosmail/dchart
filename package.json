@@ -1,6 +1,6 @@
 {
   "name": "dchart",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Extensible declarative chart library using D3.js",
   "main": "dist/dchart.js",
   "scripts": {

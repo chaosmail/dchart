@@ -332,7 +332,6 @@ declare module dChart.Utils {
         static animateAlongPath(path: any): (t: any) => string;
     }
 }
-declare function clone(obj);
 declare module dChart {
     interface IChart {
         elem: string;
@@ -395,13 +394,14 @@ declare module dChart {
         public transition: dChart.Utils.Transition;
         public label: string;
         public description: string;
-        public showLegend: boolean;
         public _font: IFontContainer;
         public fontStyle: dChart.Utils.FontStyle;
         public dataSets: dChart.DataSet[];
         public format: any;
         constructor();
         public clear(): void;
+        public initializeFormat(): void;
+        public initializeFonts(): void;
         public setFormat(format: string): Chart;
         public getPoint(): dChart.Point;
         public getSolver(): dChart.Utils.Solver;

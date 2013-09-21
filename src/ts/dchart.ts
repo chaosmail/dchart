@@ -9,17 +9,6 @@
 /// <reference path="Utils/animation.ts" />
 "use strict";
 
-function clone(obj){
-    if(obj == null || typeof(obj) != 'object')
-        return obj;
-
-    var temp = obj.constructor(); // changed
-
-    for(var key in obj)
-        temp[key] = clone(obj[key]);
-    return temp;
-}
-
 module dChart {
 
     export interface IChart {
@@ -96,7 +85,7 @@ module dChart {
         marginLeft:number = 50;
         marginRight:number = 10;
         marginTop:number = 20;
-        marginBottom:number = 80;
+        marginBottom:number = 60;
 
         width:number = 400;
         height:number = 400;
@@ -108,8 +97,6 @@ module dChart {
 
         label:string;
         description:string;
-
-        showLegend:bool = true;
 
         _font:IFontContainer = {
             root: null,
@@ -128,6 +115,24 @@ module dChart {
 
         constructor() {
 
+            this.initializeFonts();
+            this.initializeFormat();
+        }
+
+        clear() {
+
+            if (this._svg.root) {
+                this._svg.root.remove();
+            }
+        }
+
+        initializeFormat() {
+
+            this.setFormat(".2f");
+        }
+
+        initializeFonts() {
+
             this.fontStyle.fontFamily = "sans-serif";
             this.fontStyle.fontSize = 11;
             this.fontStyle.fontWeight = "normal";
@@ -144,15 +149,6 @@ module dChart {
             this._font.label.fontWeight = "bold";
             this._font.label.fontSize += 2;
             this._font.ticks.fontSize -= 2;
-
-            this.setFormat(".2f");
-        }
-
-        clear() {
-
-            if (this._svg.root) {
-                this._svg.root.remove();
-            }
         }
 
         setFormat(format:string) {
@@ -208,8 +204,7 @@ module dChart {
             this._svg.label.select(".description")
                 .fontStyle(this._font.description);
 
-            var legendDimen = this._svg.legend[0][0].getBBox();
-            this._svg.legend.attr("transform", "translate("+ this.marginLeft +"," + (legendDimen.height*0.5) + ")");
+            this._svg.legend.attr("transform", "translate("+ this.marginLeft +"," + this._font.legend.fontSize*0.5 + ")");
         }
 
         draw() {
@@ -257,17 +252,38 @@ module dChart {
 
         redrawLabel() {
 
-            this._svg.label.select(".description")
+            var description = this._svg.label.select(".description")
                 .text(this.description)
-                .attr("x", this.width * 0.5)
-                .attr("y", this.nettoHeight + this.marginBottom - 5)
+                .attr("x", this.nettoWidth * 0.5 + this.marginLeft)
+                .attr("y", this.height + this._font.label.fontSize*0.8)
                 .attr("text-anchor", "middle");
 
-            this._svg.label.select(".label")
+            var label = this._svg.label.select(".label")
                 .text(this.label)
-                .attr("x", this.width * 0.5)
-                .attr("y", this.nettoHeight + this.marginBottom - 20)
+                .attr("x", this.nettoWidth * 0.5 + this.marginLeft)
+                .attr("y", this.height + this._font.label.fontSize*0.8)
                 .attr("text-anchor", "middle");
+
+            var descriptionOffset = 0,
+                labelOffset = 0;
+
+            if (this.description) {
+
+                var descriptionDimen = description[0][0].getBBox();
+
+                descriptionOffset -= descriptionDimen.height;
+                labelOffset -= descriptionDimen.height;
+            }
+
+            if (this.label) {
+
+                var labelDimen = label[0][0].getBBox();
+
+                labelOffset -= labelDimen.height;
+            }
+
+            label.attr("transform", "translate(0,"+labelOffset+")");
+            description.attr("transform", "translate(0,"+descriptionOffset+")");
         }
 
         drawLegend() {
@@ -1284,7 +1300,7 @@ module dChart {
 
                 dataset.data.forEach( (data:any,k:number) => {
 
-                    var translateY = j*legendDotRadius* 2 * 1.2,
+                    var translateY = j * legendDotRadius * 2 * 1.2,
                         container =
                             containerDataSet
                                 .append("g")
