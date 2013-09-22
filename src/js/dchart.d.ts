@@ -133,6 +133,7 @@ declare module dChart.Utils {
         public fontFamily: string;
         public fontSize: number;
         public fontWeight: string;
+        public stroke: string;
         public normalize(value: any): void;
     }
 }
@@ -147,6 +148,7 @@ declare module dChart {
         scale: string;
         autorange: boolean;
         ticks: number;
+        tickValues: string[];
         range: number[];
         domain: number[];
     }
@@ -170,8 +172,8 @@ declare module dChart {
         public align: string;
         public labelAlign: string;
         public ticks: number;
-        public ticksFormat: string[];
         public tickValues: number[];
+        public tickLabels: string[];
         public tickSubdivide: boolean;
         public tickSize: number[];
         public tickPadding: number;

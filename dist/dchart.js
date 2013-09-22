@@ -1,4 +1,4 @@
-/** dchart - v0.0.10 - Sun Sep 22 2013 12:35:02
+/** dchart - v0.0.11 - Sun Sep 22 2013 14:00:38
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -647,6 +647,7 @@ var dChart;
                 this.fontFamily = "sans-serif";
                 this.fontSize = 11;
                 this.fontWeight = "normal";
+                this.stroke = "none";
             }
             FontStyle.prototype.normalize = function (value) {
                 _super.prototype.normalize.call(this, value);
@@ -686,6 +687,8 @@ var dChart;
             this.orientation = "x";
             this.align = "start";
             this.labelAlign = "end";
+            this.tickValues = [];
+            this.tickLabels = [];
             this.tickSubdivide = false;
             this.visible = true;
             this.gridStyle.stroke = "black";
@@ -746,6 +749,7 @@ var dChart;
         };
 
         Axis.prototype.getAxis = function () {
+            var _this = this;
             var orient = "top";
 
             if (this.orientation === "x") {
@@ -762,6 +766,19 @@ var dChart;
             }
 
             var axis = d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks).tickFormat(this.format);
+
+            if (this.tickLabels.length > 0) {
+                (axis).tickFormat(function (d, i) {
+                    if (i < _this.tickLabels.length) {
+                        return _this.tickLabels[i];
+                    }
+                    return "";
+                });
+            }
+
+            if (this.tickValues.length > 0) {
+                (axis).tickValues(this.tickValues);
+            }
 
             if (this.showGrid) {
                 axis.tickSize(-this.height, 0, 3);
@@ -861,6 +878,14 @@ var dChart;
 
             if (value.hasOwnProperty("ticks")) {
                 this.ticks = parseInt(value.ticks, 10);
+            }
+
+            if (value.hasOwnProperty("tickValues")) {
+                this.tickValues = value.tickValues;
+            }
+
+            if (value.hasOwnProperty("tickLabels")) {
+                this.tickLabels = value.tickLabels;
             }
 
             if (value.hasOwnProperty("scale")) {

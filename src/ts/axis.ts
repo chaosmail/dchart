@@ -14,6 +14,7 @@ module dChart {
         scale:string;
         autorange:bool;
         ticks:number;
+        tickValues:string[];
         range:number[];
         domain:number[];
     }
@@ -71,10 +72,8 @@ module dChart {
         labelAlign:string = "end";
 
         ticks:number;
-
-        ticksFormat:string[];
-
-        tickValues:number[];
+        tickValues:number[] = [];
+        tickLabels:string[] = [];
 
         tickSubdivide:bool = false;
 
@@ -187,6 +186,19 @@ module dChart {
                          .ticks(this.ticks)
                          .tickFormat(this.format);
 
+            if (this.tickLabels.length > 0) {
+                (<any> axis).tickFormat((d,i) => {
+                    if (i < this.tickLabels.length) {
+                        return this.tickLabels[i];
+                    }
+                    return "";
+                });
+            }
+
+            if (this.tickValues.length > 0) {
+                (<any> axis).tickValues(this.tickValues);
+            }
+
             if (this.showGrid) {
 
                 axis.tickSize(-this.height, 0, 3);
@@ -298,6 +310,16 @@ module dChart {
             if (value.hasOwnProperty("ticks")){
 
                 this.ticks = parseInt(value.ticks,10);
+            }
+
+            if (value.hasOwnProperty("tickValues")){
+
+                this.tickValues = value.tickValues;
+            }
+
+            if (value.hasOwnProperty("tickLabels")){
+
+                this.tickLabels = value.tickLabels;
             }
 
             if (value.hasOwnProperty("scale")){

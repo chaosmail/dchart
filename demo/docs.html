@@ -550,6 +550,22 @@
                     </tr>
                     <tr>
                         <td>
+                            <code>tickValues</code>
+                        </td>
+                        <td>number[]</td>
+                        <td>[]</td>
+                        <td>Shows only defined tick values on the axis</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>tickLabels</code>
+                        </td>
+                        <td>string[]</td>
+                        <td>[]</td>
+                        <td>Shows text instead of the tick number values</td>
+                    </tr>
+                    <tr>
+                        <td>
                             <code>autorange</code>
                         </td>
                         <td>boolean</td>
@@ -2754,6 +2770,9 @@
                         y: {
                             range: [9,0],
                             ticks: 9,
+                            tickLabels: [
+                                "zero","one","two","three","four","five","six","seven","eight","nine"
+                            ],
                             format:"f"
                         }
                     },

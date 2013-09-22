@@ -112,6 +112,7 @@ module dChart.Utils {
         fontFamily:string = "sans-serif";
         fontSize:number = 11;
         fontWeight:string = "normal";
+        stroke:string = "none";
 
         normalize(value:any) {
             super.normalize(value);
