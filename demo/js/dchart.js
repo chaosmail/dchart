@@ -1,4 +1,4 @@
-/** dchart - v0.0.9 - Sat Sep 21 2013 09:53:18
+/** dchart - v0.0.10 - Sun Sep 22 2013 12:35:02
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1476,11 +1476,11 @@ var dChart;
         };
 
         Chart.prototype.initializeFonts = function () {
-            this.fontStyle.fontFamily = "sans-serif";
-            this.fontStyle.fontSize = 11;
-            this.fontStyle.fontWeight = "normal";
-            this.fontStyle.stroke = "none";
-            this.fontStyle.fill = "black";
+            this.fontStyle.fontFamily = this.fontStyle.fontFamily || "sans-serif";
+            this.fontStyle.fontSize = this.fontStyle.fontSize || 11;
+            this.fontStyle.fontWeight = this.fontStyle.fontWeight || "normal";
+            this.fontStyle.stroke = this.fontStyle.stroke || "none";
+            this.fontStyle.fill = this.fontStyle.fill || "black";
 
             this._font.root = this.fontStyle.clone();
             this._font.legend = this.fontStyle.clone();
@@ -1490,7 +1490,6 @@ var dChart;
             this._font.ticks = this.fontStyle.clone();
 
             this._font.label.fontWeight = "bold";
-            this._font.label.fontSize += 2;
             this._font.ticks.fontSize -= 2;
         };
 
@@ -1687,10 +1686,9 @@ var dChart;
             }
 
             if (value.hasOwnProperty("fontStyle")) {
-                var fontStyle = new dChart.Utils.FontStyle();
-                fontStyle.normalize(value.fontStyle);
-
-                this.fontStyle = fontStyle;
+                this.fontStyle = this.fontStyle || new dChart.Utils.FontStyle();
+                this.fontStyle.normalize(value.fontStyle);
+                this.initializeFonts();
             }
 
             if (value.hasOwnProperty("dataSets")) {

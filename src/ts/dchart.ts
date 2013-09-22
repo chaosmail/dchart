@@ -133,11 +133,11 @@ module dChart {
 
         initializeFonts() {
 
-            this.fontStyle.fontFamily = "sans-serif";
-            this.fontStyle.fontSize = 11;
-            this.fontStyle.fontWeight = "normal";
-            this.fontStyle.stroke = "none";
-            this.fontStyle.fill = "black";
+            this.fontStyle.fontFamily = this.fontStyle.fontFamily || "sans-serif";
+            this.fontStyle.fontSize = this.fontStyle.fontSize || 11;
+            this.fontStyle.fontWeight = this.fontStyle.fontWeight || "normal";
+            this.fontStyle.stroke = this.fontStyle.stroke || "none";
+            this.fontStyle.fill = this.fontStyle.fill || "black";
 
             this._font.root = this.fontStyle.clone();
             this._font.legend = this.fontStyle.clone();
@@ -147,7 +147,6 @@ module dChart {
             this._font.ticks = this.fontStyle.clone();
 
             this._font.label.fontWeight = "bold";
-            this._font.label.fontSize += 2;
             this._font.ticks.fontSize -= 2;
         }
 
@@ -420,10 +419,9 @@ module dChart {
 
             if (value.hasOwnProperty("fontStyle")) {
 
-                var fontStyle = new Utils.FontStyle();
-                fontStyle.normalize(value.fontStyle);
-
-                this.fontStyle = fontStyle;
+                this.fontStyle = this.fontStyle || new Utils.FontStyle();
+                this.fontStyle.normalize(value.fontStyle);
+                this.initializeFonts();
             }
 
             if (value.hasOwnProperty("dataSets")) {
