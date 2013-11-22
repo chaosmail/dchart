@@ -6,27 +6,10 @@ declare module dChart {
         fill: string;
         fillOpacity: number;
         label: string;
-    }
-    interface IPoint1D extends IPoint {
-        x: number;
-    }
-    interface IPoint2D extends IPoint {
-        x: number;
-        y: number;
-    }
-    interface IPoint2DTime extends IPoint {
-        t: number;
-        y: number;
-    }
-    interface IPoint3D extends IPoint {
         x: number;
         y: number;
         z: number;
-    }
-    interface IPoint3DTime extends IPoint {
-        t: number;
-        y: number;
-        z: number;
+        sigma: number;
     }
     interface IPointMap {
         stroke: string;
@@ -34,76 +17,22 @@ declare module dChart {
         strokeOpacity: string;
         fill: string;
         fillOpacity: string;
-    }
-    interface IPoint1DMap extends IPointMap {
-        x: string;
-    }
-    interface IPoint2DMap extends IPointMap {
-        x: string;
-        y: string;
-    }
-    interface IPoint2DTimeMap extends IPointMap {
-        t: string;
-        y: string;
-    }
-    interface IPoint3DMap extends IPointMap {
         x: string;
         y: string;
         z: string;
-    }
-    interface IPoint3DTimeMap extends IPointMap {
-        t: string;
-        y: string;
-        z: string;
+        sigma: string;
     }
     class Point {
+        public x: number;
+        public y: number;
+        public z: number;
         public label: string;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
-        constructor();
-        public normalize(value: any): void;
-        public map(value: any, map: IPointMap): void;
-        public parse(elem: Element): void;
-    }
-    class Point1D extends Point {
-        public x: number;
-        constructor(x?: number);
-        public normalize(value: any): void;
-        public map(value: any, map: IPoint1DMap): void;
-        public parse(elem: Element): void;
-    }
-    class Point2D extends Point {
-        public x: number;
-        public y: number;
-        constructor(x?: number, y?: number);
-        public normalize(value: any): void;
-        public map(value: any, map: IPoint2DMap): void;
-        public parse(elem: Element): void;
-    }
-    class Point2DTime extends Point {
-        public t: Date;
-        public y: number;
-        constructor(t?: Date, y?: number);
-        public normalize(value: any): void;
-        public map(value: any, map: IPoint2DTimeMap): void;
-        public parse(elem: Element): void;
-    }
-    class Point3D extends Point {
-        public x: number;
-        public y: number;
-        public z: number;
+        public sigma: number;
         constructor(x?: number, y?: number, z?: number);
         public normalize(value: any): void;
-        public map(value: any, map: IPoint3DMap): void;
-        public parse(elem: Element): void;
-    }
-    class Point3DTime extends Point {
-        public t: Date;
-        public y: number;
-        public z: number;
-        constructor(t?: Date, y?: number, z?: number);
-        public normalize(value: any): void;
-        public map(value: any, map: IPoint3DTimeMap): void;
+        public map(value: any, map: IPointMap): void;
         public parse(elem: Element): void;
     }
 }
@@ -302,6 +231,7 @@ declare module dChart {
         public showArea: boolean;
         public showSymbol: boolean;
         public showValues: boolean;
+        public showLegend: boolean;
         public solver: dChart.Utils.Solver;
         public data: any[];
         public label: string;
@@ -314,6 +244,8 @@ declare module dChart {
         constructor(chart: any);
         public parse(elem: Element): void;
         public normalize(value: any): void;
+        public update(value: any): void;
+        public updateData(value: any): void;
         public clear(): void;
         public calculate(): void;
         public min(axis: string): number;
@@ -426,7 +358,7 @@ declare module dChart {
         public yAxis: dChart.yAxis;
         constructor();
         public setFormat(format: string): Chart2D;
-        public getPoint(): dChart.Point2D;
+        public getPoint(): dChart.Point;
         public getSolver(): dChart.Utils.Solver2D;
         public redraw(): void;
         public drawAxis(): void;
@@ -445,7 +377,7 @@ declare module dChart {
         public zAxis: dChart.zAxis;
         constructor();
         public setFormat(format: string): Chart3D;
-        public getPoint(): dChart.Point3D;
+        public getPoint(): dChart.Point;
         public drawAxis(): void;
         public redrawAxis(): void;
         public drawData(): void;
@@ -498,7 +430,7 @@ declare module dChart {
         public innerRadius: number;
         public colorScale: any;
         constructor(config?: IChart);
-        public getPoint(): dChart.Point1D;
+        public getPoint(): dChart.Point;
         public getSolver(): dChart.Utils.Solver1D;
         public drawData(): void;
         public redrawData(): void;

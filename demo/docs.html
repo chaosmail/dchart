@@ -792,7 +792,15 @@
                     </td>
                     <td>string</td>
                     <td>''</td>
-                    <td>Label of the dataset</td>
+                    <td>Label of the dataset. Setting the 'label' option autosets 'showLegend' to 'true'.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>showLegend</code>
+                    </td>
+                    <td>boolean</td>
+                    <td>false</td>
+                    <td>Display the label in the legend.</td>
                 </tr>
                 <tr>
                     <td>
@@ -2919,7 +2927,7 @@
                 for (i=0;i<=100;i++) {
                     scatterData1.push({x:Math.random()*10,y:Math.random()*10});
                     scatterData2.push({x:Math.random()*10,y:Math.random()*10});
-                    scatterData3.push({x:Math.random()*10,y:Math.random()*10});
+                    scatterData3.push({x:Math.random()*10,y:Math.random()*10,z:Math.random()});
                 }
 
                 var scatterChart1 = new dChart.ScatterChart({
@@ -2948,6 +2956,7 @@
                     dataSets: [
                         {
                             label: "Random Data",
+                            showLegend: false,
                             symbolStyle: {
                                 stroke: "olivedrab",
                                 fill: "olivedrab",

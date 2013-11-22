@@ -32,6 +32,7 @@ module dChart {
         showArea:bool = false;
         showSymbol:bool = false;
         showValues:bool = false;
+        showLegend:bool = false;
 
         solver:Utils.Solver;
 
@@ -127,7 +128,14 @@ module dChart {
 
             if (value.hasOwnProperty("label")) {
                 this.label = value.label;
+                this.showLegend = true;
             }
+
+            if (value.hasOwnProperty("showLegend")) {
+
+                this.showLegend = value.showLegend;
+            }
+
 
             if (value.hasOwnProperty("showSymbol")) {
 
@@ -181,6 +189,9 @@ module dChart {
 
                     var p = this.chart.getPoint();
                     p.normalize(config);
+
+                    // TODO
+                    // Check if Data exists, update if x exists, else insert
                     this.data.push(p);
                 });
             }
@@ -230,6 +241,9 @@ module dChart {
 
                         var p = this.chart.getPoint();
                         p.map(val,map);
+
+                        // TODO
+                        // Check if Data exists, update if x exists, else insert
                         this.data.push(p);
                     });
 
@@ -237,6 +251,15 @@ module dChart {
                 });
             }
         }
+
+        update(value:any) {
+            this.normalize(value);
+        }
+
+        updateData(value:any) {
+            this.normalize({data:value});
+        }
+
 
         clear() {
             this.data = [];

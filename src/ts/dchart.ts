@@ -295,6 +295,10 @@ module dChart {
 
             this.dataSets.forEach((dataset:DataSet,k:number) => {
 
+               if (dataset.showLegend === false) {
+                   return;
+               }
+
                var container =
                     this._svg.legend
                         .append("g")
@@ -488,7 +492,7 @@ module dChart {
         }
 
         getPoint() {
-            return new Point2D();
+            return new Point();
         }
 
         getSolver() {
@@ -592,7 +596,7 @@ module dChart {
         }
 
         getPoint() {
-            return new Point3D();
+            return new Point();
         }
 
         drawAxis() {
@@ -699,7 +703,7 @@ module dChart {
 
                 var group = this.svgSymbolContainer[key]
                     .selectAll("path")
-                    .data(dataSet.data, (d:Point2D) => d.x);
+                    .data(dataSet.data, (d:Point) => d.x);
 
                 var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
 
@@ -711,7 +715,7 @@ module dChart {
                     group.enter()
                         .append("path")
                         .areaStyle(dataSet.symbolStyle)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
+                        .attr("transform", (d:Point) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
                         .attr("d", symbol);
                 }
                 else {
@@ -720,8 +724,8 @@ module dChart {
                     // on which the symbols are animated
                     var lineFn = d3.svg.line()
                         .interpolate(dataSet.interpolate)
-                        .x(function(d:Point2D) { return xScale(d.x); })
-                        .y(function(d:Point2D) { return yScale(d.y); });
+                        .x(function(d:Point) { return xScale(d.x); })
+                        .y(function(d:Point) { return yScale(d.y); });
 
                     group.exit()
                         .remove();
@@ -798,8 +802,8 @@ module dChart {
 
                 lineFn[key] = d3.svg.line()
                     .interpolate(dataSet.interpolate)
-                    .x(function(d:Point2D) { return xScale(d.x); })
-                    .y(function(d:Point2D) { return yScale(d.y); });
+                    .x(function(d:Point) { return xScale(d.x); })
+                    .y(function(d:Point) { return yScale(d.y); });
 
                 if (!this.showTransition) {
 
@@ -975,7 +979,7 @@ module dChart {
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 var group = this.svgRectContainer[key].selectAll("rect")
-                    .data(dataSet.data, (d:Point2D) => d.x);
+                    .data(dataSet.data, (d:Point) => d.x);
 
                 if (dataSet.data.length === 0) {
                     return;
@@ -995,10 +999,10 @@ module dChart {
                     group.enter()
                         .append("rect")
                         .areaStyle(dataSet.areaStyle)
-                        .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
-                        .attr("y", (d:Point2D) => yScale(d.y))
-                        .attr("width", (d:Point2D) => width)
-                        .attr("height", (d:Point2D) =>  this.nettoHeight - yScale(d.y));
+                        .attr("x", (d:Point) => xScale(d.x) - start + key*width)
+                        .attr("y", (d:Point) => yScale(d.y))
+                        .attr("width", (d:Point) => width)
+                        .attr("height", (d:Point) =>  this.nettoHeight - yScale(d.y));
                 }
                 else {
 
@@ -1008,16 +1012,16 @@ module dChart {
                     group.enter()
                         .append("rect")
                         .areaStyle(dataSet.areaStyle)
-                        .attr("x", (d:Point2D) => xScale(d.x) - start + key*width)
+                        .attr("x", (d:Point) => xScale(d.x) - start + key*width)
                         .attr("y", this.nettoHeight)
-                        .attr("width", (d:Point2D) => width)
+                        .attr("width", (d:Point) => width)
                         .attr("height", 0)
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("y", (d:Point2D) => yScale(d.y))
-                        .attr("height", (d:Point2D) => this.nettoHeight - yScale(d.y));
+                        .attr("y", (d:Point) => yScale(d.y))
+                        .attr("height", (d:Point) => this.nettoHeight - yScale(d.y));
                 }
 
             });
@@ -1058,7 +1062,7 @@ module dChart {
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 var group = this.svgRectContainer[key].selectAll("rect")
-                    .data(dataSet.data, (d:Point2D) => d.x);
+                    .data(dataSet.data, (d:Point) => d.x);
 
                 if (dataSet.data.length === 0) {
                     return;
@@ -1078,10 +1082,10 @@ module dChart {
                     group.enter()
                         .append("rect")
                         .areaStyle(dataSet.areaStyle)
-                        .attr("x", (d:Point2D) => xScale(0))
-                        .attr("y", (d:Point2D) => yScale(d.y) - start + key*height)
-                        .attr("width", (d:Point2D) => xScale(d.x))
-                        .attr("height", (d:Point2D) => height);
+                        .attr("x", (d:Point) => xScale(0))
+                        .attr("y", (d:Point) => yScale(d.y) - start + key*height)
+                        .attr("width", (d:Point) => xScale(d.x))
+                        .attr("height", (d:Point) => height);
                 }
                 else {
 
@@ -1091,15 +1095,15 @@ module dChart {
                     group.enter()
                         .append("rect")
                         .areaStyle(dataSet.areaStyle)
-                        .attr("x", (d:Point2D) => xScale(0))
-                        .attr("y", (d:Point2D) => yScale(d.y) - start + key*height)
-                        .attr("width", (d:Point2D) => 0)
+                        .attr("x", (d:Point) => xScale(0))
+                        .attr("y", (d:Point) => yScale(d.y) - start + key*height)
+                        .attr("width", (d:Point) => 0)
                         .attr("height", height)
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("width", (d:Point2D) => xScale(d.x));
+                        .attr("width", (d:Point) => xScale(d.x));
                 }
 
             });
@@ -1138,7 +1142,7 @@ module dChart {
             this.dataSets.forEach((dataSet:DataSet,key:number) => {
 
                 var group = this.svgScatterContainer[key].selectAll("path")
-                    .data(dataSet.data, (d:Point2D) => d.x);
+                    .data(dataSet.data, (d:Point) => d.x);
 
                 var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
 
@@ -1150,7 +1154,12 @@ module dChart {
                     group.enter()
                         .append("path")
                         .areaStyle(dataSet.symbolStyle)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")")
+                        .attr("transform", (d:Point) => {
+
+                            var size = d.z != 0 ? d.z*dataSet.symbolStyle.size : dataSet.symbolStyle.size;
+
+                            return "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+size+")";
+                        })
                         .attr("d", symbol);
                 }
                 else {
@@ -1161,13 +1170,18 @@ module dChart {
                     group.enter()
                         .append("path")
                         .areaStyle(dataSet.symbolStyle)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale(0)")
+                        .attr("transform", (d:Point) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale(0)")
                         .attr("d", symbol)
                         .transition()
                         .duration(this.transition.duration)
                         .delay((d,i) => i*this.transition.delay)
                         .ease(this.transition.ease)
-                        .attr("transform", (d:Point2D) => "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+dataSet.symbolStyle.size+")");
+                        .attr("transform", (d:Point) => {
+
+                            var size = d.z && d.z != 0 ? d.z*dataSet.symbolStyle.size : dataSet.symbolStyle.size;
+
+                            return "translate("+xScale(d.x)+","+yScale(d.y)+") scale("+size+")";
+                        });
                 }
 
             });
@@ -1191,7 +1205,7 @@ module dChart {
         }
 
         getPoint() {
-            var p = new Point1D();
+            var p = new Point();
 
             p.areaStyle.stroke = "none";
             p.areaStyle.fill = this.colorScale(this.numPoints);
@@ -1225,7 +1239,7 @@ module dChart {
 
                 var pie = d3.layout.pie()
                     .sort(null)
-                    .value( (d:Point1D) => d.x);
+                    .value( (d:Point) => d.x);
 
                 var radius = this.nettoHeight > this.nettoWidth ? this.nettoWidth*0.5-this.innerRadius : this.nettoHeight*0.5-this.innerRadius;
 
@@ -1246,7 +1260,7 @@ module dChart {
                         .areaStyle((d:D3.ArcDescriptor) => d.data.areaStyle);
                     pieces.append("text")
                         .text((d:D3.ArcDescriptor) => this.format(d.value))
-                        .attr("transform", (d:Point1D) => "translate("+arc.centroid(d)+")")
+                        .attr("transform", (d:Point) => "translate("+arc.centroid(d)+")")
                         .fontStyle(dataSet.fontStyle)
                         .style("text-anchor", "middle");
                 }
