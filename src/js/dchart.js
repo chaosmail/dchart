@@ -1,123 +1,167 @@
 var dChart;
 (function (dChart) {
-    var Point = (function () {
-        function Point(x, y, z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.label = "";
-            this.lineStyle = new dChart.Utils.LineStyle();
-            this.areaStyle = new dChart.Utils.AreaStyle();
-            this.sigma = null;
-        }
-        Point.prototype.normalize = function (value) {
-            if (value.hasOwnProperty("label")) {
-                this.label = value.label;
+    (function (Utils) {
+        var Animation = (function () {
+            function Animation() {
             }
+            Animation.animateAlongPath = function (path) {
+                var p = path.node(), len = p.getTotalLength();
 
-            if (value.hasOwnProperty("lineStyle")) {
-                var lineStyle = new dChart.Utils.LineStyle();
-                lineStyle.normalize(value.lineStyle);
-                this.lineStyle = lineStyle;
+                return function (t) {
+                    var pos = p.getPointAtLength(Math.floor(len * t));
+
+                    return "translate(" + pos.x + "," + pos.y + ")";
+                };
+            };
+            return Animation;
+        })();
+        Utils.Animation = Animation;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Elem = (function () {
+            function Elem() {
             }
+            Elem.getFloat = function (value) {
+                return parseFloat(value.nodeValue);
+            };
 
-            if (value.hasOwnProperty("areaStyle")) {
-                var areaStyle = new dChart.Utils.AreaStyle();
-                areaStyle.normalize(value.areaStyle);
-                this.areaStyle = areaStyle;
+            Elem.getColor = function (value) {
+                return value.nodeValue;
+            };
+
+            Elem.getDate = function (value) {
+                return new Date(value.nodeValue);
+            };
+            return Elem;
+        })();
+        Utils.Elem = Elem;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Filter = (function () {
+            function Filter() {
+                this.key = "";
+                this.operator = "==";
+                this.value = null;
             }
+            Filter.prototype.is = function (object) {
+                var value = object;
 
-            if (value.hasOwnProperty("x")) {
-                this.x = parseFloat(value.x);
-            }
-
-            if (value.hasOwnProperty("y")) {
-                this.y = parseFloat(value.y);
-            }
-
-            if (value.hasOwnProperty("z")) {
-                this.z = parseFloat(value.z);
-            }
-
-            if (value.hasOwnProperty("sigma")) {
-                this.sigma = parseFloat(value.sigma);
-            }
-        };
-
-        Point.prototype.map = function (value, map) {
-            if (value.hasOwnProperty(map.stroke)) {
-                this.areaStyle.stroke = value[map.stroke];
-            }
-
-            if (value.hasOwnProperty(map.strokeWidth)) {
-                this.areaStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
-            }
-
-            if (value.hasOwnProperty(map.strokeOpacity)) {
-                this.areaStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
-            }
-
-            if (value.hasOwnProperty(map.fill)) {
-                this.areaStyle.fill = value[map.fill];
-            }
-
-            if (value.hasOwnProperty(map.fillOpacity)) {
-                this.areaStyle.fillOpacity = parseFloat(value[map.fillOpacity]);
-            }
-
-            if (value.hasOwnProperty(map.x)) {
-                this.x = parseFloat(value[map.x]);
-            }
-
-            if (value.hasOwnProperty(map.y)) {
-                this.y = parseFloat(value[map.y]);
-            }
-
-            if (value.hasOwnProperty(map.z)) {
-                this.z = parseFloat(value[map.z]);
-            }
-
-            if (value.hasOwnProperty(map.sigma)) {
-                this.sigma = parseFloat(value[map.sigma]);
-            }
-        };
-
-        Point.prototype.parse = function (elem) {
-            var _this = this;
-            elem.attributes.forEach(function (value) {
-                if (value.nodeName.match(/^stroke$/i)) {
-                    _this.areaStyle.stroke = dChart.Utils.Elem.getColor(value);
-                    return;
-                } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.areaStyle.strokeWidth = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    _this.areaStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
-                    return;
-                } else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    _this.areaStyle.fillOpacity = dChart.Utils.Elem.getFloat(value);
-                    return;
-                } else if (value.nodeName.match(/^x|t|time|date$/i)) {
-                    _this.x = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^y|val|value$/i)) {
-                    _this.y = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^z|w|weight$/i)) {
-                    _this.z = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^e|s|sigma$/i)) {
-                    _this.sigma = parseFloat(value.nodeValue);
-                    return;
+                if (this.key) {
+                    if (!object.hasOwnProperty(this.key)) {
+                        return false;
+                    }
+                    value = object[this.key];
                 }
-            });
-        };
-        return Point;
-    })();
-    dChart.Point = Point;
+
+                if (this.operator.match(/==/i)) {
+                    return value == this.value;
+                } else if (this.operator.match(/===/i)) {
+                    return value === this.value;
+                }
+
+                return false;
+            };
+
+            Filter.prototype.not = function (object) {
+                return !this.is(object);
+            };
+
+            Filter.prototype.normalize = function (value) {
+                if (value.hasOwnProperty("key")) {
+                    this.key = value.key;
+                }
+
+                if (value.hasOwnProperty("operator")) {
+                    this.operator = value.operator;
+                }
+
+                if (value.hasOwnProperty("value")) {
+                    this.value = value.value;
+                }
+            };
+            return Filter;
+        })();
+        Utils.Filter = Filter;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Loader = (function () {
+            function Loader() {
+                this.url = "";
+                this.dataType = "json";
+                this.map = {};
+            }
+            Loader.prototype.getData = function (callback) {
+                if (this.dataType.match(/^json$/i)) {
+                    return this.getJsonData(callback);
+                } else if (this.dataType.match(/^txt/i)) {
+                    return this.getTxtData(callback);
+                } else if (this.dataType.match(/^csv/i)) {
+                    return this.getCsvData(callback);
+                } else if (this.dataType.match(/^tsv/i)) {
+                    return this.getTsvData(callback);
+                }
+
+                return callback([], this.map);
+            };
+
+            Loader.prototype.getJsonData = function (callback) {
+                var _this = this;
+                d3.json(this.url, function (response) {
+                    callback(response, _this.map);
+                });
+            };
+
+            Loader.prototype.getTxtData = function (callback) {
+                var _this = this;
+                d3.text(this.url, function (response) {
+                    callback(response, _this.map);
+                });
+            };
+
+            Loader.prototype.getCsvData = function (callback) {
+                var _this = this;
+                d3.csv(this.url, function (response) {
+                    callback(response, _this.map);
+                });
+            };
+
+            Loader.prototype.getTsvData = function (callback) {
+                var _this = this;
+                d3.tsv(this.url, function (response) {
+                    callback(response, _this.map);
+                });
+            };
+
+            Loader.prototype.normalize = function (value) {
+                if (value.hasOwnProperty("url")) {
+                    this.url = value.url;
+                }
+
+                if (value.hasOwnProperty("dataType")) {
+                    this.dataType = value.dataType;
+                }
+
+                if (value.hasOwnProperty("map")) {
+                    this.map = value.map;
+                }
+            };
+            return Loader;
+        })();
+        Utils.Loader = Loader;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -125,6 +169,98 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var dChart;
+(function (dChart) {
+    (function (Utils) {
+        var Solver = (function () {
+            function Solver() {
+                this.min = 0;
+                this.max = 10;
+                this.step = 1;
+            }
+            Solver.prototype.solve = function (min, max, step) {
+                var data = [];
+
+                return data;
+            };
+
+            Solver.prototype.normalize = function (value) {
+                if (value.hasOwnProperty("min")) {
+                    this.min = parseFloat(value.min);
+                }
+
+                if (value.hasOwnProperty("max")) {
+                    this.max = parseFloat(value.max);
+                }
+
+                if (value.hasOwnProperty("min")) {
+                    this.step = parseFloat(value.step);
+                }
+
+                if (value.hasOwnProperty("fn") && (typeof value.fn === "function")) {
+                    this.fn = value.fn;
+                }
+            };
+            return Solver;
+        })();
+        Utils.Solver = Solver;
+
+        var Solver1D = (function (_super) {
+            __extends(Solver1D, _super);
+            function Solver1D() {
+                _super.apply(this, arguments);
+            }
+            Solver1D.prototype.solve = function (min, max, step) {
+                this.min = min || this.min;
+                this.max = max || this.max;
+                this.step = step || this.step;
+
+                var x;
+                var data = [];
+
+                if (typeof this.fn !== "function") {
+                    return data;
+                }
+
+                for (x = this.min; x <= this.max; x += this.step) {
+                    data.push({ x: this.fn() });
+                }
+
+                return data;
+            };
+            return Solver1D;
+        })(Solver);
+        Utils.Solver1D = Solver1D;
+
+        var Solver2D = (function (_super) {
+            __extends(Solver2D, _super);
+            function Solver2D() {
+                _super.apply(this, arguments);
+            }
+            Solver2D.prototype.solve = function (min, max, step) {
+                this.min = min || this.min;
+                this.max = max || this.max;
+                this.step = step || this.step;
+
+                var x;
+                var data = [];
+
+                if (typeof this.fn !== "function") {
+                    return data;
+                }
+
+                for (x = this.min; x <= this.max; x += this.step) {
+                    data.push({ x: x, y: this.fn(x) });
+                }
+
+                return data;
+            };
+            return Solver2D;
+        })(Solver);
+        Utils.Solver2D = Solver2D;
+    })(dChart.Utils || (dChart.Utils = {}));
+    var Utils = dChart.Utils;
+})(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
     (function (Utils) {
@@ -255,765 +391,6 @@ var dChart;
 })(dChart || (dChart = {}));
 var dChart;
 (function (dChart) {
-    var Axis = (function () {
-        function Axis(chart) {
-            this.chart = chart;
-            this.gridStyle = new dChart.Utils.LineStyle();
-            this.labelOffset = 34;
-            this.range = [0, 1];
-            this.domain = [0, 1];
-            this.autorange = true;
-            this.showGrid = false;
-            this.scale = "linear";
-            this.length = 1;
-            this.height = 1;
-            this.orientation = "x";
-            this.align = "start";
-            this.labelAlign = "end";
-            this.tickValues = [];
-            this.tickLabels = [];
-            this.tickSubdivide = false;
-            this.visible = true;
-            this.gridStyle.stroke = "black";
-            this.gridStyle.strokeWidth = 1;
-            this.gridStyle.strokeOpacity = 0.25;
-
-            this.format = chart.format;
-        }
-        Axis.prototype.addScaleFn = function (fn, args) {
-            if (this.scale[fn] && typeof this.scale[fn] === "function") {
-                this.scale[fn](args);
-            }
-        };
-
-        Axis.prototype.setOrientation = function (orientation) {
-            if (typeof orientation === "undefined") { orientation = "x"; }
-            this.orientation = (orientation.match(/^y|v|vertical$/i)) ? "y" : (orientation.match(/^z$/i)) ? "z" : "x";
-
-            return this;
-        };
-
-        Axis.prototype.setFormat = function (format) {
-            this.format = d3.format(format);
-
-            return this;
-        };
-
-        Axis.prototype.setDomain = function (domain) {
-            this.domain = domain;
-
-            return this;
-        };
-
-        Axis.prototype.setRange = function (range) {
-            this.range = range;
-
-            return this;
-        };
-
-        Axis.prototype.setAlign = function (align) {
-            this.align = (align.match(/^top|left|start$/i)) ? "start" : (align.match(/^bottom|right|end$/i)) ? "end" : "middle";
-
-            return this;
-        };
-
-        Axis.prototype.setLabelAlign = function (labelAlign) {
-            this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start" : (labelAlign.match(/^bottom|right|end$/i)) ? "end" : "middle";
-
-            return this;
-        };
-
-        Axis.prototype.getScale = function () {
-            var d3Scale = (this.scale.match(/^identity$/i)) ? d3.scale.identity() : (this.scale.match(/^pow|power$/i)) ? d3.scale.pow() : (this.scale.match(/^sqrt$/)) ? d3.scale.sqrt() : (this.scale.match(/^log$/)) ? d3.scale.log() : (this.scale.match(/^quantize/)) ? d3.scale.quantize() : (this.scale.match(/^quantile$/)) ? d3.scale.quantile() : (this.scale.match(/^treshold$/)) ? d3.scale.treshold() : d3.scale.linear();
-
-            d3Scale.domain(this.domain).range(this.range);
-
-            return d3Scale;
-        };
-
-        Axis.prototype.getAxis = function () {
-            var _this = this;
-            var orient = "top";
-
-            if (this.orientation === "x") {
-                orient = this.align === "start" ? "top" : "bottom";
-            }
-
-            if (this.orientation === "y") {
-                orient = this.align === "end" ? "right" : "left";
-            }
-
-            if (!this.ticks) {
-                var u = this.chart.unique(this.orientation);
-                this.ticks = u.length;
-            }
-
-            var axis = d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks).tickFormat(this.format);
-
-            if (this.tickLabels.length > 0) {
-                (axis).tickFormat(function (d, i) {
-                    if (i < _this.tickLabels.length) {
-                        return _this.tickLabels[i];
-                    }
-                    return "";
-                });
-            }
-
-            if (this.tickValues.length > 0) {
-                (axis).tickValues(this.tickValues);
-            }
-
-            if (this.showGrid) {
-                axis.tickSize(-this.height, 0, 3);
-            }
-
-            return axis;
-        };
-
-        Axis.prototype.clear = function () {
-            if (this.svg) {
-                this.svg.remove();
-            }
-        };
-
-        Axis.prototype.draw = function (container, min, max) {
-            this.clear();
-
-            this.fontStyle = this.fontStyle || this.chart._font.axis;
-
-            this.svg = container.append("g").attr("class", "dchart-axis dchart-axis-" + this.orientation);
-
-            this.svgLabel = container.append("g").attr("class", "dchart-axis-label dchart-axis-" + this.orientation + "-label").append("text").fontStyle(this.fontStyle);
-
-            this.redraw(min, max);
-        };
-
-        Axis.prototype.redraw = function (min, max) {
-            if (typeof min === "undefined") { min = 0; }
-            if (typeof max === "undefined") { max = 1; }
-            var _this = this;
-            if (this.autorange === true) {
-                this.setDomain([min, max]);
-            }
-
-            this.svg.call(this.getAxis());
-
-            var axisTick = 0, ticks = this.svg.selectAll("dchart-axis-" + this.orientation + " .tick line");
-
-            if (this.align == "start") {
-                axisTick = 0;
-            } else if (this.align == "end") {
-                axisTick = ticks[0].length;
-            }
-
-            ticks.style("fill", "none").style("stroke", function (d, i) {
-                return i != axisTick ? _this.gridStyle.stroke : "black";
-            }).style("stroke-width", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeWidth : 1;
-            }).style("stroke-opacity", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeOpacity : 1;
-            }).style("stroke-linecap", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeLinecap : "butt";
-            }).style("stroke-dasharray", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeDasharray : "0";
-            });
-
-            this.svgLabel.text(this.label);
-
-            this.svg.selectAll("path").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
-            this.svg.selectAll("line").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
-        };
-
-        Axis.prototype.normalize = function (value) {
-            if (value.hasOwnProperty("label")) {
-                this.label = value.label;
-            }
-
-            if (value.hasOwnProperty("align")) {
-                this.setAlign(value.align);
-            }
-
-            if (value.hasOwnProperty("labelAlign")) {
-                this.setLabelAlign(value.labelAlign);
-            }
-
-            if (value.hasOwnProperty("labelOffset")) {
-                this.labelOffset = parseInt(value.labelOffset, 10);
-            }
-
-            if (value.hasOwnProperty("autorange")) {
-                this.autorange = value.autorange;
-            }
-
-            if (value.hasOwnProperty("format")) {
-                this.setFormat(value.format);
-            }
-
-            if (value.hasOwnProperty("showGrid")) {
-                this.showGrid = value.showGrid;
-            }
-
-            if (value.hasOwnProperty("fontStyle")) {
-                this.fontStyle = this.fontStyle || this.chart._font.axis;
-
-                this.fontStyle.normalize(value.fontStyle);
-            }
-
-            if (value.hasOwnProperty("gridStyle")) {
-                var lineStyle = new dChart.Utils.LineStyle();
-                lineStyle.normalize(value.gridStyle);
-                this.gridStyle = lineStyle;
-
-                this.showGrid = true;
-            }
-
-            if (value.hasOwnProperty("ticks")) {
-                this.ticks = parseInt(value.ticks, 10);
-            }
-
-            if (value.hasOwnProperty("tickValues")) {
-                this.tickValues = value.tickValues;
-            }
-
-            if (value.hasOwnProperty("tickLabels")) {
-                this.tickLabels = value.tickLabels;
-            }
-
-            if (value.hasOwnProperty("scale")) {
-                this.scale = value.scale;
-            }
-
-            if (value.hasOwnProperty("range")) {
-                this.setDomain(value.range);
-                this.autorange = false;
-            }
-        };
-        return Axis;
-    })();
-    dChart.Axis = Axis;
-
-    var xAxis = (function (_super) {
-        __extends(xAxis, _super);
-        function xAxis(chart) {
-            _super.call(this, chart);
-            this.orientation = "x";
-
-            this.setAlign("bottom");
-            this.setLabelAlign("right");
-        }
-        xAxis.prototype.redraw = function (min, max) {
-            if (typeof min === "undefined") { min = 0; }
-            if (typeof max === "undefined") { max = 1; }
-            var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
-
-            var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
-
-            this.svg.attr("transform", "translate(0," + pos + ")");
-
-            this.svgLabel.attr("x", labelPos).attr("y", this.height + this.labelOffset).attr("text-anchor", this.labelAlign);
-
-            this.setRange([0, this.length]);
-
-            _super.prototype.redraw.call(this, min, max);
-        };
-        return xAxis;
-    })(Axis);
-    dChart.xAxis = xAxis;
-
-    var yAxis = (function (_super) {
-        __extends(yAxis, _super);
-        function yAxis(chart) {
-            _super.call(this, chart);
-            this.orientation = "y";
-
-            this.setAlign("left");
-            this.setLabelAlign("top");
-        }
-        yAxis.prototype.redraw = function (min, max) {
-            if (typeof min === "undefined") { min = 0; }
-            if (typeof max === "undefined") { max = 1; }
-            var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
-
-            var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
-
-            var labelAlign = this.labelAlign === "start" ? "end" : this.labelAlign === "end" ? "start" : "middle";
-
-            this.svg.attr("transform", "translate(" + pos + ",0)");
-
-            this.svgLabel.attr("x", -labelPos).attr("y", -this.labelOffset).attr("transform", "rotate(-90)").attr("text-anchor", labelAlign);
-
-            this.setRange([this.length, 0]);
-
-            _super.prototype.redraw.call(this, min, max);
-        };
-        return yAxis;
-    })(Axis);
-    dChart.yAxis = yAxis;
-
-    var zAxis = (function (_super) {
-        __extends(zAxis, _super);
-        function zAxis(chart) {
-            _super.call(this, chart);
-            this.orientation = "z";
-        }
-        return zAxis;
-    })(Axis);
-    dChart.zAxis = zAxis;
-})(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
-    (function (Utils) {
-        var Elem = (function () {
-            function Elem() {
-            }
-            Elem.getFloat = function (value) {
-                return parseFloat(value.nodeValue);
-            };
-
-            Elem.getColor = function (value) {
-                return value.nodeValue;
-            };
-
-            Elem.getDate = function (value) {
-                return new Date(value.nodeValue);
-            };
-            return Elem;
-        })();
-        Utils.Elem = Elem;
-    })(dChart.Utils || (dChart.Utils = {}));
-    var Utils = dChart.Utils;
-})(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
-    (function (Utils) {
-        var Solver = (function () {
-            function Solver() {
-                this.min = 0;
-                this.max = 10;
-                this.step = 1;
-            }
-            Solver.prototype.solve = function (min, max, step) {
-                var data = [];
-
-                return data;
-            };
-
-            Solver.prototype.normalize = function (value) {
-                if (value.hasOwnProperty("min")) {
-                    this.min = parseFloat(value.min);
-                }
-
-                if (value.hasOwnProperty("max")) {
-                    this.max = parseFloat(value.max);
-                }
-
-                if (value.hasOwnProperty("min")) {
-                    this.step = parseFloat(value.step);
-                }
-
-                if (value.hasOwnProperty("fn") && (typeof value.fn === "function")) {
-                    this.fn = value.fn;
-                }
-            };
-            return Solver;
-        })();
-        Utils.Solver = Solver;
-
-        var Solver1D = (function (_super) {
-            __extends(Solver1D, _super);
-            function Solver1D() {
-                _super.apply(this, arguments);
-            }
-            Solver1D.prototype.solve = function (min, max, step) {
-                this.min = min || this.min;
-                this.max = max || this.max;
-                this.step = step || this.step;
-
-                var x;
-                var data = [];
-
-                if (typeof this.fn !== "function") {
-                    return data;
-                }
-
-                for (x = this.min; x <= this.max; x += this.step) {
-                    data.push({ x: this.fn() });
-                }
-
-                return data;
-            };
-            return Solver1D;
-        })(Solver);
-        Utils.Solver1D = Solver1D;
-
-        var Solver2D = (function (_super) {
-            __extends(Solver2D, _super);
-            function Solver2D() {
-                _super.apply(this, arguments);
-            }
-            Solver2D.prototype.solve = function (min, max, step) {
-                this.min = min || this.min;
-                this.max = max || this.max;
-                this.step = step || this.step;
-
-                var x;
-                var data = [];
-
-                if (typeof this.fn !== "function") {
-                    return data;
-                }
-
-                for (x = this.min; x <= this.max; x += this.step) {
-                    data.push({ x: x, y: this.fn(x) });
-                }
-
-                return data;
-            };
-            return Solver2D;
-        })(Solver);
-        Utils.Solver2D = Solver2D;
-    })(dChart.Utils || (dChart.Utils = {}));
-    var Utils = dChart.Utils;
-})(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
-    (function (Utils) {
-        var Filter = (function () {
-            function Filter() {
-                this.key = "";
-                this.operator = "==";
-                this.value = null;
-            }
-            Filter.prototype.is = function (object) {
-                var value = object;
-
-                if (this.key) {
-                    if (!object.hasOwnProperty(this.key)) {
-                        return false;
-                    }
-                    value = object[this.key];
-                }
-
-                if (this.operator.match(/==/i)) {
-                    return value == this.value;
-                } else if (this.operator.match(/===/i)) {
-                    return value === this.value;
-                }
-
-                return false;
-            };
-
-            Filter.prototype.not = function (object) {
-                return !this.is(object);
-            };
-
-            Filter.prototype.normalize = function (value) {
-                if (value.hasOwnProperty("key")) {
-                    this.key = value.key;
-                }
-
-                if (value.hasOwnProperty("operator")) {
-                    this.operator = value.operator;
-                }
-
-                if (value.hasOwnProperty("value")) {
-                    this.value = value.value;
-                }
-            };
-            return Filter;
-        })();
-        Utils.Filter = Filter;
-    })(dChart.Utils || (dChart.Utils = {}));
-    var Utils = dChart.Utils;
-})(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
-    (function (Utils) {
-        var Loader = (function () {
-            function Loader() {
-                this.url = "";
-                this.dataType = "json";
-                this.map = {};
-            }
-            Loader.prototype.getData = function (callback) {
-                if (this.dataType.match(/^json$/i)) {
-                    return this.getJsonData(callback);
-                } else if (this.dataType.match(/^txt/i)) {
-                    return this.getTxtData(callback);
-                } else if (this.dataType.match(/^csv/i)) {
-                    return this.getCsvData(callback);
-                } else if (this.dataType.match(/^tsv/i)) {
-                    return this.getTsvData(callback);
-                }
-
-                return callback([], this.map);
-            };
-
-            Loader.prototype.getJsonData = function (callback) {
-                var _this = this;
-                d3.json(this.url, function (response) {
-                    callback(response, _this.map);
-                });
-            };
-
-            Loader.prototype.getTxtData = function (callback) {
-                var _this = this;
-                d3.text(this.url, function (response) {
-                    callback(response, _this.map);
-                });
-            };
-
-            Loader.prototype.getCsvData = function (callback) {
-                var _this = this;
-                d3.csv(this.url, function (response) {
-                    callback(response, _this.map);
-                });
-            };
-
-            Loader.prototype.getTsvData = function (callback) {
-                var _this = this;
-                d3.tsv(this.url, function (response) {
-                    callback(response, _this.map);
-                });
-            };
-
-            Loader.prototype.normalize = function (value) {
-                if (value.hasOwnProperty("url")) {
-                    this.url = value.url;
-                }
-
-                if (value.hasOwnProperty("dataType")) {
-                    this.dataType = value.dataType;
-                }
-
-                if (value.hasOwnProperty("map")) {
-                    this.map = value.map;
-                }
-            };
-            return Loader;
-        })();
-        Utils.Loader = Loader;
-    })(dChart.Utils || (dChart.Utils = {}));
-    var Utils = dChart.Utils;
-})(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
-    var DataSet = (function () {
-        function DataSet(chart) {
-            this.chart = chart;
-            this.showLine = true;
-            this.showArea = false;
-            this.showSymbol = false;
-            this.showValues = false;
-            this.showLegend = false;
-            this.data = [];
-            this.label = "";
-            this.interpolate = "linear";
-            this.visible = true;
-            this.lineStyle = new dChart.Utils.LineStyle();
-            this.fontStyle = new dChart.Utils.FontStyle();
-            this.fontStyle.stroke = "none";
-            this.fontStyle.fill = "black";
-        }
-        DataSet.prototype.parse = function (elem) {
-            var _this = this;
-            elem.attributes.forEach(function (value) {
-                if (value.nodeName.match(/^label$/i)) {
-                    _this.label = value.nodeValue;
-                    return;
-                } else if (value.nodeName.match(/^interpolate$/i)) {
-                    _this.interpolate = value.nodeValue;
-                    return;
-                } else if (value.nodeName.match(/^stroke$/i)) {
-                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
-                    return;
-                } else if (value.nodeName.match(/^stroke-width$/i)) {
-                    _this.lineStyle.strokeWidth = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^stroke-opacity$/i)) {
-                    _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
-                    return;
-                } else if (value.nodeName.match(/^fill$/i)) {
-                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
-                    return;
-                } else if (value.nodeName.match(/^fill-opacity$/i)) {
-                    _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
-                    return;
-                }
-            });
-        };
-
-        DataSet.prototype.normalize = function (value) {
-            var _this = this;
-            if (value.hasOwnProperty("interpolate")) {
-                this.interpolate = value.interpolate;
-            }
-
-            if (value.hasOwnProperty("label")) {
-                this.label = value.label;
-                this.showLegend = true;
-            }
-
-            if (value.hasOwnProperty("showLegend")) {
-                this.showLegend = value.showLegend;
-            }
-
-            if (value.hasOwnProperty("showSymbol")) {
-                this.showSymbol = value.showSymbol;
-            }
-
-            if (value.hasOwnProperty("showLine")) {
-                this.showLine = value.showLine;
-            }
-
-            if (value.hasOwnProperty("symbolStyle")) {
-                var symbolStyle = new dChart.Utils.SymbolStyle();
-                symbolStyle.normalize(value.symbolStyle);
-                this.symbolStyle = symbolStyle;
-
-                this.showSymbol = true;
-            }
-
-            if (value.hasOwnProperty("lineStyle")) {
-                var lineStyle = new dChart.Utils.LineStyle();
-                lineStyle.normalize(value.lineStyle);
-                this.lineStyle = lineStyle;
-
-                this.showLine = true;
-            }
-
-            if (value.hasOwnProperty("areaStyle")) {
-                var areaStyle = new dChart.Utils.AreaStyle();
-                areaStyle.normalize(value.areaStyle);
-                this.areaStyle = areaStyle;
-
-                this.showArea = true;
-            }
-
-            if (value.hasOwnProperty("fontStyle")) {
-                var fontStyle = new dChart.Utils.FontStyle();
-                fontStyle.normalize(value.fontStyle);
-                this.fontStyle = fontStyle;
-
-                this.showValues = true;
-            }
-
-            if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
-                value.data.forEach(function (config) {
-                    var p = _this.chart.getPoint();
-                    p.normalize(config);
-
-                    _this.data.push(p);
-                });
-            }
-
-            if (value.hasOwnProperty("dataFn")) {
-                var solver = this.chart.getSolver();
-                solver.normalize(value.dataFn);
-                this.solver = solver;
-
-                this.calculate();
-            }
-
-            if (value.hasOwnProperty("dataSrc")) {
-                var filter = [];
-
-                if (value.dataSrc.hasOwnProperty("filter")) {
-                    value.dataSrc.filter.forEach(function (f, k) {
-                        filter[k] = new dChart.Utils.Filter();
-                        filter[k].normalize(f);
-                    });
-                }
-
-                var loader = new dChart.Utils.Loader();
-                loader.normalize(value.dataSrc);
-
-                loader.getData(function (data, map) {
-                    data.forEach(function (val) {
-                        if (filter.length) {
-                            var stop = false;
-
-                            filter.forEach(function (f) {
-                                if (f.not(val)) {
-                                    stop = true;
-                                }
-                            });
-
-                            if (stop) {
-                                return;
-                            }
-                        }
-
-                        var p = _this.chart.getPoint();
-                        p.map(val, map);
-
-                        _this.data.push(p);
-                    });
-
-                    _this.chart.draw();
-                });
-            }
-        };
-
-        DataSet.prototype.update = function (value) {
-            this.normalize(value);
-        };
-
-        DataSet.prototype.updateData = function (value) {
-            this.normalize({ data: value });
-        };
-
-        DataSet.prototype.clear = function () {
-            this.data = [];
-        };
-
-        DataSet.prototype.calculate = function () {
-            var _this = this;
-            if (this.solver) {
-                this.clear();
-
-                var data = this.solver.solve();
-
-                data.forEach(function (val) {
-                    var p = _this.chart.getPoint();
-                    p.normalize(val);
-                    _this.data.push(p);
-                });
-            }
-        };
-
-        DataSet.prototype.min = function (axis) {
-            return d3.min(this.data, function (d) {
-                return d[axis];
-            });
-        };
-
-        DataSet.prototype.max = function (axis) {
-            return d3.max(this.data, function (d) {
-                return d[axis];
-            });
-        };
-
-        DataSet.prototype.unique = function (axis) {
-            var u = {}, a = [];
-
-            this.data.forEach(function (value) {
-                if (u.hasOwnProperty(value[axis])) {
-                    return;
-                }
-
-                a.push(value[axis]);
-                u[value[axis]] = 1;
-            });
-
-            return a;
-        };
-        return DataSet;
-    })();
-    dChart.DataSet = DataSet;
-})(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
     (function (Utils) {
         var Transition = (function () {
             function Transition() {
@@ -1040,28 +417,6 @@ var dChart;
     })(dChart.Utils || (dChart.Utils = {}));
     var Utils = dChart.Utils;
 })(dChart || (dChart = {}));
-var dChart;
-(function (dChart) {
-    (function (Utils) {
-        var Animation = (function () {
-            function Animation() {
-            }
-            Animation.animateAlongPath = function (path) {
-                var p = path.node(), len = p.getTotalLength();
-
-                return function (t) {
-                    var pos = p.getPointAtLength(Math.floor(len * t));
-
-                    return "translate(" + pos.x + "," + pos.y + ")";
-                };
-            };
-            return Animation;
-        })();
-        Utils.Animation = Animation;
-    })(dChart.Utils || (dChart.Utils = {}));
-    var Utils = dChart.Utils;
-})(dChart || (dChart = {}));
-"use strict";
 var dChart;
 (function (dChart) {
     var Chart = (function () {
@@ -1369,10 +724,12 @@ var dChart;
     var Chart2D = (function (_super) {
         __extends(Chart2D, _super);
         function Chart2D() {
+            _super.call(this);
+            this.xAxis = null;
+            this.yAxis = null;
+
             this.xAxis = new dChart.xAxis(this);
             this.yAxis = new dChart.yAxis(this);
-
-            _super.call(this);
         }
         Chart2D.prototype.setFormat = function (format) {
             this.format = d3.format(format);
@@ -1551,7 +908,653 @@ var dChart;
         return Chart3D;
     })(Chart);
     dChart.Chart3D = Chart3D;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    var Point = (function () {
+        function Point(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.label = "";
+            this.lineStyle = new dChart.Utils.LineStyle();
+            this.areaStyle = new dChart.Utils.AreaStyle();
+            this.sigma = null;
+        }
+        Point.prototype.normalize = function (value) {
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
 
+            if (value.hasOwnProperty("lineStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
+            }
+
+            if (value.hasOwnProperty("areaStyle")) {
+                var areaStyle = new dChart.Utils.AreaStyle();
+                areaStyle.normalize(value.areaStyle);
+                this.areaStyle = areaStyle;
+            }
+
+            if (value.hasOwnProperty("x")) {
+                this.x = parseFloat(value.x);
+            }
+
+            if (value.hasOwnProperty("y")) {
+                this.y = parseFloat(value.y);
+            }
+
+            if (value.hasOwnProperty("z")) {
+                this.z = parseFloat(value.z);
+            }
+
+            if (value.hasOwnProperty("sigma")) {
+                this.sigma = parseFloat(value.sigma);
+            }
+        };
+
+        Point.prototype.map = function (value, map) {
+            if (value.hasOwnProperty(map.stroke)) {
+                this.areaStyle.stroke = value[map.stroke];
+            }
+
+            if (value.hasOwnProperty(map.strokeWidth)) {
+                this.areaStyle.strokeWidth = parseFloat(value[map.strokeWidth]);
+            }
+
+            if (value.hasOwnProperty(map.strokeOpacity)) {
+                this.areaStyle.strokeOpacity = parseFloat(value[map.strokeOpacity]);
+            }
+
+            if (value.hasOwnProperty(map.fill)) {
+                this.areaStyle.fill = value[map.fill];
+            }
+
+            if (value.hasOwnProperty(map.fillOpacity)) {
+                this.areaStyle.fillOpacity = parseFloat(value[map.fillOpacity]);
+            }
+
+            if (value.hasOwnProperty(map.x)) {
+                this.x = parseFloat(value[map.x]);
+            }
+
+            if (value.hasOwnProperty(map.y)) {
+                this.y = parseFloat(value[map.y]);
+            }
+
+            if (value.hasOwnProperty(map.z)) {
+                this.z = parseFloat(value[map.z]);
+            }
+
+            if (value.hasOwnProperty(map.sigma)) {
+                this.sigma = parseFloat(value[map.sigma]);
+            }
+        };
+
+        Point.prototype.parse = function (elem) {
+            var _this = this;
+            d3.map(elem.attributes).forEach(function (value) {
+                if (value.nodeName.match(/^stroke$/i)) {
+                    _this.areaStyle.stroke = dChart.Utils.Elem.getColor(value);
+                    return;
+                } else if (value.nodeName.match(/^stroke-width$/i)) {
+                    _this.areaStyle.strokeWidth = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^stroke-opacity$/i)) {
+                    _this.areaStyle.strokeOpacity = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^fill$/i)) {
+                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
+                    return;
+                } else if (value.nodeName.match(/^fill-opacity$/i)) {
+                    _this.areaStyle.fillOpacity = dChart.Utils.Elem.getFloat(value);
+                    return;
+                } else if (value.nodeName.match(/^x|t|time|date$/i)) {
+                    _this.x = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^y|val|value$/i)) {
+                    _this.y = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^z|w|weight$/i)) {
+                    _this.z = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^e|s|sigma$/i)) {
+                    _this.sigma = parseFloat(value.nodeValue);
+                    return;
+                }
+            });
+        };
+        return Point;
+    })();
+    dChart.Point = Point;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    var Axis = (function () {
+        function Axis(chart) {
+            this.chart = chart;
+            this.gridStyle = new dChart.Utils.LineStyle();
+            this.labelOffset = 34;
+            this.range = [0, 1];
+            this.domain = [0, 1];
+            this.autorange = true;
+            this.showGrid = false;
+            this.scale = "linear";
+            this.length = 1;
+            this.height = 1;
+            this.orientation = "x";
+            this.align = "start";
+            this.labelAlign = "end";
+            this.tickValues = [];
+            this.tickLabels = [];
+            this.tickSubdivide = false;
+            this.visible = true;
+            this.gridStyle.stroke = "black";
+            this.gridStyle.strokeWidth = 1;
+            this.gridStyle.strokeOpacity = 0.25;
+
+            this.format = chart.format;
+        }
+        Axis.prototype.addScaleFn = function (fn, args) {
+            if (this.scale[fn] && typeof this.scale[fn] === "function") {
+                this.scale[fn](args);
+            }
+        };
+
+        Axis.prototype.setOrientation = function (orientation) {
+            if (typeof orientation === "undefined") { orientation = "x"; }
+            this.orientation = (orientation.match(/^y|v|vertical$/i)) ? "y" : (orientation.match(/^z$/i)) ? "z" : "x";
+
+            return this;
+        };
+
+        Axis.prototype.setFormat = function (format) {
+            this.format = d3.format(format);
+
+            return this;
+        };
+
+        Axis.prototype.setDomain = function (domain) {
+            this.domain = domain;
+
+            return this;
+        };
+
+        Axis.prototype.setRange = function (range) {
+            this.range = range;
+
+            return this;
+        };
+
+        Axis.prototype.setAlign = function (align) {
+            this.align = (align.match(/^top|left|start$/i)) ? "start" : (align.match(/^bottom|right|end$/i)) ? "end" : "middle";
+
+            return this;
+        };
+
+        Axis.prototype.setLabelAlign = function (labelAlign) {
+            this.labelAlign = (labelAlign.match(/^top|left|start$/i)) ? "start" : (labelAlign.match(/^bottom|right|end$/i)) ? "end" : "middle";
+
+            return this;
+        };
+
+        Axis.prototype.getScale = function () {
+            var d3Scale = (this.scale.match(/^identity$/i)) ? d3.scale.identity() : (this.scale.match(/^pow|power$/i)) ? d3.scale.pow() : (this.scale.match(/^sqrt$/)) ? d3.scale.sqrt() : (this.scale.match(/^log$/)) ? d3.scale.log() : (this.scale.match(/^quantize/)) ? d3.scale.quantize() : (this.scale.match(/^quantile$/)) ? d3.scale.quantile() : (this.scale.match(/^threshold/)) ? d3.scale.threshold() : d3.scale.linear();
+
+            d3Scale.domain(this.domain).range(this.range);
+
+            return d3Scale;
+        };
+
+        Axis.prototype.getAxis = function () {
+            var _this = this;
+            var orient = "top";
+
+            if (this.orientation === "x") {
+                orient = this.align === "start" ? "top" : "bottom";
+            }
+
+            if (this.orientation === "y") {
+                orient = this.align === "end" ? "right" : "left";
+            }
+
+            if (!this.ticks) {
+                var u = this.chart.unique(this.orientation);
+                this.ticks = u.length;
+            }
+
+            var axis = d3.svg.axis().scale(this.getScale()).orient(orient).ticks(this.ticks).tickFormat(this.format);
+
+            if (this.tickLabels.length > 0) {
+                (axis).tickFormat(function (d, i) {
+                    if (i < _this.tickLabels.length) {
+                        return _this.tickLabels[i];
+                    }
+                    return "";
+                });
+            }
+
+            if (this.tickValues.length > 0) {
+                (axis).tickValues(this.tickValues);
+            }
+
+            if (this.showGrid) {
+                axis.tickSize(-this.height, 0, 3);
+            }
+
+            return axis;
+        };
+
+        Axis.prototype.clear = function () {
+            if (this.svg) {
+                this.svg.remove();
+            }
+        };
+
+        Axis.prototype.draw = function (container, min, max) {
+            this.clear();
+
+            this.fontStyle = this.fontStyle || this.chart._font.axis;
+
+            this.svg = container.append("g").attr("class", "dchart-axis dchart-axis-" + this.orientation);
+
+            this.svgLabel = container.append("g").attr("class", "dchart-axis-label dchart-axis-" + this.orientation + "-label").append("text").fontStyle(this.fontStyle);
+
+            this.redraw(min, max);
+        };
+
+        Axis.prototype.redraw = function (min, max) {
+            if (typeof min === "undefined") { min = 0; }
+            if (typeof max === "undefined") { max = 1; }
+            var _this = this;
+            if (this.autorange === true) {
+                this.setDomain([min, max]);
+            }
+
+            this.svg.call(this.getAxis());
+
+            var axisTick = 0, ticks = this.svg.selectAll("dchart-axis-" + this.orientation + " .tick line");
+
+            if (this.align == "start") {
+                axisTick = 0;
+            } else if (this.align == "end") {
+                axisTick = ticks[0].length;
+            }
+
+            ticks.style("fill", "none").style("stroke", function (d, i) {
+                return i != axisTick ? _this.gridStyle.stroke : "black";
+            }).style("stroke-width", function (d, i) {
+                return i != axisTick ? _this.gridStyle.strokeWidth : 1;
+            }).style("stroke-opacity", function (d, i) {
+                return i != axisTick ? _this.gridStyle.strokeOpacity : 1;
+            }).style("stroke-linecap", function (d, i) {
+                return i != axisTick ? _this.gridStyle.strokeLinecap : "butt";
+            }).style("stroke-dasharray", function (d, i) {
+                return i != axisTick ? _this.gridStyle.strokeDasharray : "0";
+            });
+
+            this.svgLabel.text(this.label);
+
+            this.svg.selectAll("path").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
+        };
+
+        Axis.prototype.normalize = function (value) {
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+            }
+
+            if (value.hasOwnProperty("align")) {
+                this.setAlign(value.align);
+            }
+
+            if (value.hasOwnProperty("labelAlign")) {
+                this.setLabelAlign(value.labelAlign);
+            }
+
+            if (value.hasOwnProperty("labelOffset")) {
+                this.labelOffset = parseInt(value.labelOffset, 10);
+            }
+
+            if (value.hasOwnProperty("autorange")) {
+                this.autorange = value.autorange;
+            }
+
+            if (value.hasOwnProperty("format")) {
+                this.setFormat(value.format);
+            }
+
+            if (value.hasOwnProperty("showGrid")) {
+                this.showGrid = value.showGrid;
+            }
+
+            if (value.hasOwnProperty("fontStyle")) {
+                this.fontStyle = this.fontStyle || this.chart._font.axis;
+
+                this.fontStyle.normalize(value.fontStyle);
+            }
+
+            if (value.hasOwnProperty("gridStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.gridStyle);
+                this.gridStyle = lineStyle;
+
+                this.showGrid = true;
+            }
+
+            if (value.hasOwnProperty("ticks")) {
+                this.ticks = parseInt(value.ticks, 10);
+            }
+
+            if (value.hasOwnProperty("tickValues")) {
+                this.tickValues = value.tickValues;
+            }
+
+            if (value.hasOwnProperty("tickLabels")) {
+                this.tickLabels = value.tickLabels;
+            }
+
+            if (value.hasOwnProperty("scale")) {
+                this.scale = value.scale;
+            }
+
+            if (value.hasOwnProperty("range")) {
+                this.setDomain(value.range);
+                this.autorange = false;
+            }
+        };
+        return Axis;
+    })();
+    dChart.Axis = Axis;
+
+    var xAxis = (function (_super) {
+        __extends(xAxis, _super);
+        function xAxis(chart) {
+            _super.call(this, chart);
+            this.orientation = "x";
+
+            this.setAlign("bottom");
+            this.setLabelAlign("right");
+        }
+        xAxis.prototype.redraw = function (min, max) {
+            if (typeof min === "undefined") { min = 0; }
+            if (typeof max === "undefined") { max = 1; }
+            var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
+
+            var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
+
+            this.svg.attr("transform", "translate(0," + pos + ")");
+
+            this.svgLabel.attr("x", labelPos).attr("y", this.height + this.labelOffset).attr("text-anchor", this.labelAlign);
+
+            this.setRange([0, this.length]);
+
+            _super.prototype.redraw.call(this, min, max);
+        };
+        return xAxis;
+    })(Axis);
+    dChart.xAxis = xAxis;
+
+    var yAxis = (function (_super) {
+        __extends(yAxis, _super);
+        function yAxis(chart) {
+            _super.call(this, chart);
+            this.orientation = "y";
+
+            this.setAlign("left");
+            this.setLabelAlign("top");
+        }
+        yAxis.prototype.redraw = function (min, max) {
+            if (typeof min === "undefined") { min = 0; }
+            if (typeof max === "undefined") { max = 1; }
+            var pos = this.align === "middle" ? this.height * 0.5 : this.align === "start" ? 0 : this.height;
+
+            var labelPos = this.labelAlign === "middle" ? this.length * 0.5 : this.labelAlign === "start" ? 0 : this.length;
+
+            var labelAlign = this.labelAlign === "start" ? "end" : this.labelAlign === "end" ? "start" : "middle";
+
+            this.svg.attr("transform", "translate(" + pos + ",0)");
+
+            this.svgLabel.attr("x", -labelPos).attr("y", -this.labelOffset).attr("transform", "rotate(-90)").attr("text-anchor", labelAlign);
+
+            this.setRange([this.length, 0]);
+
+            _super.prototype.redraw.call(this, min, max);
+        };
+        return yAxis;
+    })(Axis);
+    dChart.yAxis = yAxis;
+
+    var zAxis = (function (_super) {
+        __extends(zAxis, _super);
+        function zAxis(chart) {
+            _super.call(this, chart);
+            this.orientation = "z";
+        }
+        return zAxis;
+    })(Axis);
+    dChart.zAxis = zAxis;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    var DataSet = (function () {
+        function DataSet(chart) {
+            this.chart = chart;
+            this.showLine = true;
+            this.showArea = false;
+            this.showSymbol = false;
+            this.showValues = false;
+            this.showLegend = false;
+            this.data = [];
+            this.label = "";
+            this.interpolate = "linear";
+            this.visible = true;
+            this.lineStyle = new dChart.Utils.LineStyle();
+            this.fontStyle = new dChart.Utils.FontStyle();
+            this.fontStyle.stroke = "none";
+            this.fontStyle.fill = "black";
+        }
+        DataSet.prototype.parse = function (elem) {
+            var _this = this;
+            d3.map(elem.attributes).forEach(function (value) {
+                if (value.nodeName.match(/^label$/i)) {
+                    _this.label = value.nodeValue;
+                    return;
+                } else if (value.nodeName.match(/^interpolate$/i)) {
+                    _this.interpolate = value.nodeValue;
+                    return;
+                } else if (value.nodeName.match(/^stroke$/i)) {
+                    _this.lineStyle.stroke = dChart.Utils.Elem.getColor(value);
+                    return;
+                } else if (value.nodeName.match(/^stroke-width$/i)) {
+                    _this.lineStyle.strokeWidth = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^stroke-opacity$/i)) {
+                    _this.lineStyle.strokeOpacity = parseFloat(value.nodeValue);
+                    return;
+                } else if (value.nodeName.match(/^fill$/i)) {
+                    _this.areaStyle.fill = dChart.Utils.Elem.getColor(value);
+                    return;
+                } else if (value.nodeName.match(/^fill-opacity$/i)) {
+                    _this.areaStyle.fillOpacity = parseFloat(value.nodeValue);
+                    return;
+                }
+            });
+        };
+
+        DataSet.prototype.normalize = function (value) {
+            var _this = this;
+            if (value.hasOwnProperty("interpolate")) {
+                this.interpolate = value.interpolate;
+            }
+
+            if (value.hasOwnProperty("label")) {
+                this.label = value.label;
+                this.showLegend = true;
+            }
+
+            if (value.hasOwnProperty("showLegend")) {
+                this.showLegend = value.showLegend;
+            }
+
+            if (value.hasOwnProperty("showSymbol")) {
+                this.showSymbol = value.showSymbol;
+            }
+
+            if (value.hasOwnProperty("showLine")) {
+                this.showLine = value.showLine;
+            }
+
+            if (value.hasOwnProperty("symbolStyle")) {
+                var symbolStyle = new dChart.Utils.SymbolStyle();
+                symbolStyle.normalize(value.symbolStyle);
+                this.symbolStyle = symbolStyle;
+
+                this.showSymbol = true;
+            }
+
+            if (value.hasOwnProperty("lineStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
+
+                this.showLine = true;
+            }
+
+            if (value.hasOwnProperty("areaStyle")) {
+                var areaStyle = new dChart.Utils.AreaStyle();
+                areaStyle.normalize(value.areaStyle);
+                this.areaStyle = areaStyle;
+
+                this.showArea = true;
+            }
+
+            if (value.hasOwnProperty("fontStyle")) {
+                var fontStyle = new dChart.Utils.FontStyle();
+                fontStyle.normalize(value.fontStyle);
+                this.fontStyle = fontStyle;
+
+                this.showValues = true;
+            }
+
+            if (value.hasOwnProperty("data") && (typeof value.data === "object")) {
+                value.data.forEach(function (config) {
+                    var p = _this.chart.getPoint();
+                    p.normalize(config);
+
+                    _this.data.push(p);
+                });
+            }
+
+            if (value.hasOwnProperty("dataFn")) {
+                var solver = this.chart.getSolver();
+                solver.normalize(value.dataFn);
+                this.solver = solver;
+
+                this.calculate();
+            }
+
+            if (value.hasOwnProperty("dataSrc")) {
+                var filter = [];
+
+                if (value.dataSrc.hasOwnProperty("filter")) {
+                    d3.map(value.dataSrc.filter).forEach(function (f, k) {
+                        filter[k] = new dChart.Utils.Filter();
+                        filter[k].normalize(f);
+                    });
+                }
+
+                var loader = new dChart.Utils.Loader();
+                loader.normalize(value.dataSrc);
+
+                loader.getData(function (data, map) {
+                    data.forEach(function (val) {
+                        if (filter.length) {
+                            var stop = false;
+
+                            filter.forEach(function (f) {
+                                if (f.not(val)) {
+                                    stop = true;
+                                }
+                            });
+
+                            if (stop) {
+                                return;
+                            }
+                        }
+
+                        var p = _this.chart.getPoint();
+                        p.map(val, map);
+
+                        _this.data.push(p);
+                    });
+
+                    _this.chart.draw();
+                });
+            }
+        };
+
+        DataSet.prototype.update = function (value) {
+            this.normalize(value);
+        };
+
+        DataSet.prototype.updateData = function (value) {
+            this.normalize({ data: value });
+        };
+
+        DataSet.prototype.clear = function () {
+            this.data = [];
+        };
+
+        DataSet.prototype.calculate = function () {
+            var _this = this;
+            if (this.solver) {
+                this.clear();
+
+                var data = this.solver.solve();
+
+                data.forEach(function (val) {
+                    var p = _this.chart.getPoint();
+                    p.normalize(val);
+                    _this.data.push(p);
+                });
+            }
+        };
+
+        DataSet.prototype.min = function (axis) {
+            return d3.min(this.data, function (d) {
+                return d[axis];
+            });
+        };
+
+        DataSet.prototype.max = function (axis) {
+            return d3.max(this.data, function (d) {
+                return d[axis];
+            });
+        };
+
+        DataSet.prototype.unique = function (axis) {
+            var u = {}, a = [];
+
+            this.data.forEach(function (value) {
+                if (u.hasOwnProperty(value[axis])) {
+                    return;
+                }
+
+                a.push(value[axis]);
+                u[value[axis]] = 1;
+            });
+
+            return a;
+        };
+        return DataSet;
+    })();
+    dChart.DataSet = DataSet;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
     var PointChart = (function (_super) {
         __extends(PointChart, _super);
         function PointChart(config) {
@@ -1612,71 +1615,11 @@ var dChart;
             });
         };
         return PointChart;
-    })(Chart2D);
+    })(dChart.Chart2D);
     dChart.PointChart = PointChart;
-
-    var LineChart = (function (_super) {
-        __extends(LineChart, _super);
-        function LineChart(config) {
-            _super.call(this);
-            this.svgLineContainer = [];
-            this.svgLine = [];
-
-            if (config) {
-                this.normalize(config);
-                this.draw();
-            }
-        }
-        LineChart.prototype.drawData = function () {
-            var _this = this;
-            this.dataSets.forEach(function (dataSet, key) {
-                _this.svgLineContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
-
-                _this.svgLine[key] = _this.svgLineContainer[key].append("path");
-            });
-
-            _super.prototype.drawData.call(this);
-        };
-
-        LineChart.prototype.redrawData = function () {
-            var _this = this;
-            var xScale = this.xAxis.getScale();
-            var yScale = this.yAxis.getScale();
-            var lineFn = [];
-
-            this.dataSets.forEach(function (dataSet, key) {
-                if (!dataSet.showLine) {
-                    return;
-                }
-
-                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
-                    return xScale(d.x);
-                }).y(function (d) {
-                    return yScale(d.y);
-                });
-
-                if (!_this.showTransition) {
-                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).lineStyle(dataSet.lineStyle).style("fill", "none");
-                } else {
-                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).attr("stroke", dataSet.lineStyle.stroke).attr("stroke-width", dataSet.lineStyle.strokeWidth).attr("stroke-opacity", dataSet.lineStyle.strokeOpacity).attr("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("fill", "none");
-
-                    var path = _this.svgLine[key];
-                    var totalLength = (path.node()).getTotalLength();
-
-                    _this.svgLine[key].attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(_this.transition.duration).delay(function (d, i) {
-                        return key * _this.transition.delay;
-                    }).attr("stroke-dashoffset", 0).each("end", function () {
-                        d3.select(this).attr("stroke-dasharray", dataSet.lineStyle.strokeDasharray);
-                    });
-                }
-            });
-
-            _super.prototype.redrawData.call(this);
-        };
-        return LineChart;
-    })(PointChart);
-    dChart.LineChart = LineChart;
-
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
     var AreaChart = (function (_super) {
         __extends(AreaChart, _super);
         function AreaChart(config) {
@@ -1751,9 +1694,11 @@ var dChart;
             _super.prototype.redrawData.call(this);
         };
         return AreaChart;
-    })(PointChart);
+    })(dChart.PointChart);
     dChart.AreaChart = AreaChart;
-
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
     var BarChart = (function (_super) {
         __extends(BarChart, _super);
         function BarChart(config) {
@@ -1824,7 +1769,7 @@ var dChart;
             });
         };
         return BarChart;
-    })(Chart2D);
+    })(dChart.Chart2D);
     dChart.BarChart = BarChart;
 
     var BarChartHorizontal = (function (_super) {
@@ -1897,66 +1842,11 @@ var dChart;
             });
         };
         return BarChartHorizontal;
-    })(Chart2D);
+    })(dChart.Chart2D);
     dChart.BarChartHorizontal = BarChartHorizontal;
-
-    var ScatterChart = (function (_super) {
-        __extends(ScatterChart, _super);
-        function ScatterChart(config) {
-            _super.call(this);
-            this.svgScatterContainer = [];
-
-            if (config) {
-                this.normalize(config);
-                this.draw();
-            }
-        }
-        ScatterChart.prototype.drawData = function () {
-            var _this = this;
-            this.dataSets.forEach(function (dataSet, key) {
-                _this.svgScatterContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
-            });
-        };
-
-        ScatterChart.prototype.redrawData = function () {
-            var _this = this;
-            var xScale = this.xAxis.getScale();
-            var yScale = this.yAxis.getScale();
-
-            this.dataSets.forEach(function (dataSet, key) {
-                var group = _this.svgScatterContainer[key].selectAll("path").data(dataSet.data, function (d) {
-                    return d.x;
-                });
-
-                var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
-
-                if (!_this.showTransition) {
-                    group.exit().remove();
-
-                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
-                        var size = d.z != 0 ? d.z * dataSet.symbolStyle.size : dataSet.symbolStyle.size;
-
-                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + size + ")";
-                    }).attr("d", symbol);
-                } else {
-                    group.exit().remove();
-
-                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
-                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(0)";
-                    }).attr("d", symbol).transition().duration(_this.transition.duration).delay(function (d, i) {
-                        return i * _this.transition.delay;
-                    }).ease(_this.transition.ease).attr("transform", function (d) {
-                        var size = d.z && d.z != 0 ? d.z * dataSet.symbolStyle.size : dataSet.symbolStyle.size;
-
-                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + size + ")";
-                    });
-                }
-            });
-        };
-        return ScatterChart;
-    })(Chart2D);
-    dChart.ScatterChart = ScatterChart;
-
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
     var PieChart = (function (_super) {
         __extends(PieChart, _super);
         function PieChart(config) {
@@ -2065,9 +1955,11 @@ var dChart;
             });
         };
         return PieChart;
-    })(Chart);
+    })(dChart.Chart);
     dChart.PieChart = PieChart;
-
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
     var DoughnutChart = (function (_super) {
         __extends(DoughnutChart, _super);
         function DoughnutChart() {
@@ -2082,6 +1974,130 @@ var dChart;
             }
         };
         return DoughnutChart;
-    })(PieChart);
+    })(dChart.PieChart);
     dChart.DoughnutChart = DoughnutChart;
 })(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    var LineChart = (function (_super) {
+        __extends(LineChart, _super);
+        function LineChart(config) {
+            _super.call(this);
+            this.svgLineContainer = [];
+            this.svgLine = [];
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+        }
+        LineChart.prototype.drawData = function () {
+            var _this = this;
+            this.dataSets.forEach(function (dataSet, key) {
+                _this.svgLineContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+
+                _this.svgLine[key] = _this.svgLineContainer[key].append("path");
+            });
+
+            _super.prototype.drawData.call(this);
+        };
+
+        LineChart.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+            var lineFn = [];
+
+            this.dataSets.forEach(function (dataSet, key) {
+                if (!dataSet.showLine) {
+                    return;
+                }
+
+                lineFn[key] = d3.svg.line().interpolate(dataSet.interpolate).x(function (d) {
+                    return xScale(d.x);
+                }).y(function (d) {
+                    return yScale(d.y);
+                });
+
+                if (!_this.showTransition) {
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).lineStyle(dataSet.lineStyle).style("fill", "none");
+                } else {
+                    _this.svgLine[key].attr("d", lineFn[key](dataSet.data)).attr("stroke", dataSet.lineStyle.stroke).attr("stroke-width", dataSet.lineStyle.strokeWidth).attr("stroke-opacity", dataSet.lineStyle.strokeOpacity).attr("stroke-linecap", dataSet.lineStyle.strokeLinecap).style("fill", "none");
+
+                    var path = _this.svgLine[key];
+                    var totalLength = (path.node()).getTotalLength();
+
+                    _this.svgLine[key].attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(_this.transition.duration).delay(function (d, i) {
+                        return key * _this.transition.delay;
+                    }).attr("stroke-dashoffset", 0).each("end", function () {
+                        d3.select(this).attr("stroke-dasharray", dataSet.lineStyle.strokeDasharray);
+                    });
+                }
+            });
+
+            _super.prototype.redrawData.call(this);
+        };
+        return LineChart;
+    })(dChart.PointChart);
+    dChart.LineChart = LineChart;
+})(dChart || (dChart = {}));
+var dChart;
+(function (dChart) {
+    var ScatterChart = (function (_super) {
+        __extends(ScatterChart, _super);
+        function ScatterChart(config) {
+            _super.call(this);
+            this.svgScatterContainer = [];
+
+            if (config) {
+                this.normalize(config);
+                this.draw();
+            }
+        }
+        ScatterChart.prototype.drawData = function () {
+            var _this = this;
+            this.dataSets.forEach(function (dataSet, key) {
+                _this.svgScatterContainer[key] = _this._svg.data.append("g").attr("class", "dchart-data-set dchart-data-set-" + key);
+            });
+        };
+
+        ScatterChart.prototype.redrawData = function () {
+            var _this = this;
+            var xScale = this.xAxis.getScale();
+            var yScale = this.yAxis.getScale();
+
+            this.dataSets.forEach(function (dataSet, key) {
+                var group = _this.svgScatterContainer[key].selectAll("path").data(dataSet.data, function (d) {
+                    return d.x;
+                });
+
+                var symbol = d3.svg.symbol().type(dataSet.symbolStyle.type);
+
+                if (!_this.showTransition) {
+                    group.exit().remove();
+
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
+                        var size = d.z != 0 ? d.z * dataSet.symbolStyle.size : dataSet.symbolStyle.size;
+
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + size + ")";
+                    }).attr("d", symbol);
+                } else {
+                    group.exit().remove();
+
+                    group.enter().append("path").areaStyle(dataSet.symbolStyle).attr("transform", function (d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(0)";
+                    }).attr("d", symbol).transition().duration(_this.transition.duration).delay(function (d, i) {
+                        return i * _this.transition.delay;
+                    }).ease(_this.transition.ease).attr("transform", function (d) {
+                        var size = d.z && d.z != 0 ? d.z * dataSet.symbolStyle.size : dataSet.symbolStyle.size;
+
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ") scale(" + size + ")";
+                    });
+                }
+            });
+        };
+        return ScatterChart;
+    })(dChart.Chart2D);
+    dChart.ScatterChart = ScatterChart;
+})(dChart || (dChart = {}));
+//# sourceMappingURL=dchart.js.map

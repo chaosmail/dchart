@@ -1,3 +1,5 @@
+/// <reference path="references.ts" />
+
 module dChart {
 
     export interface IPoint {
@@ -130,7 +132,7 @@ module dChart {
 
         parse(elem:Element) {
 
-            elem.attributes.forEach((value:any) => {
+            d3.map(elem.attributes).forEach((value:any) => {
 
                 if (value.nodeName.match(/^stroke$/i)) {
                     this.areaStyle.stroke = Utils.Elem.getColor(value);

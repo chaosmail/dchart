@@ -1,10 +1,4 @@
-/// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
-/// <reference path="point.ts" />
-/// <reference path="Utils/style.ts" />
-/// <reference path="Utils/elem.ts" />
-/// <reference path="Utils/solver.ts" />
-/// <reference path="Utils/loader.ts" />
-/// <reference path="Utils/filter.ts" />
+/// <reference path="references.ts" />
 
 module dChart {
 
@@ -28,11 +22,11 @@ module dChart {
 
     export class DataSet {
 
-        showLine:bool = true;
-        showArea:bool = false;
-        showSymbol:bool = false;
-        showValues:bool = false;
-        showLegend:bool = false;
+        showLine:boolean = true;
+        showArea:boolean = false;
+        showSymbol:boolean = false;
+        showValues:boolean = false;
+        showLegend:boolean = false;
 
         solver:Utils.Solver;
 
@@ -66,9 +60,9 @@ module dChart {
 
         /**
          * Visibility of the DataSet
-         * @type {boolean}
+         * @type {booleanean}
          */
-        visible:bool = true;
+        visible:boolean = true;
 
         lineStyle:Utils.LineStyle = new Utils.LineStyle();
         areaStyle:Utils.AreaStyle;
@@ -87,7 +81,7 @@ module dChart {
          */
          parse(elem:Element) {
 
-            elem.attributes.forEach((value:any) => {
+            d3.map(elem.attributes).forEach((value:any) => {
 
                 if (value.nodeName.match(/^label$/i)) {
                     this.label = value.nodeValue;
@@ -211,7 +205,7 @@ module dChart {
 
                 if (value.dataSrc.hasOwnProperty("filter")) {
 
-                    value.dataSrc.filter.forEach(function(f,k) {
+                    d3.map(value.dataSrc.filter).forEach(function(f,k) {
                         filter[k] = new Utils.Filter();
                         filter[k].normalize(f);
                     });

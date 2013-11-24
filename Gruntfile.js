@@ -35,7 +35,7 @@ module.exports = function(grunt) {
     },
     typescript: {
       base: {
-        src: ['src/ts/dchart.ts'],
+        src: ['src/ts/references.ts', 'src/ts/Charts/*.ts'],
         dest: 'src/js/dchart.js',
         options: {
           target: 'es3', //or es5

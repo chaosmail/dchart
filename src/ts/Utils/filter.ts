@@ -1,12 +1,6 @@
 
 module dChart.Utils {
 
-    export interface IFilter {
-        name:string;
-        operator:string;
-        value:any;
-    }
-
     export class Filter {
 
         key:string = "";

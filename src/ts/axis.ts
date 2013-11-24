@@ -1,5 +1,4 @@
-/// <reference path="../../d.ts/DefinitelyTyped/d3/d3.d.ts" />
-/// <reference path="Utils/style.ts" />
+/// <reference path="references.ts" />
 
 module dChart {
 
@@ -12,7 +11,7 @@ module dChart {
         gridStyle:Utils.LineStyle;
         fontStyle:Utils.FontStyle;
         scale:string;
-        autorange:bool;
+        autorange:boolean;
         ticks:number;
         tickValues:string[];
         range:number[];
@@ -38,9 +37,9 @@ module dChart {
 
         domain:number[] = [0, 1];
 
-        autorange:bool = true;
+        autorange:boolean = true;
 
-        showGrid:bool = false;
+        showGrid:boolean = false;
 
         scale:string = "linear";
 
@@ -75,13 +74,13 @@ module dChart {
         tickValues:number[] = [];
         tickLabels:string[] = [];
 
-        tickSubdivide:bool = false;
+        tickSubdivide:boolean = false;
 
         tickSize:number[];
 
         tickPadding:number;
 
-        visible:bool = true;
+        visible:boolean = true;
 
         constructor(public chart:any) {
 
@@ -155,7 +154,7 @@ module dChart {
                 : (this.scale.match(/^log$/)) ? d3.scale.log()
                 : (this.scale.match(/^quantize/)) ? d3.scale.quantize()
                 : (this.scale.match(/^quantile$/)) ? d3.scale.quantile()
-                : (this.scale.match(/^treshold$/)) ? d3.scale.treshold()
+                : (this.scale.match(/^threshold/)) ? d3.scale.threshold()
                 : d3.scale.linear();
 
             d3Scale.domain(this.domain).range(this.range);
@@ -165,7 +164,7 @@ module dChart {
 
         getAxis() {
 
-            var orient = "top";
+            var orient:string = "top";
 
             if (this.orientation === "x") {
                 orient = this.align === "start" ? "top" : "bottom";
@@ -283,7 +282,7 @@ module dChart {
 
             if (value.hasOwnProperty("labelOffset")){
 
-                this.labelOffset = parseInt(value.labelOffset, 10);
+                this.labelOffset = parseInt(<any> value.labelOffset, 10);
             }
 
             if (value.hasOwnProperty("autorange")){
@@ -319,7 +318,7 @@ module dChart {
 
             if (value.hasOwnProperty("ticks")){
 
-                this.ticks = parseInt(value.ticks,10);
+                this.ticks = parseInt(<any> value.ticks,10);
             }
 
             if (value.hasOwnProperty("tickValues")){
