@@ -241,12 +241,22 @@ module dChart {
 
             this.svg.call(this.getAxis());
 
-            this.svg.selectAll(".tick line").style("fill", "none")
-                .style("stroke", (d,i) => i>0 ? this.gridStyle.stroke : "black")
-                .style("stroke-width", (d,i) => i>0 ? this.gridStyle.strokeWidth : 1)
-                .style("stroke-opacity", (d,i) => i>0 ? this.gridStyle.strokeOpacity : 1)
-                .style("stroke-linecap", (d,i) => i>0 ? this.gridStyle.strokeLinecap : "butt")
-                .style("stroke-dasharray", (d,i) => i>0 ? this.gridStyle.strokeDasharray : "0");
+            var axisTick = 0,
+                ticks = this.svg.selectAll("dchart-axis-"+this.orientation+" .tick line");
+
+            if (this.align=="start") {
+                axisTick = 0;
+            }
+            else if (this.align=="end") {
+                axisTick = ticks[0].length;
+            }
+
+            ticks.style("fill", "none")
+                .style("stroke", (d,i) => i!=axisTick ? this.gridStyle.stroke : "black")
+                .style("stroke-width", (d,i) => i!=axisTick ? this.gridStyle.strokeWidth : 1)
+                .style("stroke-opacity", (d,i) => i!=axisTick ? this.gridStyle.strokeOpacity : 1)
+                .style("stroke-linecap", (d,i) => i!=axisTick ? this.gridStyle.strokeLinecap : "butt")
+                .style("stroke-dasharray", (d,i) => i!=axisTick ? this.gridStyle.strokeDasharray : "0");
 
             this.svgLabel.text(this.label);
 

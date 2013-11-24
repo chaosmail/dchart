@@ -398,16 +398,24 @@ var dChart;
 
             this.svg.call(this.getAxis());
 
-            this.svg.selectAll(".tick line").style("fill", "none").style("stroke", function (d, i) {
-                return i > 0 ? _this.gridStyle.stroke : "black";
+            var axisTick = 0, ticks = this.svg.selectAll("dchart-axis-" + this.orientation + " .tick line");
+
+            if (this.align == "start") {
+                axisTick = 0;
+            } else if (this.align == "end") {
+                axisTick = ticks[0].length;
+            }
+
+            ticks.style("fill", "none").style("stroke", function (d, i) {
+                return i != axisTick ? _this.gridStyle.stroke : "black";
             }).style("stroke-width", function (d, i) {
-                return i > 0 ? _this.gridStyle.strokeWidth : 1;
+                return i != axisTick ? _this.gridStyle.strokeWidth : 1;
             }).style("stroke-opacity", function (d, i) {
-                return i > 0 ? _this.gridStyle.strokeOpacity : 1;
+                return i != axisTick ? _this.gridStyle.strokeOpacity : 1;
             }).style("stroke-linecap", function (d, i) {
-                return i > 0 ? _this.gridStyle.strokeLinecap : "butt";
+                return i != axisTick ? _this.gridStyle.strokeLinecap : "butt";
             }).style("stroke-dasharray", function (d, i) {
-                return i > 0 ? _this.gridStyle.strokeDasharray : "0";
+                return i != axisTick ? _this.gridStyle.strokeDasharray : "0";
             });
 
             this.svgLabel.text(this.label);
