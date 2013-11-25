@@ -1,4 +1,4 @@
-/** dchart - v0.0.12 - Mon Nov 25 2013 21:13:49
+/** dchart - v0.0.12 - Mon Nov 25 2013 21:31:03
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1660,7 +1660,7 @@ var dChart;
                 var filter = [];
 
                 if (value.dataSrc.hasOwnProperty("filter")) {
-                    d3.map(value.dataSrc.filter).forEach(function (f, k) {
+                    d3.map(value.dataSrc.filter).forEach(function (k, f) {
                         filter[k] = new dChart.Utils.Filter();
                         filter[k].normalize(f);
                     });

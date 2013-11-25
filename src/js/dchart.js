@@ -1484,7 +1484,7 @@ var dChart;
                 var filter = [];
 
                 if (value.dataSrc.hasOwnProperty("filter")) {
-                    d3.map(value.dataSrc.filter).forEach(function (f, k) {
+                    d3.map(value.dataSrc.filter).forEach(function (k, f) {
                         filter[k] = new dChart.Utils.Filter();
                         filter[k].normalize(f);
                     });
