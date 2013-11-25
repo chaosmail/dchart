@@ -23,6 +23,7 @@ module dChart {
         svg:D3.Selection;
         svgLabel:D3.Selection;
 
+        lineStyle:Utils.LineStyle = new Utils.LineStyle();
         gridStyle:Utils.LineStyle = new Utils.LineStyle();
 
         fontStyle:Utils.FontStyle;
@@ -84,9 +85,21 @@ module dChart {
 
         constructor(public chart:any) {
 
-            this.gridStyle.stroke = "black";
-            this.gridStyle.strokeWidth = 1;
-            this.gridStyle.strokeOpacity = 0.25;
+            this.lineStyle = <any>{
+                stroke: "black",
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                strokeLinecap: "butt",
+                strokeDasharray: 0
+            };
+
+            this.gridStyle = <any>{
+                stroke: "black",
+                strokeOpacity: 0.8,
+                strokeWidth: 1,
+                strokeLinecap: "butt",
+                strokeDasharray: 0
+            };
 
             this.format = chart.format;
         }
@@ -148,7 +161,7 @@ module dChart {
 
         getScale() {
 
-            var d3Scale = (this.scale.match(/^identity$/i)) ? d3.scale.identity()
+            var d3Scale:any = (this.scale.match(/^identity$/i)) ? d3.scale.identity()
                 : (this.scale.match(/^pow|power$/i)) ? d3.scale.pow()
                 : (this.scale.match(/^sqrt$/)) ? d3.scale.sqrt()
                 : (this.scale.match(/^log$/)) ? d3.scale.log()
@@ -179,7 +192,7 @@ module dChart {
                 this.ticks = u.length;
             }
 
-            var axis = d3.svg.axis()
+            var axis:any = d3.svg.axis()
                          .scale(this.getScale())
                          .orient(orient)
                          .ticks(this.ticks)
@@ -200,7 +213,7 @@ module dChart {
 
             if (this.showGrid) {
 
-                axis.tickSize(-this.height, 0, 3);
+                axis.tickSize(-this.height, 0, 4);
             }
 
             return axis;
@@ -240,27 +253,41 @@ module dChart {
 
             this.svg.call(this.getAxis());
 
-            var axisTick = 0,
-                ticks = this.svg.selectAll("dchart-axis-"+this.orientation+" .tick line");
-
-            if (this.align=="start") {
-                axisTick = 0;
-            }
-            else if (this.align=="end") {
-                axisTick = ticks[0].length;
-            }
-
-            ticks.style("fill", "none")
-                .style("stroke", (d,i) => i!=axisTick ? this.gridStyle.stroke : "black")
-                .style("stroke-width", (d,i) => i!=axisTick ? this.gridStyle.strokeWidth : 1)
-                .style("stroke-opacity", (d,i) => i!=axisTick ? this.gridStyle.strokeOpacity : 1)
-                .style("stroke-linecap", (d,i) => i!=axisTick ? this.gridStyle.strokeLinecap : "butt")
-                .style("stroke-dasharray", (d,i) => i!=axisTick ? this.gridStyle.strokeDasharray : "0");
+            var gridLines = this.svg.selectAll(".tick line");
 
             this.svgLabel.text(this.label);
 
-            this.svg.selectAll("path").style("stroke",this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
-            this.svg.selectAll("line").style("stroke",this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
+            // Crisp Edges for everything
+            // for nicer rendering
+            this.svg.selectAll("path").style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("shape-rendering", "crispEdges").style("fill", "none");
+
+            // Style for Axis
+            this.svg.selectAll("path.domain").lineStyle(this.lineStyle);
+
+            // Style for Grid
+            gridLines.style("fill", "none").lineStyle(this.gridStyle);
+
+            // Adjust Grid Position
+            if (this.showGrid && this.align === "end") {
+
+                if (this.orientation === "x") {
+                    gridLines.attr("transform","translate(0,0)");
+                }
+                else if (this.orientation === "y") {
+                    gridLines.attr("transform","translate(0,0)");
+                }
+            }
+            else if (this.showGrid && this.align === "middle") {
+
+                if (this.orientation === "x") {
+                    gridLines.attr("transform","translate(0,"+ this.height*0.5 +")");
+                }
+                else if (this.orientation === "y") {
+                    gridLines.attr("transform","translate(-"+ this.height*0.5 +",0)");
+                }
+            }
+
         }
 
         normalize(value:any) {
@@ -305,6 +332,13 @@ module dChart {
                 this.fontStyle = this.fontStyle || this.chart._font.axis;
 
                 this.fontStyle.normalize(value.fontStyle);
+            }
+
+            if (value.hasOwnProperty("lineStyle")){
+
+                var lineStyle = new Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
             }
 
             if (value.hasOwnProperty("gridStyle")){

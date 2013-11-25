@@ -420,7 +420,7 @@
         axis: {
             x: {
                 label: "x axis",
-                align: "top",
+                align: "bottom",
                 labelAlign: "left",
                 gridStyle: {
                     stroke: "black",
@@ -429,7 +429,7 @@
             },
             y: {
                 label: "y axis",
-                align: "right",
+                align: "left",
                 labelAlign:"center",
                 gridStyle: {
                     stroke: "blueviolet",
@@ -452,16 +452,16 @@
                     axis: {
                         x: {
                             label: "x axis",
-                            align: "top",
+                            align: "bottom",
                             labelAlign: "left",
                             gridStyle: {
-                                stroke: "black",
+                                stroke: "grey",
                                 strokeOpacity: 0.7
                             }
                         },
                         y: {
                             label: "y axis",
-                            align: "right",
+                            align: "left",
                             labelAlign:"center",
                             gridStyle: {
                                 stroke: "blueviolet",
@@ -582,6 +582,15 @@
                     </tr>
                     <tr>
                         <td>
+                            <code>lineStyle</code>
+                        </td>
+                        <td><a href="#chart-styling-line">LineStyle</a></td>
+                        <td>{}</td>
+                        <td>Style for the axis.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <code>showGrid</code>
                         </td>
                         <td>boolean</td>
@@ -594,7 +603,7 @@
                         </td>
                         <td><a href="#chart-styling-line">LineStyle</a></td>
                         <td>{}</td>
-                        <td>Grid styling for the axis. Setting the 'gridStyle' option autosets 'showGrid' to 'true'.
+                        <td>Style for the grid. Setting the 'gridStyle' option autosets 'showGrid' to 'true'.
                         </td>
                     </tr>
                     <tr>

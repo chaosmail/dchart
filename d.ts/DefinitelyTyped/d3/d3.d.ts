@@ -682,6 +682,8 @@ declare module D3 {
             (name: string, valueFunction: (data: any, index: number) => any): Selection;
         };
 
+        size(): number;
+
         style: {
             (name: string): string;
             (name: string, value: any, priority?: string): Selection;

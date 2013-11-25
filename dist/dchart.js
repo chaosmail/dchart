@@ -1,4 +1,4 @@
-/** dchart - v0.0.12 - Mon Nov 25 2013 16:45:14
+/** dchart - v0.0.12 - Mon Nov 25 2013 21:13:49
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1217,6 +1217,7 @@ var dChart;
     var Axis = (function () {
         function Axis(chart) {
             this.chart = chart;
+            this.lineStyle = new dChart.Utils.LineStyle();
             this.gridStyle = new dChart.Utils.LineStyle();
             this.labelOffset = 34;
             this.range = [0, 1];
@@ -1233,9 +1234,21 @@ var dChart;
             this.tickLabels = [];
             this.tickSubdivide = false;
             this.visible = true;
-            this.gridStyle.stroke = "black";
-            this.gridStyle.strokeWidth = 1;
-            this.gridStyle.strokeOpacity = 0.25;
+            this.lineStyle = {
+                stroke: "black",
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                strokeLinecap: "butt",
+                strokeDasharray: 0
+            };
+
+            this.gridStyle = {
+                stroke: "black",
+                strokeOpacity: 0.8,
+                strokeWidth: 1,
+                strokeLinecap: "butt",
+                strokeDasharray: 0
+            };
 
             this.format = chart.format;
         }
@@ -1323,7 +1336,7 @@ var dChart;
             }
 
             if (this.showGrid) {
-                axis.tickSize(-this.height, 0, 3);
+                axis.tickSize(-this.height, 0, 4);
             }
 
             return axis;
@@ -1350,37 +1363,36 @@ var dChart;
         Axis.prototype.redraw = function (min, max) {
             if (typeof min === "undefined") { min = 0; }
             if (typeof max === "undefined") { max = 1; }
-            var _this = this;
             if (this.autorange === true) {
                 this.setDomain([min, max]);
             }
 
             this.svg.call(this.getAxis());
 
-            var axisTick = 0, ticks = this.svg.selectAll("dchart-axis-" + this.orientation + " .tick line");
-
-            if (this.align == "start") {
-                axisTick = 0;
-            } else if (this.align == "end") {
-                axisTick = ticks[0].length;
-            }
-
-            ticks.style("fill", "none").style("stroke", function (d, i) {
-                return i != axisTick ? _this.gridStyle.stroke : "black";
-            }).style("stroke-width", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeWidth : 1;
-            }).style("stroke-opacity", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeOpacity : 1;
-            }).style("stroke-linecap", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeLinecap : "butt";
-            }).style("stroke-dasharray", function (d, i) {
-                return i != axisTick ? _this.gridStyle.strokeDasharray : "0";
-            });
+            var gridLines = this.svg.selectAll(".tick line");
 
             this.svgLabel.text(this.label);
 
-            this.svg.selectAll("path").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
-            this.svg.selectAll("line").style("stroke", this.gridStyle.stroke).style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("path").style("shape-rendering", "crispEdges").style("fill", "none");
+            this.svg.selectAll("line").style("shape-rendering", "crispEdges").style("fill", "none");
+
+            this.svg.selectAll("path.domain").lineStyle(this.lineStyle);
+
+            gridLines.style("fill", "none").lineStyle(this.gridStyle);
+
+            if (this.showGrid && this.align === "end") {
+                if (this.orientation === "x") {
+                    gridLines.attr("transform", "translate(0,0)");
+                } else if (this.orientation === "y") {
+                    gridLines.attr("transform", "translate(0,0)");
+                }
+            } else if (this.showGrid && this.align === "middle") {
+                if (this.orientation === "x") {
+                    gridLines.attr("transform", "translate(0," + this.height * 0.5 + ")");
+                } else if (this.orientation === "y") {
+                    gridLines.attr("transform", "translate(-" + this.height * 0.5 + ",0)");
+                }
+            }
         };
 
         Axis.prototype.normalize = function (value) {
@@ -1416,6 +1428,12 @@ var dChart;
                 this.fontStyle = this.fontStyle || this.chart._font.axis;
 
                 this.fontStyle.normalize(value.fontStyle);
+            }
+
+            if (value.hasOwnProperty("lineStyle")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.lineStyle);
+                this.lineStyle = lineStyle;
             }
 
             if (value.hasOwnProperty("gridStyle")) {

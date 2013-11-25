@@ -290,6 +290,7 @@ declare module dChart {
         public chart: any;
         public svg: D3.Selection;
         public svgLabel: D3.Selection;
+        public lineStyle: dChart.Utils.LineStyle;
         public gridStyle: dChart.Utils.LineStyle;
         public fontStyle: dChart.Utils.FontStyle;
         public label: string;
@@ -320,8 +321,8 @@ declare module dChart {
         public setRange(range: number[]): Axis;
         public setAlign(align: string): Axis;
         public setLabelAlign(labelAlign: string): Axis;
-        public getScale(): D3.Scale.QuantizeScale;
-        public getAxis(): D3.Svg.Axis;
+        public getScale();
+        public getAxis();
         public clear(): void;
         public draw(container: D3.Selection, min: number, max: number): void;
         public redraw(min?: number, max?: number): void;
