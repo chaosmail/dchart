@@ -65,6 +65,22 @@ var dChart;
                     return value == this.value;
                 } else if (this.operator.match(/===/i)) {
                     return value === this.value;
+                } else if (this.operator.match(/!==/i)) {
+                    return value !== this.value;
+                } else if (this.operator.match(/!=/i)) {
+                    return value != this.value;
+                } else if (this.operator.match(/>=/i)) {
+                    return value >= this.value;
+                } else if (this.operator.match(/>/i)) {
+                    return value > this.value;
+                } else if (this.operator.match(/<=/i)) {
+                    return value <= this.value;
+                } else if (this.operator.match(/</i)) {
+                    return value < this.value;
+                } else if (this.operator.match(/&&/i)) {
+                    return value && this.value;
+                } else if (this.operator.match(/||/i)) {
+                    return value || this.value;
                 }
 
                 return false;

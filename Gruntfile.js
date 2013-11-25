@@ -3,6 +3,8 @@ var banner = '/** <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.tod
              ' *  License: MIT\n' +
              ' */\n';
 
+
+
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -67,6 +69,15 @@ module.exports = function(grunt) {
         ]
       }
     },
+    karma: {
+      options: {
+        configFile: 'config/karma.conf.js'
+      },
+      unit: {
+        singleRun: false,
+        background: true
+      }
+    },
     shell: {
         deploy: {
             options: {
@@ -79,6 +90,10 @@ module.exports = function(grunt) {
       scripts: {
         files: ['src/css/**/*.css', 'src/ts/**/*.ts'],
         tasks: ['default']
+      },
+      karma: {
+        files: ['test/**/*.js'],
+        tasks: ['karma:unit:run']
       }
     }
   });
@@ -90,8 +105,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-karma');
 
-  // Default task(s).
-  grunt.registerTask('default', ['clean', 'typescript', 'concat', 'uglify', 'copy']);
+  // Tasks
+  grunt.registerTask('dist', ['clean', 'typescript', 'concat', 'uglify', 'copy']);
+  grunt.registerTask('default', ['karma:unit', 'dist', 'karma:unit:run']);
+  grunt.registerTask('test', ['karma:unit', 'watch']);
   grunt.registerTask('deploy', ['shell:deploy']);
 };

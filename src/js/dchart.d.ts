@@ -17,7 +17,7 @@ declare module dChart.Utils {
         public key: string;
         public operator: string;
         public value: any;
-        public is(object: any): boolean;
+        public is(object: any);
         public not(object: any): boolean;
         public normalize(value: any): void;
     }
