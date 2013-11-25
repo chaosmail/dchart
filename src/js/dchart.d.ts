@@ -179,6 +179,7 @@ declare module dChart {
         public format: any;
         constructor();
         public clear(): void;
+        public initialize(): void;
         public initializeFormat(): void;
         public initializeFonts(): void;
         public setFormat(format: string): Chart;
@@ -201,7 +202,7 @@ declare module dChart {
     class Chart2D extends Chart {
         public xAxis: any;
         public yAxis: any;
-        constructor();
+        public initialize(): void;
         public setFormat(format: string): Chart2D;
         public getPoint(): dChart.Point;
         public getSolver(): dChart.Utils.Solver2D;
@@ -220,7 +221,7 @@ declare module dChart {
         public xAxis: any;
         public yAxis: any;
         public zAxis: any;
-        constructor();
+        public initialize(): void;
         public setFormat(format: string): Chart3D;
         public getPoint(): dChart.Point;
         public drawAxis(): void;

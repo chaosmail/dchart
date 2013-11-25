@@ -106,6 +106,7 @@ module dChart {
 
         constructor() {
 
+            this.initialize();
             this.initializeFonts();
             this.initializeFormat();
         }
@@ -115,6 +116,10 @@ module dChart {
             if (this._svg.root) {
                 this._svg.root.remove();
             }
+        }
+
+        initialize() {
+
         }
 
         initializeFormat() {
@@ -464,11 +469,10 @@ module dChart {
 
         // TODO
         // xAxis:xAxis and yAxis:yAxis is causing error in WebStorm
-        xAxis:any = null;
-        yAxis:any = null;
+        xAxis:any;
+        yAxis:any;
 
-        constructor() {
-            super();
+        initialize() {
 
             this.xAxis = new xAxis(this);
             this.yAxis = new yAxis(this);
@@ -568,14 +572,12 @@ module dChart {
         yAxis:any;
         zAxis:any;
 
-        constructor() {
-            super();
+        initialize() {
 
             this.xAxis = new xAxis(this);
             this.yAxis = new yAxis(this);
             this.zAxis = new zAxis(this);
         }
-
 
         setFormat(format:string) {
 

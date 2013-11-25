@@ -1,4 +1,4 @@
-/** dchart - v0.0.11 - Mon Nov 25 2013 16:30:59
+/** dchart - v0.0.12 - Mon Nov 25 2013 16:45:14
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -625,6 +625,7 @@ var dChart;
             };
             this.fontStyle = new dChart.Utils.FontStyle();
             this.dataSets = [];
+            this.initialize();
             this.initializeFonts();
             this.initializeFormat();
         }
@@ -632,6 +633,9 @@ var dChart;
             if (this._svg.root) {
                 this._svg.root.remove();
             }
+        };
+
+        Chart.prototype.initialize = function () {
         };
 
         Chart.prototype.initializeFormat = function () {
@@ -900,13 +904,13 @@ var dChart;
     var Chart2D = (function (_super) {
         __extends(Chart2D, _super);
         function Chart2D() {
-            _super.call(this);
-            this.xAxis = null;
-            this.yAxis = null;
-
+            _super.apply(this, arguments);
+        }
+        Chart2D.prototype.initialize = function () {
             this.xAxis = new dChart.xAxis(this);
             this.yAxis = new dChart.yAxis(this);
-        }
+        };
+
         Chart2D.prototype.setFormat = function (format) {
             this.format = d3.format(format);
             this.xAxis.setFormat(format);
@@ -993,14 +997,16 @@ var dChart;
     var Chart3D = (function (_super) {
         __extends(Chart3D, _super);
         function Chart3D() {
-            _super.call(this);
+            _super.apply(this, arguments);
             this.dataSets = [];
             this.depth = 400;
-
+        }
+        Chart3D.prototype.initialize = function () {
             this.xAxis = new dChart.xAxis(this);
             this.yAxis = new dChart.yAxis(this);
             this.zAxis = new dChart.zAxis(this);
-        }
+        };
+
         Chart3D.prototype.setFormat = function (format) {
             this.format = d3.format(format);
             this.xAxis.setFormat(format);
