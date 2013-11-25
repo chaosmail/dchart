@@ -927,77 +927,7 @@
 
         <h3 id="datasets-points-point">Point Options</h3>
 
-        <h4>Point 1D</h4>
-
-        <div class="bs-table-scrollable">
-            <table class="table table-bordered table-striped bs-table">
-                <colgroup>
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-5">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>type</th>
-                    <th>default</th>
-                    <th>description</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <code>x</code>
-                    </td>
-                    <td>number</td>
-                    <td>0</td>
-                    <td>Value</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h4>Point 2D</h4>
-
-        <div class="bs-table-scrollable">
-            <table class="table table-bordered table-striped bs-table">
-                <colgroup>
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-5">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>type</th>
-                    <th>default</th>
-                    <th>description</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <code>x</code>
-                    </td>
-                    <td>number</td>
-                    <td>0</td>
-                    <td>Value on the x-axis</td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>y</code>
-                    </td>
-                    <td>number</td>
-                    <td>0</td>
-                    <td>Value on the y-axis</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h4>Point 3D</h4>
+        <h4>Point</h4>
 
         <div class="bs-table-scrollable">
             <table class="table table-bordered table-striped bs-table">
@@ -1326,6 +1256,7 @@
                         y: {
                             format: 's',
                             range:[0,10000000],
+                            ticks: 10,
                             gridStyle: {
                                 stroke: "lightgrey",
                                 strokeOpacity: 0.5
@@ -1333,8 +1264,8 @@
                         }
                     },
                     transition: {
-                        duration: 250,
-                        delay: 150
+                        duration: 150,
+                        delay: 50
                     },
                     dataSets: [
                         {
