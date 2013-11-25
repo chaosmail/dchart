@@ -11,6 +11,9 @@ module.exports = function(grunt) {
     clean: {
       dist: {
         src: ["dist/", "demo/js"]
+      },
+      demo: {
+        src: ["demo/ts"]
       }
     },
     concat: {
@@ -49,8 +52,19 @@ module.exports = function(grunt) {
       demo: {
           files: {
               'demo/js/<%= pkg.name %>.js': 'dist/<%= pkg.name %>.js',
+              'demo/js/<%= pkg.name %>.js.map': 'src/js/<%= pkg.name %>.js.map',
               'demo/js/<%= pkg.name %>.min.js': 'dist/<%= pkg.name %>.min.js'
           }
+      },
+      ts: {
+        files: [
+          {
+              expand: true,
+              src: ['**'],
+              dest: 'demo/ts',
+              cwd: 'src/ts'
+          }
+        ]
       }
     },
     shell: {
@@ -78,6 +92,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean:dist', 'typescript', 'concat', 'uglify', 'copy']);
+  grunt.registerTask('default', ['clean', 'typescript', 'concat', 'uglify', 'copy']);
   grunt.registerTask('deploy', ['shell:deploy']);
 };
