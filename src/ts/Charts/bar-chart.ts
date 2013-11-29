@@ -75,9 +75,9 @@ module dChart {
 
                     group.enter()
                         .append("line")
-                        .attr("x1", (d:Point) => d.sigma ? xScale(d.x) - (start + key*width)*0.5 : 0)
+                        .attr("x1", (d:Point) => d.sigma ? xScale(d.x) - start + key*width + width*0.5 : 0)
                         .attr("y1", (d:Point) => d.sigma ? yScale(d.y + d.sigma) : 0)
-                        .attr("x2", (d:Point) => d.sigma ? xScale(d.x) - (start + key*width)*0.5 : 0)
+                        .attr("x2", (d:Point) => d.sigma ? xScale(d.x) - start + key*width + width*0.5 : 0)
                         .attr("y2", (d:Point) => d.sigma ? yScale(d.y - d.sigma) : 0)
                         .lineStyle({
                             stroke: "black",
@@ -127,9 +127,9 @@ module dChart {
 
                     group.enter()
                         .append("line")
-                        .attr("x1", (d:Point) => d.sigma ? xScale(d.x) - (start + key*width)*0.5 : 0)
+                        .attr("x1", (d:Point) => d.sigma ? xScale(d.x) - start + key*width + width*0.5 : 0)
                         .attr("y1", (d:Point) => d.sigma ? yScale(d.y + d.sigma) : 0)
-                        .attr("x2", (d:Point) => d.sigma ? xScale(d.x) - (start + key*width)*0.5 : 0)
+                        .attr("x2", (d:Point) => d.sigma ? xScale(d.x) - start + key*width + width*0.5 : 0)
                         .attr("y2", (d:Point) => d.sigma ? yScale(d.y - d.sigma) : 0)
                         .lineStyle({
                             stroke: "black",
@@ -225,9 +225,9 @@ module dChart {
 
                     group.enter()
                         .append("line")
-                        .attr("y1", (d:Point) => d.sigma ? yScale(d.y) - (start + key*height)*0.5 : 0)
+                        .attr("y1", (d:Point) => d.sigma ? yScale(d.y) - start + key*height + height*0.5 : 0)
                         .attr("x1", (d:Point) => d.sigma ? xScale(d.x + d.sigma) : 0)
-                        .attr("y2", (d:Point) => d.sigma ? yScale(d.y) - (start + key*height)*0.5 : 0)
+                        .attr("y2", (d:Point) => d.sigma ? yScale(d.y) - start + key*height + height*0.5 : 0)
                         .attr("x2", (d:Point) => d.sigma ? xScale(d.x - d.sigma) : 0)
                         .lineStyle({
                             stroke: "black",
@@ -279,9 +279,9 @@ module dChart {
 
                     group.enter()
                         .append("line")
-                        .attr("y1", (d:Point) => d.sigma ? yScale(d.y) - (start + key*height)*0.5 : 0)
+                        .attr("y1", (d:Point) => d.sigma ? yScale(d.y) - start + key*height + height*0.5 : 0)
                         .attr("x1", (d:Point) => d.sigma ? xScale(d.x + d.sigma) : 0)
-                        .attr("y2", (d:Point) => d.sigma ? yScale(d.y) - (start + key*height)*0.5 : 0)
+                        .attr("y2", (d:Point) => d.sigma ? yScale(d.y) - start + key*height + height*0.5 : 0)
                         .attr("x2", (d:Point) => d.sigma ? xScale(d.x - d.sigma) : 0)
                         .lineStyle({
                             stroke: "black",

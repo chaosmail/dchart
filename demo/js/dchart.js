@@ -1,4 +1,4 @@
-/** dchart - v0.0.14 - Fri Nov 29 2013 23:37:57
+/** dchart - v0.0.14 - Sat Nov 30 2013 00:37:59
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -2016,11 +2016,11 @@ var dChart;
                     });
 
                     group.enter().append("line").attr("x1", function (d) {
-                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
+                        return d.sigma ? xScale(d.x) - start + key * width + width * 0.5 : 0;
                     }).attr("y1", function (d) {
                         return d.sigma ? yScale(d.y + d.sigma) : 0;
                     }).attr("x2", function (d) {
-                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
+                        return d.sigma ? xScale(d.x) - start + key * width + width * 0.5 : 0;
                     }).attr("y2", function (d) {
                         return d.sigma ? yScale(d.y - d.sigma) : 0;
                     }).lineStyle({
@@ -2069,11 +2069,11 @@ var dChart;
                     });
 
                     group.enter().append("line").attr("x1", function (d) {
-                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
+                        return d.sigma ? xScale(d.x) - start + key * width + width * 0.5 : 0;
                     }).attr("y1", function (d) {
                         return d.sigma ? yScale(d.y + d.sigma) : 0;
                     }).attr("x2", function (d) {
-                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
+                        return d.sigma ? xScale(d.x) - start + key * width + width * 0.5 : 0;
                     }).attr("y2", function (d) {
                         return d.sigma ? yScale(d.y - d.sigma) : 0;
                     }).lineStyle({
@@ -2168,11 +2168,11 @@ var dChart;
                     });
 
                     group.enter().append("line").attr("y1", function (d) {
-                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                        return d.sigma ? yScale(d.y) - start + key * height + height * 0.5 : 0;
                     }).attr("x1", function (d) {
                         return d.sigma ? xScale(d.x + d.sigma) : 0;
                     }).attr("y2", function (d) {
-                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                        return d.sigma ? yScale(d.y) - start + key * height + height * 0.5 : 0;
                     }).attr("x2", function (d) {
                         return d.sigma ? xScale(d.x - d.sigma) : 0;
                     }).lineStyle({
@@ -2221,11 +2221,11 @@ var dChart;
                     });
 
                     group.enter().append("line").attr("y1", function (d) {
-                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                        return d.sigma ? yScale(d.y) - start + key * height + height * 0.5 : 0;
                     }).attr("x1", function (d) {
                         return d.sigma ? xScale(d.x + d.sigma) : 0;
                     }).attr("y2", function (d) {
-                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                        return d.sigma ? yScale(d.y) - start + key * height + height * 0.5 : 0;
                     }).attr("x2", function (d) {
                         return d.sigma ? xScale(d.x - d.sigma) : 0;
                     }).lineStyle({
