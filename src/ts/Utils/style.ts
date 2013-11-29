@@ -51,6 +51,9 @@ module dChart.Utils {
                 this.strokeDasharray = value.strokeDasharray;
             }
         }
+
+        // TODO
+        // Add the map function here
     }
 
     /**
@@ -72,6 +75,9 @@ module dChart.Utils {
                 this.fillOpacity = parseFloat(value.fillOpacity);
             }
         }
+
+        // TODO
+        // Add the map function here
     }
 
     /**
@@ -102,6 +108,9 @@ module dChart.Utils {
                 this.size = parseFloat(value.size);
             }
         }
+
+        // TODO
+        // Add the map function here
     }
 
     /**
@@ -129,6 +138,9 @@ module dChart.Utils {
                 this.fontSize = parseFloat(value.fontSize);
             }
         }
+
+        // TODO
+        // Add the map function here
     }
 
 }

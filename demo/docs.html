@@ -970,6 +970,38 @@
                     <td>0</td>
                     <td>Value on the z-axis</td>
                 </tr>
+                <tr>
+                    <td>
+                        <code>sigma</code>
+                    </td>
+                    <td>number</td>
+                    <td>0</td>
+                    <td>Sigma Value</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>label</code>
+                    </td>
+                    <td>string</td>
+                    <td>''</td>
+                    <td>Label of the data point</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>symbolStyle</code>
+                    </td>
+                    <td>SymbolStyle</td>
+                    <td>{}</td>
+                    <td>Style of the data point</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>conditionSymbolStyle</code>
+                    </td>
+                    <td>SymbolStyle</td>
+                    <td>{}</td>
+                    <td>Style of the data point</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -1442,77 +1474,7 @@
 
         <h3 id="datasets-files-map">PointMap Options</h3>
 
-        <h4>Point 1D</h4>
-
-        <div class="bs-table-scrollable">
-            <table class="table table-bordered table-striped bs-table">
-                <colgroup>
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-5">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>type</th>
-                    <th>default</th>
-                    <th>description</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <code>x</code>
-                    </td>
-                    <td>string</td>
-                    <td>'x'</td>
-                    <td>Name of the value</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h4>Point 2D</h4>
-
-        <div class="bs-table-scrollable">
-            <table class="table table-bordered table-striped bs-table">
-                <colgroup>
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-1">
-                    <col class="col-lg-5">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>type</th>
-                    <th>default</th>
-                    <th>description</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <code>x</code>
-                    </td>
-                    <td>string</td>
-                    <td>'x'</td>
-                    <td>Name of the x-value</td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>y</code>
-                    </td>
-                    <td>string</td>
-                    <td>'y'</td>
-                    <td>Name of the y-value</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h4>Point 3D</h4>
+        <h4>Point</h4>
 
         <div class="bs-table-scrollable">
             <table class="table table-bordered table-striped bs-table">
@@ -2587,6 +2549,100 @@
 
         </div>
 
+        <div>
+            <div class="bs-example bs-example-type">
+                <div id="barChart2"></div>
+                <button type="button" class="btn btn-primary btn-ms" onclick="barChart2.draw();">redraw</button>
+            </div>
+            <pre><code>
+                var barChart2 = new dChart.BarChart({
+                    elem: 'barChart2',
+                    width: 700,
+                    height: 400,
+                    axis: {
+                        x: {
+                            range: [0,11],
+                            format: "f"
+                        },
+                        y: {
+                            range: [0,10],
+                            ticks: 10,
+                            format:"0.1f",
+                            gridStyle: {
+                                stroke: "lightgrey",
+                                strokeOpacity: 0.5
+                            }
+                        }
+                    },
+                    dataSets: [
+                        {
+                            label: "Dataset 1",
+                            areaStyle: {
+                                stroke: "darkgoldenrod",
+                                fill: "darkgoldenrod",
+                                fillOpacity: 0.7
+                            },
+                            data: [
+                                {x:1, y:1, sigma:0.5},
+                                {x:2, y:2, sigma:0.6},
+                                {x:3, y:3, sigma:0.7},
+                                {x:4.5, y:4, sigma:0.8},
+                                {x:5, y:5, sigma:0.9},
+                                {x:6, y:6, sigma:1},
+                                {x:7, y:7, sigma:1.5},
+                                {x:8, y:8, sigma:1.8},
+                                {x:9, y:9, sigma:2}
+                            ]
+                        }
+                    ]
+                });
+            </code></pre>
+            <script>
+                var barChart2 = new dChart.BarChart({
+                    elem: 'barChart2',
+                    width: 700,
+                    height: 400,
+                    axis: {
+                        x: {
+                            range: [0,10],
+                            format: "f"
+                        },
+                        y: {
+                            range: [0,15],
+                            ticks: 10,
+                            format:"0.1f",
+                            gridStyle: {
+                                stroke: "lightgrey",
+                                strokeOpacity: 0.5
+                            }
+                        }
+                    },
+                    dataSets: [
+                        {
+                            label: "Dataset 1",
+                            areaStyle: {
+                                stroke: "darkgoldenrod",
+                                fill: "darkgoldenrod",
+                                fillOpacity: 0.7
+                            },
+                            data: [
+                                {x:1, y:1, sigma:0.5},
+                                {x:2, y:2, sigma:0.6},
+                                {x:3, y:3, sigma:0.7},
+                                {x:4, y:4, sigma:0.8},
+                                {x:5, y:5, sigma:0.9},
+                                {x:6, y:6, sigma:1},
+                                {x:7, y:7, sigma:1.5},
+                                {x:8, y:8, sigma:1.8},
+                                {x:9, y:9, sigma:2}
+                            ]
+                        }
+                    ]
+                });
+            </script>
+
+        </div>
+
         <h3>BarChart Options</h3>
 
         <h4>Dataset</h4>
@@ -2709,7 +2765,7 @@
                     marginRight:20,
                     axis: {
                         x: {
-                            range: [0,10],
+                            range: [0,12],
                             ticks:20,
                             format: "0.1f",
                             gridStyle: {
@@ -2740,15 +2796,15 @@
                                 fillOpacity: 0.7
                             },
                             data: [
-                                {x:1, y:1},
-                                {x:4, y:2},
-                                {x:6, y:3},
-                                {x:7.5, y:4},
-                                {x:8, y:5},
-                                {x:8.5, y:6},
-                                {x:9, y:7},
-                                {x:9.5, y:8},
-                                {x:10, y:9}
+                                {x:1, y:1, sigma:0.8},
+                                {x:4, y:2, sigma:0.7},
+                                {x:6, y:3, sigma:0.2},
+                                {x:7.5, y:4, sigma:0.5},
+                                {x:8, y:5, sigma:0.2},
+                                {x:8.5, y:6, sigma:0.3},
+                                {x:9, y:7, sigma:0.2},
+                                {x:9.5, y:8, sigma:0.1},
+                                {x:10, y:9, sigma:0.9}
                             ]
                         },
                         {

@@ -141,6 +141,21 @@ module dChart {
                 this.showLine = value.showLine;
             }
 
+            if (value.hasOwnProperty("style")) {
+
+                var lineStyle = new Utils.LineStyle();
+                lineStyle.normalize(value.style);
+                this.lineStyle = lineStyle;
+
+                var symbolStyle = new Utils.SymbolStyle();
+                symbolStyle.normalize(value.style);
+                this.symbolStyle = symbolStyle;
+
+                var areaStyle = new Utils.AreaStyle();
+                areaStyle.normalize(value.style);
+                this.areaStyle = areaStyle;
+            }
+
             if (value.hasOwnProperty("symbolStyle")) {
 
                 var symbolStyle = new Utils.SymbolStyle();

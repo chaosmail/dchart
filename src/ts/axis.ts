@@ -334,6 +334,13 @@ module dChart {
                 this.fontStyle.normalize(value.fontStyle);
             }
 
+            if (value.hasOwnProperty("style")){
+
+                var lineStyle = new Utils.LineStyle();
+                lineStyle.normalize(value.style);
+                this.lineStyle = lineStyle;
+            }
+
             if (value.hasOwnProperty("lineStyle")){
 
                 var lineStyle = new Utils.LineStyle();

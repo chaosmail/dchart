@@ -3,8 +3,6 @@ var banner = '/** <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.tod
              ' *  License: MIT\n' +
              ' */\n';
 
-
-
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -74,6 +72,9 @@ module.exports = function(grunt) {
         configFile: 'config/karma.conf.js'
       },
       unit: {
+        singleRun: true
+      },
+      continuous: {
         singleRun: false,
         background: true
       }
@@ -109,7 +110,7 @@ module.exports = function(grunt) {
 
   // Tasks
   grunt.registerTask('dist', ['clean', 'typescript', 'concat', 'uglify', 'copy']);
-  grunt.registerTask('default', ['karma:unit', 'dist', 'karma:unit:run']);
-  grunt.registerTask('test', ['karma:unit', 'watch']);
+  grunt.registerTask('default', ['karma:continuous', 'dist', 'karma:unit:run']);
+  grunt.registerTask('test', ['karma:continuous', 'watch']);
   grunt.registerTask('deploy', ['shell:deploy']);
 };

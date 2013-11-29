@@ -47,6 +47,10 @@ module dChart {
          */
         areaStyle:Utils.AreaStyle = new Utils.AreaStyle();
 
+        /**
+         * dChart Area Element, that stores all Attribute Styles
+         */
+        symbolStyle:Utils.SymbolStyle = new Utils.SymbolStyle();
 
         sigma:number = null;
 
@@ -72,6 +76,20 @@ module dChart {
                 var areaStyle = new Utils.AreaStyle();
                 areaStyle.normalize(value.areaStyle);
                 this.areaStyle = areaStyle;
+            }
+
+            if (value.hasOwnProperty("style")) {
+
+                var symbolStyle = new Utils.SymbolStyle();
+                symbolStyle.normalize(value.style);
+                this.symbolStyle = symbolStyle;
+            }
+
+            if (value.hasOwnProperty("symbolStyle")) {
+
+                var symbolStyle = new Utils.SymbolStyle();
+                symbolStyle.normalize(value.symbolStyle);
+                this.symbolStyle = symbolStyle;
             }
 
             if (value.hasOwnProperty("x")) {

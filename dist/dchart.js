@@ -1,4 +1,4 @@
-/** dchart - v0.0.13 - Mon Nov 25 2013 23:40:25
+/** dchart - v0.0.13 - Fri Nov 29 2013 23:29:41
  *  (c) 2013 Christoph Körner, office@chaosmail.at, http://chaosmail.at
  *  License: MIT
  */
@@ -1117,6 +1117,7 @@ var dChart;
             this.label = "";
             this.lineStyle = new dChart.Utils.LineStyle();
             this.areaStyle = new dChart.Utils.AreaStyle();
+            this.symbolStyle = new dChart.Utils.SymbolStyle();
             this.sigma = null;
         }
         Point.prototype.normalize = function (value) {
@@ -1134,6 +1135,18 @@ var dChart;
                 var areaStyle = new dChart.Utils.AreaStyle();
                 areaStyle.normalize(value.areaStyle);
                 this.areaStyle = areaStyle;
+            }
+
+            if (value.hasOwnProperty("style")) {
+                var symbolStyle = new dChart.Utils.SymbolStyle();
+                symbolStyle.normalize(value.style);
+                this.symbolStyle = symbolStyle;
+            }
+
+            if (value.hasOwnProperty("symbolStyle")) {
+                var symbolStyle = new dChart.Utils.SymbolStyle();
+                symbolStyle.normalize(value.symbolStyle);
+                this.symbolStyle = symbolStyle;
             }
 
             if (value.hasOwnProperty("x")) {
@@ -1446,6 +1459,12 @@ var dChart;
                 this.fontStyle.normalize(value.fontStyle);
             }
 
+            if (value.hasOwnProperty("style")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.style);
+                this.lineStyle = lineStyle;
+            }
+
             if (value.hasOwnProperty("lineStyle")) {
                 var lineStyle = new dChart.Utils.LineStyle();
                 lineStyle.normalize(value.lineStyle);
@@ -1621,6 +1640,20 @@ var dChart;
 
             if (value.hasOwnProperty("showLine")) {
                 this.showLine = value.showLine;
+            }
+
+            if (value.hasOwnProperty("style")) {
+                var lineStyle = new dChart.Utils.LineStyle();
+                lineStyle.normalize(value.style);
+                this.lineStyle = lineStyle;
+
+                var symbolStyle = new dChart.Utils.SymbolStyle();
+                symbolStyle.normalize(value.style);
+                this.symbolStyle = symbolStyle;
+
+                var areaStyle = new dChart.Utils.AreaStyle();
+                areaStyle.normalize(value.style);
+                this.areaStyle = areaStyle;
             }
 
             if (value.hasOwnProperty("symbolStyle")) {
@@ -1939,6 +1972,7 @@ var dChart;
             var _this = this;
             var xScale = this.xAxis.getScale();
             var yScale = this.yAxis.getScale();
+            var sigmaScale = 0.3;
 
             this.dataSets.forEach(function (dataSet, key) {
                 var group = _this.svgRectContainer[key].selectAll("rect").data(dataSet.data, function (d) {
@@ -1967,6 +2001,45 @@ var dChart;
                     }).attr("height", function (d) {
                         return _this.nettoHeight - yScale(d.y);
                     });
+
+                    group.enter().append("line").attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width * (1 - sigmaScale) : 0;
+                    }).attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y + d.sigma) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width - width * (1 - sigmaScale) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y + d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x) : 0;
+                    }).attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y + d.sigma) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width * (1 - sigmaScale) : 0;
+                    }).attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y - d.sigma) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width - width * (1 - sigmaScale) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
                 } else {
                     group.exit().remove();
 
@@ -1980,6 +2053,45 @@ var dChart;
                         return yScale(d.y);
                     }).attr("height", function (d) {
                         return _this.nettoHeight - yScale(d.y);
+                    });
+
+                    group.enter().append("line").attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width * (1 - sigmaScale) : 0;
+                    }).attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y + d.sigma) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width - width * (1 - sigmaScale) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y + d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
+                    }).attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y + d.sigma) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width * (1 - sigmaScale) : 0;
+                    }).attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y - d.sigma) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x) - start + key * width + width - width * (1 - sigmaScale) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
                     });
                 }
             });
@@ -2012,6 +2124,7 @@ var dChart;
             var _this = this;
             var xScale = this.xAxis.getScale();
             var yScale = this.yAxis.getScale();
+            var sigmaScale = 0.3;
 
             this.dataSets.forEach(function (dataSet, key) {
                 var group = _this.svgRectContainer[key].selectAll("rect").data(dataSet.data, function (d) {
@@ -2040,6 +2153,45 @@ var dChart;
                     }).attr("height", function (d) {
                         return height;
                     });
+
+                    group.enter().append("line").attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height * (1 - sigmaScale) : 0;
+                    }).attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x + d.sigma) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height - height * (1 - sigmaScale) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x + d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                    }).attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x + d.sigma) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height * (1 - sigmaScale) : 0;
+                    }).attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x - d.sigma) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height - height * (1 - sigmaScale) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
                 } else {
                     group.exit().remove();
 
@@ -2053,6 +2205,45 @@ var dChart;
                         return i * _this.transition.delay;
                     }).ease(_this.transition.ease).attr("width", function (d) {
                         return xScale(d.x);
+                    });
+
+                    group.enter().append("line").attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height * (1 - sigmaScale) : 0;
+                    }).attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x + d.sigma) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height - height * (1 - sigmaScale) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x + d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                    }).attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x + d.sigma) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y) - (start + key * height) * 0.5 : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
+                    });
+
+                    group.enter().append("line").attr("y1", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height * (1 - sigmaScale) : 0;
+                    }).attr("x1", function (d) {
+                        return d.sigma ? xScale(d.x - d.sigma) : 0;
+                    }).attr("y2", function (d) {
+                        return d.sigma ? yScale(d.y) - start + key * height + height - height * (1 - sigmaScale) : 0;
+                    }).attr("x2", function (d) {
+                        return d.sigma ? xScale(d.x - d.sigma) : 0;
+                    }).lineStyle({
+                        stroke: "black",
+                        strokeWidth: 1
                     });
                 }
             });

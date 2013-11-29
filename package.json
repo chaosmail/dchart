@@ -4,7 +4,7 @@
   "description": "Extensible declarative chart library using D3.js",
   "main": "dist/dchart.js",
   "scripts": {
-     "test": "./node_modules/.bin/karma start config/karma.conf.js --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start config/karma.conf.js --single-run --browsers PhantomJS"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,8 @@
     "requirejs": "~2.1.9",
     "karma-requirejs": "~0.2.0",
     "karma-phantomjs-launcher": "~0.1.0",
-    "karma": "~0.10.5"
+    "karma": "~0.10.5",
+    "karma-mocha": "~0.1.0"
   },
   "author": "Christoph Körner <office@chaosmail.at> (http://chaosmail.at)",
   "license": "MIT",

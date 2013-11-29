@@ -264,6 +264,7 @@ declare module dChart {
         public label: string;
         public lineStyle: dChart.Utils.LineStyle;
         public areaStyle: dChart.Utils.AreaStyle;
+        public symbolStyle: dChart.Utils.SymbolStyle;
         public sigma: number;
         constructor(x?: number, y?: number, z?: number);
         public normalize(value: any): void;
