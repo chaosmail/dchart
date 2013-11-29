@@ -1,6 +1,6 @@
 {
   "name": "dchart",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "dist/dchart.js",
   "dependencies": {
     "d3": "~3.3.4",
