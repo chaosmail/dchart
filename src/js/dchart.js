@@ -1840,11 +1840,11 @@ var dChart;
                     });
 
                     group.enter().append("line").attr("x1", function (d) {
-                        return d.sigma ? xScale(d.x) : 0;
+                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
                     }).attr("y1", function (d) {
                         return d.sigma ? yScale(d.y + d.sigma) : 0;
                     }).attr("x2", function (d) {
-                        return d.sigma ? xScale(d.x) : 0;
+                        return d.sigma ? xScale(d.x) - (start + key * width) * 0.5 : 0;
                     }).attr("y2", function (d) {
                         return d.sigma ? yScale(d.y - d.sigma) : 0;
                     }).lineStyle({
