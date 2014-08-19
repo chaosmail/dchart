@@ -1,0 +1,7 @@
+lib/
+components/
+node_modules/
+.idea
+*.sublime-project
+*.sublime-workspace
+*.log
